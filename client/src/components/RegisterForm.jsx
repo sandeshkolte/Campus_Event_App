@@ -31,7 +31,7 @@ const { register, handleSubmit , reset } = useForm()
 const formSubmit = async (data) => {
 console.log(data);
   try {
-    await axios.post(baseUrl + '/user/register', data).then((response) => {
+    await axios.post(baseUrl + '/api/user/register', data).then((response) => {
       if(response.status === 200) {
         // toast.success("Product Created Successfully!")
         console.log(JSON.stringify(data))

@@ -30,7 +30,7 @@ export default function LoginForm() {
   const formSubmit = async (data) => {
   console.log(data);
     try {
-      await axios.post(baseUrl + '/user/login', data).then((response) => {
+      await axios.post(baseUrl + '/api/user/login', data).then((response) => {
         if(response.status === 200) {
           // toast.success("Product Created Successfully!")
           console.log(JSON.stringify(response.data.response.user))

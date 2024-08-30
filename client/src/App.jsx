@@ -37,7 +37,7 @@ const fetchUserDetails = async() => {
     
     if(userId) {
       
-      axios.post(baseUrl+ `/user/getuser/?userid=${userId}`).then((result)=>{
+      axios.post(baseUrl+ `/api/user/getuser/?userid=${userId}`).then((result)=>{
         // console.log(result)
         if(result.status===200) {
           const userDetails = result.data.response
