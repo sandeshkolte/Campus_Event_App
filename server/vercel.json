@@ -1,8 +1,7 @@
 {
   "builds": [
     {
-      "src": "server/app.js",
-      "framework": "node"
+      "src": "app.js"
     }
   ],
   "routes": [
