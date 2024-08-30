@@ -11,9 +11,24 @@ const PORT = process.env.PORT || 9000;
 const path = require('path')
 
 // Middleware
-app.use(cors({
-  origin: "*"
-}));
+
+const corsOptions = {
+
+  origin: "https://campusevent.vercel.app",
+  
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  
+  credentials: true
+  
+  };
+  
+  app.use(cors(corsOptions));
+
+// app.use(cors({
+//   origin: "*"
+// }));
 require('dotenv').config();
 app.use(appLogger);
 app.use(cookieParser());
