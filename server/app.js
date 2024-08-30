@@ -43,8 +43,8 @@ db.on('disconnected', () => {
 });
 
 
-app.use('/user', userRouter);
-app.use('/event', eventRouter);
+app.use('/api/user', userRouter);
+app.use('/api/event', eventRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));

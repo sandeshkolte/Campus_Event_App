@@ -1,5 +1,9 @@
 {
     "rewrites": [
+      {
+      "source": "/user/login",
+      "destination": "/api/user/login"
+    },
       { "source": "/(.*)", "destination": "/" }
     ]
   }
