@@ -2,7 +2,6 @@
   "builds": [
     {
       "src": "server/app.js",
-      "command": "npm run build",
       "framework": "node"
     }
   ],
