@@ -1,20 +1,34 @@
 const express = require('express');
 const userRouter = require('./routes/userRouter');
 const eventRouter = require('./routes/eventRouter');
-const appLogger = require('./middlewares/appLogger').default;
+const appLogger = require('./middlewares/appLogger');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const expressSession = require('express-session')
 const db = require('./config/mongoose-config');
 const app = express();
 const PORT = process.env.PORT || 9000;
+const path = require('path')
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "*"
+}));
 require('dotenv').config();
 app.use(appLogger);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+
+app.use(expressSession({
+  resave:false,
+  saveUninitialized:false,
+  secret:process.env.EXPRESS_SESSION_SECRET,
+  cookie: { secure: true }
+}))
 
 db.on('connected', () => {
   console.log('Mongoose connected to MongoDB Atlas');
@@ -32,6 +46,9 @@ db.on('disconnected', () => {
 app.use('/user', userRouter);
 app.use('/event', eventRouter);
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+});
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server started on port ${PORT}`);

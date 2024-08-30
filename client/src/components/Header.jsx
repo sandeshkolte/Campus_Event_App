@@ -1,7 +1,13 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
+import { useSelector } from 'react-redux';
+
+
 
 const Header = () => {
+    
+    const userInfo = useSelector((state)=> state.auth.userInfo)
+
     return (
         <header className="w-full bg-slate-50 p-5">
             <div className='flex justify-between'>
@@ -27,9 +33,9 @@ const Header = () => {
                     </li>
 
                 </ul>
-                <div className='outline-black outline-4'>
-                    <img className='h-12 rounded-3xl object-cover' src="https://i.pinimg.com/originals/7d/ff/55/7dff551f2d67f821295ee46d87cdf709.jpg" alt="profile" />
-                </div>
+                {/* <div className='outline-black outline-4'>
+                    <img className='h-12 rounded-3xl object-cover' src={userInfo.image} alt="profile" />
+                </div> */}
             </div>
         </header>
     )

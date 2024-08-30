@@ -37,7 +37,7 @@ const registerUser = async (req, res) => {
         fullname,
         email,
         password,
-        image,
+        // image,
         myevents,
         contact } = req.body
 
@@ -62,9 +62,10 @@ const registerUser = async (req, res) => {
                         username,
                         fullname,
                         email,
-                        image: req.file.buffer,
+                        // image: req.file.buffer,
                         myevents,
-                        contact, password: hash
+                        contact, 
+                        password: hash
                     })
 
                     const token = generateToken(createdUser)
@@ -92,7 +93,6 @@ const loginUser = async (req, res) => {
             response: "Email or Password Incorrect"
         })
     } else {
-
         bcrypt.compare(password, user.password, (err, result) => {
             if (result) {
                 const token = generateToken(user)

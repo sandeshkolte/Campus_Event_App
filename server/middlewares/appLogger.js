@@ -11,4 +11,4 @@ const appLogger = (req,res,next)=> {
     next()
 }
 
-export default appLogger
+module.exports= appLogger
