@@ -14,7 +14,7 @@ const path = require('path')
 
 const corsOptions = {
 
-  origin: "https://campusevent.vercel.app",
+  origin: "*",
   
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   
@@ -65,6 +65,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
 
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });

@@ -1,6 +1,19 @@
 {
-    "rewrites": [
-      { "source": "/api/(.*)", "destination": "/api/$1" },
-      { "source": "/(.*)", "destination": "/" }
-    ]
-  }
+  "builds": [
+    {
+      "src": "server/app.js",
+      "command": "npm run build",
+      "framework": "node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/client/dist/$1"
+    }
+  ]
+}
