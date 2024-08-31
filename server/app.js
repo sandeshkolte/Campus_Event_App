@@ -8,35 +8,15 @@ const expressSession = require('express-session')
 const db = require('./config/mongoose-config');
 const app = express();
 const PORT = process.env.PORT || 9000;
-const path = require('path')
 
-// Middleware
-
-const corsOptions = {
-
-  origin: "*",
-  
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  
-  credentials: true
-  
-  };
-  
-  app.use(cors(corsOptions));
-
-// app.use(cors({
-//   origin: "*"
-// }));
+app.use(cors({
+  origin: "*"
+}));
 require('dotenv').config();
 app.use(appLogger);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(express.static(path.join(__dirname, '../client/dist')));
-
 
 app.use(expressSession({
   resave:false,
@@ -60,10 +40,6 @@ db.on('disconnected', () => {
 
 app.use('/api/user', userRouter);
 app.use('/api/event', eventRouter);
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
-});
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
