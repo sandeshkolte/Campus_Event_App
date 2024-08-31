@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea"
 
 export default function Component() {
   return (
-    <Card className="w-full max-w-6xl mx-auto ">
+    <Card className="w-full max-w-6xl">
       <CardHeader>
         <CardTitle>Create Event</CardTitle>
         <CardDescription>Fill in the details for your new event.</CardDescription>
@@ -71,7 +71,7 @@ export default function Component() {
       </CardContent>
       <CardFooter className="flex justify-end space-x-2">
         <Button variant="outline">Cancel</Button>
-        <Button className="bg-gray-950 text-white" >Create Event</Button>
+        <Button  className="bg-gray-950 text-white" >Create Event</Button>
       </CardFooter>
     </Card>
   )

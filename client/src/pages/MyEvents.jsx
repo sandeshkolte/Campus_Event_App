@@ -1,10 +1,10 @@
-import { Button } from '@/components/ui/button'
+import EventDetail from '@/components/EventDetail'
 import React from 'react'
 
 const MyEvents = () => {
   return (
-    <div>
-      <Button>Click me</Button>
+    <div className='flex justify-center bg-indigo-50'>
+      <EventDetail/>
     </div>
   )
 }
