@@ -9,9 +9,15 @@ const db = require('./config/mongoose-config');
 const app = express();
 const PORT = process.env.PORT || 9000;
 
-app.use(cors({
-  origin: "*"
-}));
+const corsOptions = {
+  origin: "*",
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization','Access-Control-Allow-Origin: * '],
+  credentials: true
+  };
+  
+  app.use(cors(corsOptions));
+
 require('dotenv').config();
 app.use(appLogger);
 app.use(cookieParser());
@@ -40,6 +46,7 @@ db.on('disconnected', () => {
 
 app.use('/api/user', userRouter);
 app.use('/api/event', eventRouter);
+
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
