@@ -8,15 +8,8 @@ const expressSession = require('express-session')
 const db = require('./config/mongoose-config');
 const app = express();
 const PORT = process.env.PORT || 9000;
-
-const corsOptions = {
-  origin: "*",
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: "*",
-  credentials: true
-  };
   
-  app.use(cors(corsOptions));
+  app.use(cors());
 
 require('dotenv').config();
 app.use(appLogger);
