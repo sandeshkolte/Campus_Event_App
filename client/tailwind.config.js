@@ -21,10 +21,15 @@ module.exports = {
        gradient:{
         "0%": { backgroundPosition: "0% 50%" },
 "100%": { backgroundPosition: "100% 50%" },
-       }
+       },
+       spin: {
+        '0%': { transform: 'rotate(0deg)' },
+        '100%': { transform: 'rotate(360deg)' },
+      },
       },
       animation: {
-       gradient : "gradient 6s linear infinite"
+       gradient : "gradient 6s linear infinite",
+      'spin-slow' : 'spin 2s linear infinite',
       },
     },
   },

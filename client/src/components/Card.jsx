@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge"
 
 export default function Component() {
   return (
-    <Card className="w-[300px] overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg cursor-pointer">
+    <Card className="w-[300px] overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:shadow-purple-400 cursor-pointer">
       <div className="relative h-[200px] bg-slate-900">
         <img
           src="/placeholder.svg?height=200&width=300"

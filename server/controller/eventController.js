@@ -70,13 +70,13 @@ const findEvent = async (req, res) => {
 const createEvent = async (req, res) => {
     try {
         let {
-            title, description, image, category, coordinator, price, participants, date
+            title, description, image, category, coordinator, price, participants, date,venue
         } = req.body;
 
         console.log("Request Body:", req.body);
 
         let event = new eventModel({
-            title, description, image: req.file.buffer, category, coordinator, price, participants, date,
+            title, description, image, category, coordinator, price, participants, date,venue
         });
 
         await event.save();

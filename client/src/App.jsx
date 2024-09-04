@@ -13,6 +13,7 @@ import axios from 'axios'
 import { baseUrl } from './common/common'
 import { useDispatch } from 'react-redux'
 import { login } from './store/authSlice'
+import { addEvent } from './store/eventSlice'
 
 const App = () => {
 
@@ -41,7 +42,7 @@ const fetchUserDetails = async() => {
         // console.log(result)
         if(result.status===200) {
           const userDetails = result.data.response
-          console.log("useEffect called")
+          // console.log("useEffect called")
           dispatch(login(userDetails))
         }
           })
@@ -51,12 +52,33 @@ const fetchUserDetails = async() => {
 console.log(err)
   }
   }
+
+const fetchAllEvents = async() => {
+  try{
+    axios.get(baseUrl+"/api/event/").then(result =>{
+        console.log(result.data.response)
+        const allEvents = result.data.response
+        dispatch(addEvent(allEvents))
+    }).catch(err =>{
+        toast.error(err)
+    })
+}catch(err) {
+    toast.error(err)
+}
+}
+
     useEffect(() => {
 if(token && userId) {
   console.log("token called")
   fetchUserDetails()
 }
     }, [token,userId])
+
+useEffect(() => {
+fetchAllEvents()
+
+}, [])
+
 
 
 return (

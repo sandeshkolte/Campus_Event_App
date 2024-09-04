@@ -1,5 +1,5 @@
-import React from 'react'
-import ActionAreaCard from '../components/Card'
+import React, { useEffect } from 'react'
+import EventCard from '../components/Card'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -8,9 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 const Home = () => {
+
+const events = useSelector((state) => state.events.details)
 
   return (
     <div className='min-h-screen relative bg-slate-50 px-10'>
@@ -20,14 +23,14 @@ const Home = () => {
             <div className='absolute top-[20%] left-[20%] translate-y-[-50%] translate-x-[-50%]'>
                 <div className='w-20 h-20 blur-3xl max-sm:bg-transparent bg-violet-500 rounded-3xl'></div>
             </div>
-          
+        
         <div className='bg-slate-50 w-full mb-52'>
         <h1 className='font-bold text-7xl text-center p-5 pt-10'>Where Campus Life <br /> Comes <span className='gradient-text text-transparent animate-gradient' >Alive</span></h1>
         <p className='font-semibold text-md text-center text-slate-800'>Discover, Register, and Participate in Events Around Campus</p>
        
        <div className='flex justify-center mt-2 gap-5'>
-        <Button variant="outline" >About us</Button>
-        <Button className="bg-gray-900 text-white shadow-xl " >Get Started</Button>
+        <Button variant="outline" className="bg-white transition-all duration-300 hover:shadow-xl hover:shadow-purple-400 " >About us</Button>
+        <Button className="bg-gray-900 text-white shadow-xl transition-all duration-300  hover:shadow-purple-400 " >Get Started</Button>
        </div>
         </div>
 
@@ -40,12 +43,12 @@ const Home = () => {
                     className='bg-transparent px-2 py-1 rounded-xl w-full outline-none' 
                 />
             </div>
-            <div className='bg-violet-100 px-2 py-1 rounded-xl w-96 max-sm:w-full flex items-center'>
-                <Select className="bg-transparent" >
+            <div className='bg-transparent px-2 py-1 rounded-xl w-96 max-sm:w-full flex items-center'>
+                <Select className="bg-white" >
                     <SelectTrigger id="coordinator" className='w-full'>
-                        <SelectValue placeholder="Select Category" className='bg-violet-100' />
+                        <SelectValue placeholder="Select Category" className='bg-white' />
                     </SelectTrigger>
-                    <SelectContent className="bg-violet-100" >
+                    <SelectContent className="bg-white" >
                         <SelectItem value="john">John Doe</SelectItem>
                         <SelectItem value="jane">Jane Smith</SelectItem>
                         <SelectItem value="bob">Bob Johnson</SelectItem>
@@ -55,14 +58,13 @@ const Home = () => {
         </div>
 
 <div className='flex flex-wrap gap-16 p-10 w-full justify-center'>
-<ActionAreaCard/>
-<ActionAreaCard/>
-<ActionAreaCard/>
-<ActionAreaCard/>
-<ActionAreaCard/>
-<ActionAreaCard/>
-<ActionAreaCard/>
-<ActionAreaCard/>
+<ul className='events' >
+    {events.details.map((event) => {
+        <li className='event' key={event.id} >
+            {event.title}
+        </li>
+    })}
+</ul>
 </div>
     </div>
   )

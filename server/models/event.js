@@ -7,23 +7,26 @@ image:String,
 category:String,
 coordinator:[
     {
-   type: mongoose.Schema.Types.ObjectId,
-    ref: 'user'
+//    type: mongoose.Schema.Types.ObjectId,
+//     ref: 'user'
+    type:String,
 }
 ],
 price:{
-    type:Number,
-    default:0
+    type:String,
+    default:"0"
 },
 participants:[
     {
-   type: mongoose.Schema.Types.ObjectId,
-    ref: 'user'
+//    type: mongoose.Schema.Types.ObjectId,
+//     ref: 'user'
+    type:String,
 }
 ],
 date:{
     type:String
-}
+},
+venue:String
 },
 {
     timestamps: true 

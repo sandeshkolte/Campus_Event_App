@@ -4,7 +4,7 @@ const router = express.Router()
 const upload = require('../config/multer-config')
 
 router.get('/',getEvent)
-router.post('/create',upload.single("image"), createEvent)
+router.post('/create', createEvent)
 router.post('/find', findEvent);
 router.get('/edit/:id',editEvent)
 router.get('/delete/',deleteEvent)

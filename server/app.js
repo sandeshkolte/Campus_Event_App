@@ -9,7 +9,7 @@ const db = require('./config/mongoose-config');
 const app = express();
 const PORT = process.env.PORT || 9000;
   
-  app.use(cors());
+app.use(cors());
 
 require('dotenv').config();
 app.use(appLogger);
@@ -36,11 +36,9 @@ db.on('disconnected', () => {
   console.log('Mongoose disconnected from MongoDB Atlas');
 });
 
-
 app.use('/api/user', userRouter);
 app.use('/api/event', eventRouter);
 
-
-app.listen(PORT, () => {
+app.listen(PORT,"0.0.0.0", () => {
   console.log(`Server started on port ${PORT}`);
 });

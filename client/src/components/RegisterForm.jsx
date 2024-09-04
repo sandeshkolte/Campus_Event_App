@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux"
 import { useForm } from "react-hook-form"
 import { login } from "@/store/authSlice"
 import { toast } from "react-toastify"
+import { VscLoading } from "react-icons/vsc";
 
 export default function RegisterForm() {
 
@@ -27,9 +28,11 @@ const navigate = useNavigate()
 
 const { register, handleSubmit , reset } = useForm()
 
+const [loading,setLoading] =  React.useState(false)
 
 const formSubmit = async (data) => {
 console.log(data);
+setLoading(true)
   try {
     await axios.post(baseUrl + '/api/user/register', data).then((response) => {
       if(response.status === 200) {
@@ -54,9 +57,10 @@ console.log(data);
       console.error("Registration failed:", err);
       // toast.error("User Already Exist !")
     }
+  } finally{
+    setLoading(false)
   }
 }
-
 
   return (
     <Card className="w-[400px]">
@@ -95,7 +99,7 @@ console.log(data);
           </div>
       </CardContent>
       <CardFooter className="grid" >
-        <Button className="w-full bg-gray-900 text-white" >SIGN UP</Button>
+      <Button className="w-full bg-gray-900 text-white" >{loading ? <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "SIGN UP"}</Button>
         <hr className="mt-3 border-gray-300 rounded-md border-[1.5px]" />
 <div className="flex py-2 justify-center" >
 <p className="" >Already Have an Account?</p>

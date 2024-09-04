@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CalendarIcon, MapPinIcon } from "lucide-react"
 
-export default function EventDetail() {
+export default function EventDetail({props}) {
   return (
     <Card className="w-full max-w-6xl outline-transparent">
       <div className="flex flex-col md:flex-row">

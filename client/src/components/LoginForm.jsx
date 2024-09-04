@@ -18,6 +18,7 @@ import axios from "axios"
 import { baseUrl } from "@/common/common"
 import { toast } from "react-toastify"
 import { login } from "@/store/authSlice"
+import { VscLoading } from "react-icons/vsc";
 
 export default function LoginForm() {
 
@@ -27,8 +28,11 @@ export default function LoginForm() {
 
   const { register, handleSubmit , reset } = useForm()
   
+const [loading,setLoading] =  React.useState(false)
+
   const formSubmit = async (data) => {
   console.log(data);
+  setLoading(true)
     try {
       await axios.post(baseUrl + '/api/user/login', data).then((response) => {
         if(response.status === 200) {
@@ -49,10 +53,14 @@ export default function LoginForm() {
     } catch (err) {
       if (axios.isCancel(err)) {
         console.log("Fetch aborted");
+        toast.error("Fetch aborted");
       } else {
         console.error("Registration failed:", err);
+        toast.error("Registration failed:", err);
         // toast.error("Invalid User Details!")
       }
+    } finally{
+      setLoading(false)
     }
   }
   
@@ -92,7 +100,7 @@ export default function LoginForm() {
        
       </CardContent>
       <CardFooter className="grid" >
-        <Button className="w-full bg-gray-900 text-white" >SIGN IN</Button>
+        <Button className="w-full bg-gray-900 text-white" >{loading ? <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "SIGN IN"}</Button>
         <hr className="mt-3 border-gray-300 rounded-md border-[1.5px]" />
 <div className="flex py-2 justify-center" >
 <p className="" >Don't Have an Account?</p>
