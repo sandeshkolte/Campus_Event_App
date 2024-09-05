@@ -7,6 +7,7 @@ router.get('/',getEvent)
 router.post('/create', createEvent)
 router.post('/find', findEvent);
 router.get('/edit/:id',editEvent)
+router.get('/details',editEvent)
 router.get('/delete/',deleteEvent)
 router.post('/update/:id',upload.single("image"), updateEvent)
 

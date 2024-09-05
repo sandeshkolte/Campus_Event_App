@@ -87,6 +87,7 @@ export default function Component() {
           toast.success("Event created successfully!")
           reset() // Reset the form fields
           setImagePreview(null) // Reset the image preview
+          setUploadedFile(null) // Reset the uploaded file state
           navigate("/") // Navigate to the home route
         }
       })
@@ -99,7 +100,7 @@ export default function Component() {
 
   return (
     <Card className="w-full max-w-6xl">
-      <form onSubmit={handleSubmit(formSubmit)} >
+      <form onSubmit={handleSubmit(formSubmit)}>
         <CardHeader>
           <CardTitle>Create Event</CardTitle>
           <CardDescription>Fill in the details for your new event.</CardDescription>
@@ -112,13 +113,17 @@ export default function Component() {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="price">Price</Label>
-              <Input id="price" placeholder="0.00" {...register("price")} />
+              <Input id="price" type="number" placeholder="0.00" {...register("price")} />
             </div>
-            <div className="flex flex-col space-y-1.5 sm:col-span-2">
+            <div className="flex flex-col space-y-1.5 sm:col-span-1">
               <Label htmlFor="description">Description</Label>
               <Textarea id="description" placeholder="Describe your event" rows={4} {...register("description")} />
             </div>
-            <div className="flex flex-col space-y-1.5 sm:col-span-2">
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="title">Category</Label>
+              <Input id="category" placeholder="Enter Category" {...register("category")} />
+            </div>
+            <div className="flex flex-col space-y-1.5 sm:col-span-1">
               <div className="space-y-2">
                 <Label htmlFor="image">Upload Image</Label>
                 <div className="flex flex-col items-center space-y-4">
@@ -127,9 +132,8 @@ export default function Component() {
                       id="image"
                       type="file"
                       className="sr-only"
-                      onChange={handleFileChange}
+                      onChange={handleFileChange} // Only handle file changes here
                       accept="image/*"
-                      {...register("file")}
                     />
                     <Label
                       htmlFor="image"
@@ -168,10 +172,23 @@ export default function Component() {
               </div>
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="coordinator">Coordinator</Label>
-              <Select onValueChange={(value) => setValue("coordinator", value)}>
-                <SelectTrigger id="coordinator">
-                  <SelectValue placeholder="Select coordinator" />
+              <Label htmlFor="coordinator">Coordinator 1</Label>
+              <Select onValueChange={(value) => setValue("coordinator1", value)}>
+                <SelectTrigger id="coordinator1">
+                  <SelectValue placeholder="Select coordinator 1" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectItem value="John Doe">John Doe</SelectItem>
+                  <SelectItem value="Jane Smith">Jane Smith</SelectItem>
+                  <SelectItem value="Bob Johnson">Bob Johnson</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="coordinator">Coordinator 2</Label>
+              <Select onValueChange={(value) => setValue("coordinato2r", value)}>
+                <SelectTrigger id="coordinator2">
+                  <SelectValue placeholder="Select coordinator 2" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
                   <SelectItem value="John Doe">John Doe</SelectItem>
@@ -194,6 +211,7 @@ export default function Component() {
           <Button variant="outline" onClick={() => {
             reset()
             setImagePreview(null)
+            setUploadedFile(null)
             navigate("/")
           }}>Cancel</Button>
           <Button type="submit" className="bg-gray-950 text-white">

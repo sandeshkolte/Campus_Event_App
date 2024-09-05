@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'
-import EventCard from '../components/Card'
+import React, { Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -8,12 +7,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+const AllEvents = React.lazy(() => import('../components/AllEvents')) 
 
 const Home = () => {
 
-const events = useSelector((state) => state.events.details)
+// const events = useSelector((state) => state.event.events)
 
   return (
     <div className='min-h-screen relative bg-slate-50 px-10'>
@@ -25,7 +23,7 @@ const events = useSelector((state) => state.events.details)
             </div>
         
         <div className='bg-slate-50 w-full mb-52'>
-        <h1 className='font-bold text-7xl text-center p-5 pt-10'>Where Campus Life <br /> Comes <span className='gradient-text text-transparent animate-gradient' >Alive</span></h1>
+        <h1 className='font-bold text-7xl text-center p-5 pt-10'>Where Campus Life<br />Comes <span className='gradient-text text-transparent animate-gradient' >Alive</span></h1>
         <p className='font-semibold text-md text-center text-slate-800'>Discover, Register, and Participate in Events Around Campus</p>
        
        <div className='flex justify-center mt-2 gap-5'>
@@ -43,8 +41,8 @@ const events = useSelector((state) => state.events.details)
                     className='bg-transparent px-2 py-1 rounded-xl w-full outline-none' 
                 />
             </div>
-            <div className='bg-transparent px-2 py-1 rounded-xl w-96 max-sm:w-full flex items-center'>
-                <Select className="bg-white" >
+            <div className='bg-violet-100 px-2 py-1 rounded-xl w-96 max-sm:w-full flex items-center'>
+                <Select className="bg-transparent" >
                     <SelectTrigger id="coordinator" className='w-full'>
                         <SelectValue placeholder="Select Category" className='bg-white' />
                     </SelectTrigger>
@@ -57,15 +55,12 @@ const events = useSelector((state) => state.events.details)
             </div>
         </div>
 
-<div className='flex flex-wrap gap-16 p-10 w-full justify-center'>
-<ul className='events' >
-    {events.details.map((event) => {
-        <li className='event' key={event.id} >
-            {event.title}
-        </li>
-    })}
-</ul>
-</div>
+{/* <div className='flex flex-wrap gap-16 p-10 w-full justify-center'> */}
+<Suspense fallback={<div>Loading...</div>} >
+<AllEvents/>
+</Suspense>
+
+{/* </div> */}
     </div>
   )
 }

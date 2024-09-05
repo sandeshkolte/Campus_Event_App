@@ -13,7 +13,8 @@ import axios from 'axios'
 import { baseUrl } from './common/common'
 import { useDispatch } from 'react-redux'
 import { login } from './store/authSlice'
-import { addEvent } from './store/eventSlice'
+import {allEvents} from './store/eventSlice'
+import EventDetail from './components/EventDetail'
 
 const App = () => {
 
@@ -57,8 +58,8 @@ const fetchAllEvents = async() => {
   try{
     axios.get(baseUrl+"/api/event/").then(result =>{
         console.log(result.data.response)
-        const allEvents = result.data.response
-        dispatch(addEvent(allEvents))
+        const events = result.data.response
+        dispatch(allEvents(events))
     }).catch(err =>{
         toast.error(err)
     })
@@ -86,6 +87,7 @@ return (
       <Routes>
       <Route path='/' element={<Layout/>} >
       <Route path='' element={<Home/>} />
+      <Route path='/eventdetails/:id' element={<EventDetail/>} />
 
 {/* Unauthorized Routes */}
 {!isAuthenticated && (

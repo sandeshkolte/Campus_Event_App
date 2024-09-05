@@ -94,8 +94,9 @@ const createEvent = async (req, res) => {
 
 const editEvent = async (req, res) => {
     try {
-        let event = await eventModel.findById(req.params.id);
 
+const {id} = req.query
+        let event = await eventModel.findById(id);
         res.status(200).json({
             event
         })
