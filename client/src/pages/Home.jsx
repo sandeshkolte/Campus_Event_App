@@ -7,13 +7,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-const AllEvents = React.lazy(() => import('../components/AllEvents')) 
+import { motion } from 'framer-motion'
+import AllEvents from '@/components/AllEvents'
+// const AllEvents = React.lazy(() => import('../components/AllEvents')) 
+
+
 
 const Home = () => {
 
 // const events = useSelector((state) => state.event.events)
 
   return (
+
+    <motion.div>
     <div className='min-h-screen relative bg-slate-50 px-10'>
         <div className='absolute top-[15%] right-[20%] translate-y-[-50%] translate-x-[-50%]'>
                 <div className='w-28 h-28 blur-3xl max-sm:bg-transparent bg-purple-500 rounded-3xl'></div>
@@ -56,12 +62,13 @@ const Home = () => {
         </div>
 
 {/* <div className='flex flex-wrap gap-16 p-10 w-full justify-center'> */}
-<Suspense fallback={<div>Loading...</div>} >
+{/* <Suspense fallback={<div>Loading...</div>} > */}
 <AllEvents/>
-</Suspense>
+{/* </Suspense> */}
 
 {/* </div> */}
     </div>
+    </motion.div>
   )
 }
 

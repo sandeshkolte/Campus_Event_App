@@ -6,8 +6,8 @@ export default function EventCard({ event }) {
     <Card className="w-[300px] overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:shadow-purple-400 cursor-pointer">
       <div className="relative h-[200px] bg-slate-900">
         <img
-          src={event.image} // Use event image
-          alt={event.title} // Use event title for alt text
+          src={event.image}
+          alt={event.title} 
           className="object-cover w-full h-full"
         />
         <div className="absolute inset-0 flex items-center justify-center">
@@ -17,7 +17,7 @@ export default function EventCard({ event }) {
       <CardContent className="p-4">
         <div className="flex items-center space-x-2 mb-2">
           <Badge variant="secondary" className="bg-green-100 text-green-800 font-bold">
-            {event.price === '0' ? 'FREE' : `$${event.price}`}
+            {String(event.price) === '0'|| '' ? 'FREE' : `$${event.price}`}
           </Badge>
           <Badge variant="secondary" className="bg-slate-100 text-gray-800">
             {event.category || 'Cultural'} {/* Assuming there's a category field */}

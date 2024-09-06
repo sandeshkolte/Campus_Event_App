@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSelector } from 'react-redux';
-
+import SideSheet from './Sheet';
 
 const Header = () => {
 
@@ -12,22 +12,22 @@ const Header = () => {
         <header className="w-full bg-slate-50 px-5 py-2 shadow-lg shadow-purple-200">
             <div className='flex justify-between'>
                 <h1 className='bg-gradient-to-r from-purple-400 to-indigo-600 font-bold text-transparent bg-clip-text' >Eventify</h1>
-                <ul className='flex justify-center flex-row gap-5 font-semibold max-sm:hidden '>
+                <ul className='md:flex justify-center flex-row gap-5 font-semibold hidden'>
                     <li>
                         <NavLink to='/' className={({ isActive }) => ` 
-                ${isActive ? "text-purple-500" : "text-black"}
+                ${isActive ? "text-black" : "text-gray-400"}
             `
                         } >Home</NavLink>
                     </li>
                     <li>
                         <NavLink to='/myevents' className={({ isActive }) => `
-                ${isActive ? "text-purple-500" : "text-black"}
+                ${isActive ? "text-black" : "text-gray-400"}
             `
-                        } >My Events</NavLink>
+                        } >My Tickets</NavLink>
                     </li>
                     <li>
                         <NavLink to='/profile' className={({ isActive }) => `
-                ${isActive ? "text-purple-500" : "text-black"}
+                ${isActive ? "text-black" : "text-gray-400"}
             `
                         } >Profile</NavLink>
                     </li>
@@ -39,7 +39,7 @@ const Header = () => {
                     <div className='outline-black outline-4'>
                         <img className='h-10 rounded-3xl object-cover' src={userInfo.image} alt="profile" />
                     </div></NavLink> */}
-
+<SideSheet/>
             </div>
         </header>
     )
