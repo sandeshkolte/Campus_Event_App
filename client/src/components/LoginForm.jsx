@@ -45,6 +45,7 @@ const [loading,setLoading] =  React.useState(false)
           dispatch(login(userData))
           reset();
           navigate('/')
+    window.location.reload();
         }else if(response.status===403) {
           toast.error("Invalid User Details!")
         }

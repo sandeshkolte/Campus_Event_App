@@ -38,6 +38,7 @@ const registerUser = async (req, res) => {
         email,
         password,
         // image,
+        role,
         myevents,
         contact } = req.body
 
@@ -112,5 +113,45 @@ const loginUser = async (req, res) => {
     }
 
 }
+
+
+const userUpdate = async (req, res) => {
+    try {
+
+        let { username,
+            fullname,
+            email,
+            password,
+            // image,
+            role,
+            myevents,
+            contact } = req.body;
+
+        let updatedUser = await eventModel.findOneAndUpdate(
+            { _id: req.params.id },
+            {
+                // image:req.file.buffer,
+                username,
+        fullname,
+        email,
+        password,
+        // image,
+        contact 
+            },
+            { new: true }
+        );
+
+        res.status(200).json({
+            status: "success",
+            response: "Event Updated"
+        })
+
+    }
+
+    catch (err) {
+        res.status(403).json({ status: "Error", response: err.message });
+    }
+};
+
 
 module.exports = { getUserDetails, registerUser, loginUser }

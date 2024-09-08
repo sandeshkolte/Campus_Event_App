@@ -78,7 +78,7 @@ export default function Component() {
         const downloadURL = await handleImageUpload(file)
         data.image = downloadURL
       }
-
+      data.coordinator = [data.coordinator1, data.coordinator2];
       console.log(data)
 
       await axios.post(baseUrl + "/api/event/create", data).then(result => {
@@ -186,7 +186,7 @@ export default function Component() {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="coordinator">Coordinator 2</Label>
-              <Select onValueChange={(value) => setValue("coordinato2r", value)}>
+              <Select onValueChange={(value) => setValue("coordinator2", value)}>
                 <SelectTrigger id="coordinator2">
                   <SelectValue placeholder="Select coordinator 2" />
                 </SelectTrigger>
