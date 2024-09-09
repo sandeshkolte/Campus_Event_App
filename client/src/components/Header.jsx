@@ -13,7 +13,7 @@ let role = null
 if (token && token.includes('.')) {
   try {
     role = jwtDecode(String(token)).role
-    console.log(role)
+    // console.log(role)
   } catch (error) {
     console.error("Invalid token:", error)
   }
@@ -48,6 +48,16 @@ ${isActive ? "text-black" : "text-gray-400"}
                         } >My Tickets</NavLink>
                     </li>
                     ) }
+                    <li>
+                      { (role==="superadmin"||role==="admin") && (
+                           
+                            <NavLink to='/organised' className={({ isActive }) => `
+                          ${isActive ? "text-black" : "text-gray-400"}
+                          `
+                            } >Events Organised</NavLink>
+                          
+                                              )}
+                    </li>
                     <li>
                         <NavLink to='/profile' className={({ isActive }) => `
                 ${isActive ? "text-black" : "text-gray-400"}

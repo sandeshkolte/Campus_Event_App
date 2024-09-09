@@ -31,37 +31,43 @@ export default function LoginForm() {
 const [loading,setLoading] =  React.useState(false)
 
   const formSubmit = async (data) => {
-  console.log(data);
-  setLoading(true)
-    try {
-      await axios.post(baseUrl + '/api/user/login', data).then((response) => {
-        if(response.status === 200) {
-          // toast.success("Product Created Successfully!")
-          console.log(JSON.stringify(response.data.response.user))
-          toast.success("User Login Successfully!")
-          const {token} = response.data.response
-          const userData = response.data.response.user;
-          localStorage.setItem('userToken', token)
-          dispatch(login(userData))
-          reset();
-          navigate('/')
-    window.location.reload();
-        }else if(response.status===403) {
-          toast.error("Invalid User Details!")
+    if(data.email!="" || data.password!=""){
+      // console.log(data);
+      setLoading(true)
+        try {
+          await axios.post(baseUrl + '/api/user/login', data).then((response) => {
+            if(response.status === 200) {
+              // toast.success("Product Created Successfully!")
+              // console.log(JSON.stringify(response.data.response.user))
+              toast.success("User Login Successfully!")
+              const {token} = response.data.response
+              const userData = response.data.response.user;
+              localStorage.setItem('userToken', token)
+              dispatch(login(userData))
+              reset();
+              navigate('/')
+        window.location.reload();
+            }else if(response.status===403) {
+              toast.error("Invalid User Details!")
+            }
+            // setProgressPercent(0);
+          })
+        } catch (err) {
+          if (axios.isCancel(err)) {
+            console.log("Fetch aborted");
+            toast.error("Fetch aborted");
+          } 
+          else {
+            console.error("Login failed:", err);
+            toast.error("Invalid User Details!")
+            // toast.error("Invalid User Details!")
+          }
+        } finally{
+          setLoading(false)
         }
-        // setProgressPercent(0);
-      })
-    } catch (err) {
-      if (axios.isCancel(err)) {
-        console.log("Fetch aborted");
-        toast.error("Fetch aborted");
-      } else {
-        console.error("Registration failed:", err);
-        toast.error("Registration failed:", err);
-        // toast.error("Invalid User Details!")
-      }
-    } finally{
-      setLoading(false)
+    }
+    else{
+      toast.error("Fill the form")
     }
   }
   
@@ -91,11 +97,11 @@ const [loading,setLoading] =  React.useState(false)
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="Type your email" {...register('email')} />
+              <Input required id="email" type="email" placeholder="Type your email" {...register('email')} />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="Type your password" {...register('password')} />
+              <Input required id="password" type="password" placeholder="Type your password" {...register('password')} />
             </div>
           </div>
        

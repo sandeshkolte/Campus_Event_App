@@ -17,6 +17,10 @@ const Home = () => {
 
 // const events = useSelector((state) => state.event.events)
 
+const token = localStorage.getItem("userToken")
+const isAuthenticated = token !== null && token !== ""
+
+
   return (
 
     <motion.div>
@@ -34,7 +38,7 @@ const Home = () => {
        
        <div className='flex justify-center mt-2 gap-5'>
         <Button variant="outline" className="bg-white transition-all duration-300 hover:shadow-xl hover:shadow-purple-400 " >About us</Button>
-        <Button className="bg-gray-900 text-white shadow-xl transition-all duration-300  hover:shadow-purple-400 " >Get Started</Button>
+        <Button className="bg-gray-900 text-white shadow-xl transition-all duration-300  hover:shadow-purple-400 " >{!isAuthenticated && "Get Started" || "Explore Events"}</Button>
        </div>
         </div>
 

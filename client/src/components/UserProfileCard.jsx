@@ -1,8 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { AtSignIcon, MailIcon, UserIcon } from "lucide-react"
+import { AtSignIcon, Instagram, MailIcon, UserIcon, UserPen } from "lucide-react"
 import AlertComponent from "./alert-dialog"
+import { FaGithub, FaInstagram, FaLinkedin } from "react-icons/fa"
 
 export default function UserProfileCard({user}) {
 
@@ -17,7 +18,7 @@ export default function UserProfileCard({user}) {
         {/* <Button className="absolute top-0 right-0 m-2 opacity-100 group-hover:opacity-0 transition-opacity duration-300 shadow-2xl shadow-black cursor-default" onClick={handleLogout} >Logout</Button> */}
         
         <AlertComponent  title="Logout" />
-
+        <UserPen className="absolute left-5 top-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"  />
         <Avatar className="h-24 w-24">
           <AvatarImage alt={`${user.username}'s avatar`} src={user.image} />
           <AvatarFallback>{user.username}</AvatarFallback>
@@ -34,17 +35,22 @@ export default function UserProfileCard({user}) {
               Admin
             </Badge>
           ) ||
-          <Badge className="mt-2 bg-cyan-500 text-white" variant="secondary">
+          <Badge className="mt-2 bg-emerald-500 text-white" variant="secondary">
             Student
           </Badge>
         }
+        <div className="flex gap-5" >
+        <FaInstagram className="font-bold text-xl" />
+        <FaGithub className="font-bold text-xl" />
+        <FaLinkedin className="font-bold text-xl" />
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center space-x-4">
           <AtSignIcon className="h-5 w-5 text-muted-foreground" />
           <div>
             <p className="text-sm font-medium">Username</p>
-            <p className="text-sm text-muted-foreground">{user.username}</p>
+            <p className="text-sm text-muted-foreground">{(user.username==="" || user.username===null)&& "no username" || user.username}</p>
           </div>
         </div>
         <div className="flex items-center space-x-4">

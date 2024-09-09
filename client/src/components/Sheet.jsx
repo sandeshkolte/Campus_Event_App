@@ -27,7 +27,7 @@ const SideSheet = () => {
   if (token && token.includes('.')) {
     try {
       role = jwtDecode(String(token)).role
-      console.log(role)
+      // console.log(role)
     } catch (error) {
       console.error("Invalid token:", error)
     }
@@ -65,7 +65,7 @@ const SideSheet = () => {
                     <NavLink to='/create' className={({ isActive }) => `
 ${isActive ? "text-black underline" : "text-gray-400"}
 `}
-  onClick={handleLinkClick} >Create Event</NavLink>
+                      onClick={handleLinkClick} >Create Event</NavLink>
                   </li>
                 ) || (role === null || role === "user") && (
 
@@ -73,10 +73,22 @@ ${isActive ? "text-black underline" : "text-gray-400"}
                     <NavLink to='/mytickets' className={({ isActive }) => `
                ${isActive ? "text-black underline" : "text-gray-400"}
                `}
-                 onClick={handleLinkClick}
-                     >My Tickets</NavLink>
+                      onClick={handleLinkClick}
+                    >My Tickets</NavLink>
                   </li>
                 )}
+              <li>
+                {(role === "superadmin" || role === "admin") && (
+
+                  <NavLink to='/organised' className={({ isActive }) => `
+                          ${isActive ? "text-black underline" : "text-gray-400"}
+                          `
+                  } 
+                  onClick={handleLinkClick}
+                  >Events Organised</NavLink>
+
+                )}
+              </li>
               <li>
                 <NavLink
                   to='/profile'

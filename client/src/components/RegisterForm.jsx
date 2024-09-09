@@ -40,11 +40,12 @@ setLoading(true)
         console.log(JSON.stringify(data))
         toast.success("User Registered Successfully!")
         const {token} = response.data.response
-        const {fullname, email } = response.data.response.user;
+        // const {fullname, email } = response.data.response.createdUser;
         localStorage.setItem('userToken', token)
-        dispatch(login({ fullname, email }))
+        dispatch(login(response.data.response.createdUser))
         reset();
         navigate('/')
+        window.location.reload();
       }else if(response.status===403) {
         toast.error("User Already Exist !")
       }
@@ -55,7 +56,7 @@ setLoading(true)
       console.log("Fetch aborted");
     } else {
       console.error("Registration failed:", err);
-      // toast.error("User Already Exist !")
+      toast.error("User Already Exist !")
     }
   } finally{
     setLoading(false)
@@ -86,15 +87,15 @@ setLoading(true)
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="fullname">Full Name</Label>
-              <Input id="fullname" placeholder="Type your full name" {...register('fullname')} />
+              <Input required id="fullname" placeholder="Type your full name" {...register('fullname')} />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="Type your email" {...register('email')} />
+              <Input required id="email" type="email" placeholder="Type your email" {...register('email')} />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="Type your password" {...register('password')} />
+              <Input required id="password" type="password" placeholder="Type your password" {...register('password')} />
             </div>
           </div>
       </CardContent>

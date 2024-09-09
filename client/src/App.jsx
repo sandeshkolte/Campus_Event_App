@@ -16,6 +16,7 @@ import { allEvents } from './store/eventSlice'
 import EventDetail from './components/EventDetail'
 import { toast } from 'react-toastify'
 import MyTickets from './pages/MyEvents'
+import EventsOrganised from './pages/EventsOrganised'
 
 const App = () => {
 
@@ -59,7 +60,7 @@ const App = () => {
   const fetchAllEvents = async () => {
     try {
       axios.get(baseUrl + "/api/event/").then(result => {
-        console.log(result.data.response)
+        // console.log(result.data.response)
         const events = result.data.response
         dispatch(allEvents(events))
       }).catch(err => {
@@ -72,7 +73,7 @@ const App = () => {
 
   useEffect(() => {
     if (token && userId) {
-      console.log("token called")
+      // console.log("token called")
       fetchUserDetails()
     }
   }, [token, userId])
@@ -107,6 +108,7 @@ const App = () => {
 {(role==="admin"||"superadmin") && (
 <>
 <Route path='/create' element={<CreateEvent />} />
+<Route path='/organised' element={<EventsOrganised />} />
 </>
 ) 
 }
