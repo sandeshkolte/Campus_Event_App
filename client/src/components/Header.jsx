@@ -42,7 +42,7 @@ ${isActive ? "text-black" : "text-gray-400"}
                     ) || (role===null || role==="user") && (
 
                     <li>
-                        <NavLink to='/myevents' className={({ isActive }) => `
+                        <NavLink to='/mytickets' className={({ isActive }) => `
                 ${isActive ? "text-black" : "text-gray-400"}
             `
                         } >My Tickets</NavLink>

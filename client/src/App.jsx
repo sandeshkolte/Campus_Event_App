@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import Home from './pages/Home'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './Layout'
-import MyEvents from './pages/MyEvents'
 import Profile from './pages/Profile'
 import SignUpPage from './pages/SignUpPage'
 import SignInPage from './pages/SignInPage'
@@ -16,6 +15,7 @@ import { login } from './store/authSlice'
 import { allEvents } from './store/eventSlice'
 import EventDetail from './components/EventDetail'
 import { toast } from 'react-toastify'
+import MyTickets from './pages/MyEvents'
 
 const App = () => {
 
@@ -102,7 +102,7 @@ const App = () => {
             <Route path='/register' element={<Navigate to="/" />} />
             <Route path='/login' element={<Navigate to="/" />} />
             <Route path='/profile' element={<Profile />} />
-            <Route path='/myevents' element={<MyEvents />} />
+            <Route path='/mytickets' element={<MyTickets />} />
 
 {(role==="admin"||"superadmin") && (
 <>
