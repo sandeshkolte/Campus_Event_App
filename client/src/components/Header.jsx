@@ -22,11 +22,13 @@ if (token && token.includes('.')) {
     return (
         <header className="w-full bg-slate-50 p-5 shadow-lg shadow-purple-200">
             <div className='flex justify-between'>
+            
                 <h1 className='bg-gradient-to-r from-purple-400 to-indigo-600 font-bold text-transparent bg-clip-text' >Eventify</h1>
+            
                 <ul className='md:flex justify-center flex-row gap-5 font-semibold hidden'>
                     <li>
                         <NavLink to='/' className={({ isActive }) => ` 
-                ${isActive ? "text-black" : "text-gray-400"}
+                ${isActive ? "text-black underline" : "text-black"}
             `
                         } >Home</NavLink>
                     </li>
@@ -34,16 +36,18 @@ if (token && token.includes('.')) {
                     {
                     (role==="superadmin"||role==="admin") && (
   <li>
+    {/* <div className='bg-gray-950 text-white p-2 rounded-md ' > */}
   <NavLink to='/create' className={({ isActive }) => `
-${isActive ? "text-black" : "text-gray-400"}
+${isActive ? "text-black underline " : "text-black"}
 `
-  } >Create Event</NavLink>
+  } ><h3>Create Event</h3></NavLink>
+    {/* </div> */}
 </li>
                     ) || (role===null || role==="user") && (
 
                     <li>
                         <NavLink to='/mytickets' className={({ isActive }) => `
-                ${isActive ? "text-black" : "text-gray-400"}
+                ${isActive ? "text-black underline" : "text-black"}
             `
                         } >My Tickets</NavLink>
                     </li>
@@ -52,7 +56,7 @@ ${isActive ? "text-black" : "text-gray-400"}
                       { (role==="superadmin"||role==="admin") && (
                            
                             <NavLink to='/organised' className={({ isActive }) => `
-                          ${isActive ? "text-black" : "text-gray-400"}
+                          ${isActive ? "text-black underline" : "text-black"}
                           `
                             } >Events Organised</NavLink>
                           
@@ -60,7 +64,7 @@ ${isActive ? "text-black" : "text-gray-400"}
                     </li>
                     <li>
                         <NavLink to='/profile' className={({ isActive }) => `
-                ${isActive ? "text-black" : "text-gray-400"}
+                ${isActive ? "text-black underline" : "text-black"}
             `
                         } >Profile</NavLink>
                     </li>

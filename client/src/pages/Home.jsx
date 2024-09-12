@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -9,6 +9,9 @@ import {
 } from "@/components/ui/select"
 import { motion } from 'framer-motion'
 import AllEvents from '@/components/AllEvents'
+import debounce from 'lodash.debounce';
+import axios from 'axios'
+import BranchCard from '@/components/event-card'
 // const AllEvents = React.lazy(() => import('../components/AllEvents')) 
 
 
@@ -16,6 +19,21 @@ import AllEvents from '@/components/AllEvents'
 const Home = () => {
 
 // const events = useSelector((state) => state.event.events)
+
+const [query,setQuery] = useState('')
+const [loading,setLoading] = useState(false)
+
+const fetchSearchResults = debounce(async(searchQuery)=>{
+    setLoading(true);
+    try {
+      const response = await axios.get('/api/event/',searchQuery);
+      setResults(response.data.events);
+    } catch (err) {
+      console.error(err);
+    }
+    setLoading(false);
+},300)
+
 
 const token = localStorage.getItem("userToken")
 const isAuthenticated = token !== null && token !== ""
@@ -33,7 +51,10 @@ const isAuthenticated = token !== null && token !== ""
             </div>
         
         <div className='bg-slate-50 w-full mb-52'>
-        <h1 className='font-bold text-7xl text-center p-5 pt-10'>Where Campus Life<br />Comes <span className='gradient-text text-transparent animate-gradient' >Alive</span></h1>
+            <div className='flex justify-center' >
+        <img src="https://upload.wikimedia.org/wikipedia/en/2/2c/Government_College_of_Engineering%2C_Chandrapur_logo.png" height={100} width={100} alt="" />
+            </div>
+        <h1 className='font-bold text-7xl text-center p-5 pt-10'>GCOEC<br />  Where Campus Life<br />Comes <span className='gradient-text text-transparent animate-gradient' >Alive</span></h1>
         <p className='font-semibold text-md text-center text-slate-800'>Discover, Register, and Participate in Events Around Campus</p>
        
        <div className='flex justify-center mt-2 gap-5'>
@@ -46,6 +67,7 @@ const isAuthenticated = token !== null && token !== ""
             <div className='bg-violet-100 px-2 py-1 rounded-xl w-96 max-sm:w-full flex items-center'>
                 <i className="ri-search-line text-gray-400"></i>
                 <input 
+                    id="searchfield"
                     type="text" 
                     placeholder='Search title...' 
                     className='bg-transparent px-2 py-1 rounded-xl w-full outline-none' 
@@ -57,16 +79,25 @@ const isAuthenticated = token !== null && token !== ""
                         <SelectValue placeholder="Select Category" className='bg-white' />
                     </SelectTrigger>
                     <SelectContent className="bg-white" >
-                        <SelectItem value="john">John Doe</SelectItem>
-                        <SelectItem value="jane">Jane Smith</SelectItem>
+                        <SelectItem value="john">Sports</SelectItem>
+                        <SelectItem value="jane">Departments</SelectItem>
                         <SelectItem value="bob">Bob Johnson</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
         </div>
-
+{/* <div className='my-10' >
+    <h3 className='text-center font-bold text-2xl py-5' >Organising Comittees</h3>
+    <div className='flex flex-grow gap-5 justify-center ' >
+  <BranchCard/>
+  <BranchCard/>
+  <BranchCard/>
+  <BranchCard/>
+    </div>
+</div> */}
 {/* <div className='flex flex-wrap gap-16 p-10 w-full justify-center'> */}
 {/* <Suspense fallback={<div>Loading...</div>} > */}
+{/* <h3 className='mt-5 text-2xl font-bold ' >Upcoming Events</h3> */}
 <AllEvents/>
 {/* </Suspense> */}
 

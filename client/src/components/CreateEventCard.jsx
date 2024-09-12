@@ -89,6 +89,7 @@ export default function Component() {
           setImagePreview(null) // Reset the image preview
           setUploadedFile(null) // Reset the uploaded file state
           navigate("/") // Navigate to the home route
+        window.location.reload();
         }
       })
     } catch (err) {

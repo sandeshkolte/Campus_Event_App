@@ -55,11 +55,20 @@ const getEvent = async (req, res) => {
     }
 };
 
-
-const findEvent = async (req, res) => {
+const findEventByCategory = async (req, res) => {
     try {
-        const { category } = req.query;
+        const { category } = req.params;
         const event = await eventModel.find({ category: { $regex: category, $options: "i" } });
+        res.status(200).json({ status: "success", response: event });
+    } catch (err) {
+        res.status(400).json({ status: "Error", response: err.message });
+    }
+};
+
+const findEventByTitle = async (req, res) => {
+    try {
+        const { search } = req.params;
+        const event = await eventModel.find({title:search});
         res.status(200).json({ status: "success", response: event });
     } catch (err) {
         res.status(400).json({ status: "Error", response: err.message });
@@ -148,4 +157,4 @@ const updateEvent = async (req, res) => {
 // Middleware to handle file uploads in createevent
 // app.post('/create-event', upload.single('file'), createevent); 
 
-module.exports = { getEvent, findEvent, updateEvent, deleteEvent, createEvent, editEvent }
+module.exports = { getEvent, findEventByCategory, findEventByTitle, updateEvent, deleteEvent, createEvent, editEvent }

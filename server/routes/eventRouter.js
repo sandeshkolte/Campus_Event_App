@@ -1,11 +1,12 @@
 const express = require('express')
-const { getEvent, createEvent, findEvent, editEvent, deleteEvent, updateEvent } = require('../controller/eventController')
+const { getEvent, createEvent, editEvent, deleteEvent, updateEvent, findEventByTitle, findEventByCategory } = require('../controller/eventController')
 const router = express.Router()
 const upload = require('../config/multer-config')
 
 router.get('/',getEvent)
 router.post('/create', createEvent)
-router.post('/find', findEvent);
+router.get('/find', findEventByTitle);
+// router.get('/find', findEventByCategory);
 router.get('/edit/:id',editEvent)
 router.get('/details',editEvent)
 router.get('/delete/',deleteEvent)
