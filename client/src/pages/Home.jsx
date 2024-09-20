@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { motion } from 'framer-motion'
+// import { motion } from 'framer-motion'
 import AllEvents from '@/components/AllEvents'
 import debounce from 'lodash.debounce';
 import axios from 'axios'
@@ -41,7 +41,6 @@ const isAuthenticated = token !== null && token !== ""
 
   return (
 
-    <motion.div>
     <div className='min-h-screen relative px-10'>
         <div className='absolute top-[15%] right-[20%] translate-y-[-50%] translate-x-[-50%]'>
                 <div className='w-28 h-28 blur-3xl max-sm:bg-transparent bg-purple-500 rounded-3xl'></div>
@@ -51,8 +50,8 @@ const isAuthenticated = token !== null && token !== ""
             </div>
         
         <div className='bg-transparent w-full mb-52 '>
-            <div className='flex justify-center' >
-        <img src="https://th.bing.com/th/id/OIP.U_AL86l48sLEcu0k2UhMzgHaHa?rs=1&pid=ImgDetMain" height={100} width={100} alt="" />
+            <div className= ' mt-5 flex justify-center' >
+        <img src="https://th.bing.com/th/id/OIP.U_AL86l48sLEcu0k2UhMzgHaHa?rs=1&pid=ImgDetMain" height={130} width={130} alt="" />
             </div>
         <h1 className='font-bold text-7xl text-center p-5 pt-10'>GCOEC<br />  Where Campus Life<br />Comes <span className='gradient-text text-transparent animate-gradient' >Alive</span></h1>
         <p className='font-semibold text-md text-center text-slate-800'>Discover, Register, and Participate in Events Around Campus</p>
@@ -105,7 +104,7 @@ const isAuthenticated = token !== null && token !== ""
 
 {/* </div> */}
     </div>
-    </motion.div>
+   
   )
 }
 
