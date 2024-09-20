@@ -15,8 +15,8 @@ const EventsOrganised = () => {
       </div>
       <div className='md:px-32' >
 <div className='bg-slate-50 rounded-xl h-36 text-center flex flex-col items-center mt-5 mx-5 p-10' >
-  <h3 className='text-xl font-bold' >No event tickets purchased yet</h3>
-  <p className='text-sm font-semibold ' >No worries  plenty of new events to explore!</p>
+  <h3 className='text-xl font-bold' >No event organised yet</h3>
+  <p className='text-sm font-semibold ' >Organise plenty of new events!</p>
 </div>
       </div>
 

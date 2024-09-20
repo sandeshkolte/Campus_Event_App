@@ -5,10 +5,17 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const userSchema= mongoose.Schema({
 username:{
     type:String,
-    default:""
+    default:"",
+    unique:true
 },
-fullname:String,
-email:String,
+fullname:{
+    type:String,
+    unique:true
+},
+email:{
+    type:String,
+    unique:true
+},
 password:String,
 role:{
     type:String,
@@ -24,7 +31,8 @@ myevents:[{
 }],
 contact: {
     type:Number,
-    default:0
+    default:0,
+    unique:true
 },
 }, 
 {

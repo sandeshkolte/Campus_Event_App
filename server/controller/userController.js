@@ -3,7 +3,7 @@ const userModel = require('../models/user')
 const { generateToken } = require('../utils/generateToken')
 
 
-const getUserDetails = async (req, res) => {
+const getUserDetails = async (req, res, next) => {
 
     try {
 
@@ -11,27 +11,28 @@ const getUserDetails = async (req, res) => {
 
         let user = await userModel.findById(userid)
 
-        if (!user) {
-            return res.status(403).json({
-                status: "Error",
-                response: "no User"
-            })
-        }
-        else {
+        // if (!user) {
+        //     return res.status(403).json({
+        //         status: "Error",
+        //         response: "no User"
+        //     })
+        // }
+        if (user) {
             return res.status(200).json({
                 status: "success",
                 response: user
             })
         }
     } catch (err) {
-        res.status(500).json({
-            status: "Error",
-            response: `Error: ${err.message}`
-        });
+        // res.status(500).json({
+        //     status: "Error",
+        //     response: `Error: ${err.message}`
+        // });
+        next(err)
     }
 }
 
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
 
     const { username,
         fullname,
@@ -45,19 +46,26 @@ const registerUser = async (req, res) => {
     let user = await userModel.findOne({ email })
 
     if (user) {
-        return res.status(403).json({
-            status: "Error",
-            response: "User already exist"
-        })
+        // return res.status(403).json({
+        //     status: "Error",
+        //     response: "User already exist"
+        // })
+        const message = "User already exist"
+        const error = {
+            message
+        }
+
+        next(error)
     }
     else {
         bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(password, salt, async (err, hash) => {
 
-                if (err) return res.status(403).json({
-                    status: "Error",
-                    response: err.message
-                })
+                if (err) next(err)
+                //     return res.status(403).json({
+                //     status: "Error",
+                //     response: err.message
+                // })
                 else {
                     let createdUser = await userModel.create({
                         username,
@@ -65,7 +73,7 @@ const registerUser = async (req, res) => {
                         email,
                         // image: req.file.buffer,
                         myevents,
-                        contact, 
+                        contact,
                         password: hash
                     })
 
@@ -83,16 +91,23 @@ const registerUser = async (req, res) => {
     }
 }
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
     const { email, password } = req.body
 
     let user = await userModel.findOne({ email })
 
     if (!user) {
-        return res.status(403).json({
-            status: "Error",
-            response: "Email or Password Incorrect"
-        })
+        // return res.status(403).json({
+        //     status: "Error",
+        //     response: "Email or Password Incorrect"
+        // })
+        const message = "Email or Password Incorrect"
+
+        const error = {
+            message
+        }
+        next(error)
+
     } else {
         bcrypt.compare(password, user.password, (err, result) => {
             if (result) {
@@ -103,10 +118,16 @@ const loginUser = async (req, res) => {
                     response: { user, token }
                 })
             } else {
-                res.status(403).json({
-                    status: "Error",
-                    response: "Email or Password Incorrect"
-                })
+                // res.status(403).json({
+                //     status: "Error",
+                //     response: "Email or Password Incorrect"
+                // })
+                const message = "Email or Password Incorrect"
+
+                const error = {
+                    message
+                }
+                next(error)
             }
 
         })
@@ -132,11 +153,11 @@ const userUpdate = async (req, res) => {
             {
                 // image:req.file.buffer,
                 username,
-        fullname,
-        email,
-        password,
-        // image,
-        contact 
+                fullname,
+                email,
+                password,
+                // image,
+                contact
             },
             { new: true }
         );

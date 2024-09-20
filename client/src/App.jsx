@@ -17,6 +17,7 @@ import EventDetail from './components/EventDetail'
 import { toast } from 'react-toastify'
 import MyTickets from './pages/MyEvents'
 import EventsOrganised from './pages/EventsOrganised'
+import EventDetailsPage from './pages/EventDetailsPage'
 
 const App = () => {
 
@@ -88,7 +89,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Layout />} >
           <Route path='' element={<Home />} />
-          <Route path='/eventdetails/:id' element={<EventDetail />} />
+          <Route path='/eventdetails/:id' element={<EventDetailsPage />} />
 
           {/* Unauthorized Routes */}
           {!isAuthenticated && (

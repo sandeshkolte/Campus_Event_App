@@ -42,7 +42,7 @@ const isAuthenticated = token !== null && token !== ""
   return (
 
     <motion.div>
-    <div className='min-h-screen relative bg-slate-50 px-10'>
+    <div className='min-h-screen relative px-10'>
         <div className='absolute top-[15%] right-[20%] translate-y-[-50%] translate-x-[-50%]'>
                 <div className='w-28 h-28 blur-3xl max-sm:bg-transparent bg-purple-500 rounded-3xl'></div>
             </div>
@@ -50,9 +50,9 @@ const isAuthenticated = token !== null && token !== ""
                 <div className='w-20 h-20 blur-3xl max-sm:bg-transparent bg-violet-500 rounded-3xl'></div>
             </div>
         
-        <div className='bg-slate-50 w-full mb-52'>
+        <div className='bg-transparent w-full mb-52 '>
             <div className='flex justify-center' >
-        <img src="https://upload.wikimedia.org/wikipedia/en/2/2c/Government_College_of_Engineering%2C_Chandrapur_logo.png" height={100} width={100} alt="" />
+        <img src="https://th.bing.com/th/id/OIP.U_AL86l48sLEcu0k2UhMzgHaHa?rs=1&pid=ImgDetMain" height={100} width={100} alt="" />
             </div>
         <h1 className='font-bold text-7xl text-center p-5 pt-10'>GCOEC<br />  Where Campus Life<br />Comes <span className='gradient-text text-transparent animate-gradient' >Alive</span></h1>
         <p className='font-semibold text-md text-center text-slate-800'>Discover, Register, and Participate in Events Around Campus</p>
@@ -81,23 +81,25 @@ const isAuthenticated = token !== null && token !== ""
                     <SelectContent className="bg-white" >
                         <SelectItem value="john">Sports</SelectItem>
                         <SelectItem value="jane">Departments</SelectItem>
-                        <SelectItem value="bob">Bob Johnson</SelectItem>
+                        <SelectItem value="bob">Seminars</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
         </div>
-{/* <div className='my-10' >
+<div className='my-10 ' >
     <h3 className='text-center font-bold text-2xl py-5' >Organising Comittees</h3>
-    <div className='flex flex-grow gap-5 justify-center ' >
-  <BranchCard/>
-  <BranchCard/>
-  <BranchCard/>
-  <BranchCard/>
+    <div className='flex flex-wrap gap-10 justify-center ' >
+  <BranchCard title={"CSE"} />
+  <BranchCard title={"Mech"} />
+  <BranchCard title={"ENTC"} />
+  <BranchCard title={"Civil"} />
+  <BranchCard title={"Elec"} />
+  <BranchCard title={"Instru"} />
     </div>
-</div> */}
+</div> 
 {/* <div className='flex flex-wrap gap-16 p-10 w-full justify-center'> */}
 {/* <Suspense fallback={<div>Loading...</div>} > */}
-{/* <h3 className='mt-5 text-2xl font-bold ' >Upcoming Events</h3> */}
+<h3 className='mt-5 text-2xl font-bold ' >Upcoming Events</h3>
 <AllEvents/>
 {/* </Suspense> */}
 

@@ -30,6 +30,7 @@ module.exports = {
       animation: {
        gradient : "gradient 6s linear infinite",
       'spin-slow' : 'spin 2s linear infinite',
+      'spin-fast' : 'spin 5s linear infinite',
       },
     },
   },

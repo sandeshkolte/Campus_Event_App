@@ -6,6 +6,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const expressSession = require('express-session')
 const db = require('./config/mongoose-config');
+const errorMidddleware = require('./middlewares/errorMiddleware');
 const app = express();
 const PORT = process.env.PORT || 9000;
   
@@ -16,6 +17,7 @@ app.use(appLogger);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(errorMidddleware)
 
 app.use(expressSession({
   resave:false,

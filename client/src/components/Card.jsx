@@ -8,6 +8,7 @@ export default function EventCard({ event }) {
         <img
           src={event.image}
           alt={event.title} 
+          loading="lazy"
           className="object-cover w-full h-full"
         />
         <div className="absolute inset-0 flex items-center justify-center">

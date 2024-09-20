@@ -32,10 +32,7 @@ export default function EventDetail() {
       <div className="flex flex-col md:flex-row">
         <div className="w-full md:w-2/5">
           <div className="relative aspect-[4/3] flex items-center justify-center">
-          <div
-              className="absolute inset-0 bg-cover bg-center "
-              style={{ backgroundImage: `url(${eventDetails.image})` }}
-            />
+         <img src={eventDetails.image} alt="image" loading="lazy" className="object-cover  " />
              {/* <div className="relative text-white text-center z-10">
               <div className="mb-4">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-24 h-24 mx-auto">
