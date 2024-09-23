@@ -18,10 +18,7 @@ req.user = user
 
 next()
 }catch(err){
-   res.status(403).json({
-      status:"Error",
-      response: err.message
-   })
+  next(err)
 }
 
 }
@@ -44,10 +41,7 @@ return  res.status(403).json({
    
    next()
    }catch(err){
-      res.status(403).json({
-         status:"Error",
-         response: err.message
-      })
+    next(err)
    }
 }
 

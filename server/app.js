@@ -9,7 +9,7 @@ const db = require('./config/mongoose-config');
 const errorMidddleware = require('./middlewares/errorMiddleware');
 const app = express();
 const PORT = process.env.PORT || 9000;
-  
+
 app.use(cors());
 
 require('dotenv').config();
@@ -39,6 +39,7 @@ db.on('disconnected', () => {
 });
 
 app.use('/api/user', userRouter);
+// app.use('/api/admin', adminRouter);
 app.use('/api/event', eventRouter);
 
 app.listen(PORT,"0.0.0.0", () => {

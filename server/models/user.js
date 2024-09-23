@@ -10,7 +10,6 @@ username:{
 },
 fullname:{
     type:String,
-    unique:true
 },
 email:{
     type:String,
@@ -29,6 +28,29 @@ myevents:[{
     type: ObjectId,
     ref: 'event'
 }],
+eventsorganised:[{
+    type: ObjectId,
+    ref: 'event'
+}],
+department: {
+    type: String,
+    // required: true
+ },
+ yearOfStudy: {
+    type: Number,
+    // required: true
+ },
+ studentID: {
+    type: String,
+    unique: true,
+    // required: true
+ },
+ clubs: [{
+    type: String
+ }],
+ skills: [{
+    type: String
+ }],  
 contact: {
     type:Number,
     default:0,

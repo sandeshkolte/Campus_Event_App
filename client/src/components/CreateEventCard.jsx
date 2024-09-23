@@ -27,6 +27,7 @@ import { storage } from "../firebase"
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage"
 import { VscLoading } from "react-icons/vsc"
 import { CalendarIcon, Upload } from "lucide-react"
+import useAdminInfo from "@/hooks/useAdminInfo"
 
 export default function Component() {
   const { register, handleSubmit, reset, setValue } = useForm()
@@ -70,34 +71,76 @@ export default function Component() {
     }
   }
 
-  const formSubmit = async (data) => {
-    setLoading(true)
+  const updateUserRoleToAdmin = async (userId) => {
     try {
-      const file = uploadedFile
-      if (file) {
-        const downloadURL = await handleImageUpload(file)
-        data.image = downloadURL
+      const response = await axios.put( baseUrl + `/api/user/updateRole`, { userId, role: "admin" });
+      if (response.status === 200) {
+        console.log(`User role updated to admin for userId: ${userId}`);
       }
-      data.coordinator = [data.coordinator1, data.coordinator2];
-      console.log(data)
-
-      await axios.post(baseUrl + "/api/event/create", data).then(result => {
-        if (result.status === 200) {
-          console.log("Event created successfully", result.data)
-          toast.success("Event created successfully!")
-          reset() // Reset the form fields
-          setImagePreview(null) // Reset the image preview
-          setUploadedFile(null) // Reset the uploaded file state
-          navigate("/") // Navigate to the home route
-        window.location.reload();
-        }
-      })
-    } catch (err) {
-      toast.error("Failed to create event: " + err.message)
-    } finally {
-      setLoading(false)
+    } catch (error) {
+      console.error("Failed to update user role:", error);
+      toast.error("Failed to update user role.");
     }
+  };
+  
+
+// Function to update 'eventsorganised' field
+const addEventToUser = async (userId, eventId) => {
+  try {
+    const response = await axios.put(`${baseUrl}/api/user/addEvent`, { userId, eventId });
+    if (response.status === 200) {
+      console.log(`Event added to user ${userId}`);
+    }
+  } catch (error) {
+    console.error("Failed to add event to user:", error);
+    toast.error("Failed to add event to user.");
   }
+};
+
+const formSubmit = async (data) => {
+  setLoading(true)
+  try {
+    const file = uploadedFile
+    if (file) {
+      const downloadURL = await handleImageUpload(file)
+      data.image = downloadURL
+    }
+    data.coordinator = [data.coordinator1, data.coordinator2];
+
+    // Create the event
+    const eventResponse = await axios.post(`${baseUrl}/api/event/create`, data);
+    const eventId = eventResponse.data._id; // Get the new event ID
+    if (eventResponse.status === 201) {
+      console.log("Event created successfully", eventResponse.data);
+      toast.success("Event created successfully!");
+
+      // Update the roles of the selected coordinators
+      await Promise.all([
+        updateUserRoleToAdmin(data.coordinator1),
+        updateUserRoleToAdmin(data.coordinator2)
+      ]);
+
+      // Update 'eventsorganised' field for coordinators
+      await Promise.all([
+        addEventToUser(data.coordinator1, eventId),
+        addEventToUser(data.coordinator2, eventId)
+      ]);
+
+      reset(); // Reset the form fields
+      setImagePreview(null); // Reset the image preview
+      setUploadedFile(null); // Reset the uploaded file state
+      navigate("/"); // Navigate to the home route
+      window.location.reload();
+    }
+  } catch (err) {
+    toast.error("Failed to create event " + err.message);
+  } finally {
+    setLoading(false);
+  }
+}
+
+  const adminInfo = useAdminInfo()
+  const adminOptions = adminInfo.length > 0 ? adminInfo : []
 
   return (
     <Card className="w-full max-w-6xl">
@@ -179,9 +222,14 @@ export default function Component() {
                   <SelectValue placeholder="Select coordinator 1" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
-                  <SelectItem value="John Doe">John Doe</SelectItem>
+                {adminOptions.map((admin) => (
+                    <SelectItem key={admin._id} value={admin._id}>
+                      {admin.fullname}
+                    </SelectItem>
+                  ))}
+                  {/* <SelectItem value="John Doe">John Doe</SelectItem>
                   <SelectItem value="Jane Smith">Jane Smith</SelectItem>
-                  <SelectItem value="Bob Johnson">Bob Johnson</SelectItem>
+                  <SelectItem value="Bob Johnson">Bob Johnson</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
@@ -192,9 +240,11 @@ export default function Component() {
                   <SelectValue placeholder="Select coordinator 2" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
-                  <SelectItem value="John Doe">John Doe</SelectItem>
-                  <SelectItem value="Jane Smith">Jane Smith</SelectItem>
-                  <SelectItem value="Bob Johnson">Bob Johnson</SelectItem>
+                {adminOptions.map((admin) => (
+                    <SelectItem key={admin._id} value={admin._id}>
+                      {admin.fullname}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
