@@ -71,17 +71,17 @@ export default function Component() {
     }
   }
 
-  const updateUserRoleToAdmin = async (userId) => {
-    try {
-      const response = await axios.put( baseUrl + `/api/user/updateRole`, { userId, role: "admin" });
-      if (response.status === 200) {
-        console.log(`User role updated to admin for userId: ${userId}`);
-      }
-    } catch (error) {
-      console.error("Failed to update user role:", error);
-      toast.error("Failed to update user role.");
-    }
-  };
+  // const updateUserRoleToAdmin = async (userId) => {
+  //   try {
+  //     const response = await axios.put( baseUrl + `/api/user/updateRole`, { userId, role: "admin" });
+  //     if (response.status === 200) {
+  //       console.log(`User role updated to admin for userId: ${userId}`);
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to update user role:", error);
+  //     toast.error("Failed to update user role.");
+  //   }
+  // };
   
 
 // Function to update 'eventsorganised' field
@@ -115,10 +115,10 @@ const formSubmit = async (data) => {
       toast.success("Event created successfully!");
 
       // Update the roles of the selected coordinators
-      await Promise.all([
-        updateUserRoleToAdmin(data.coordinator1),
-        updateUserRoleToAdmin(data.coordinator2)
-      ]);
+      // await Promise.all([
+      //   updateUserRoleToAdmin(data.coordinator1),
+      //   updateUserRoleToAdmin(data.coordinator2)
+      // ]);
 
       // Update 'eventsorganised' field for coordinators
       await Promise.all([

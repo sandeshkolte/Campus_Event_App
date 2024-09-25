@@ -204,4 +204,19 @@ const addOrganisedEvent = async (req, res) => {
     }
   }
 
-module.exports = { getUserDetails, registerUser, loginUser, userUpdate, updateUserRole, getUserByRole,addOrganisedEvent };
+  const deleteUser = async (req, res) => {
+    try {
+        console.log(req.query.id);
+        let user = await userModel.findOneAndDelete({ _id: req.query.id });
+        res.status(200).json({
+            status: "success",
+            response: `User deleted`
+        })
+    } catch (err) {
+        res.status(400).json({ status: "Error", response: err.message });
+    }
+};
+
+
+module.exports = { getUserDetails, registerUser, loginUser, userUpdate, 
+    updateUserRole, getUserByRole,addOrganisedEvent,deleteUser };

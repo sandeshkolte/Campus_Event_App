@@ -8,7 +8,10 @@ username:{
     default:"",
     unique:true
 },
-fullname:{
+firstname:{
+    type:String,
+},
+lastname:{
     type:String,
 },
 email:{
