@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 function EventCard({ event }) {
   return (
-    <Card className="w-96 min-h-80 overflow-hidden rounded-xl shadow-md">
+    <Card className="w-80 sm:w-96 min-h-80 overflow-hidden rounded-xl shadow-md">
       <CardHeader className="p-0">
         <div className="relative">
           <img
