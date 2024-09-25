@@ -36,7 +36,7 @@ const getEvent = async (req, res) => {
         if (events) {
             console.log("Get from cache")
             return res.json({
-                events: JSON.parse(events)
+                response: JSON.parse(events)
             })
         }
 console.log("from MONGO");

@@ -18,9 +18,8 @@ price:{
 },
 participants:[
     {
-//    type: mongoose.Schema.Types.ObjectId,
-//     ref: 'user'
-    type:String,
+   type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
 }
 ],
 date:{
