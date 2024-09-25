@@ -61,7 +61,7 @@ const App = () => {
   const fetchAllEvents = async () => {
     try {
       axios.get(baseUrl + "/api/event/").then(result => {
-        // console.log(result.data.response)
+        console.log(result.data.response)
         const events = result.data.response
         dispatch(allEvents(events))
       }).catch(err => {
