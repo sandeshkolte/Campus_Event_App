@@ -12,7 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Gamepad2, Music, Code, ChevronDown, Pen } from "lucide-react";
+import { Gamepad2, Music, Code, Pen } from "lucide-react";
 import "react-profile/themes/default";
 import { openEditor } from "react-profile";
 
