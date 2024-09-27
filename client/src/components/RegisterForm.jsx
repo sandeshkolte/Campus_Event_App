@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form"
 import { login } from "@/store/authSlice"
 import { toast } from "react-toastify"
 import { VscLoading } from "react-icons/vsc";
+import SignInWithGoogle from "./signInWithGoogle"
 
 export default function RegisterForm() {
 
@@ -71,13 +72,14 @@ export default function RegisterForm() {
           <CardDescription>Enter your details to create a new account.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-around align-middle pb-2">
-            <Button variant="outline" className="flex justify-around align-middle w-28">
+          <div className="pb-2">
+           {/* <Button variant="outline" className="flex justify-around align-middle w-28">
               <FaGithub />Github
-            </Button>
-            <Button variant="outline" className="flex justify-around align-middle w-28">
+            </Button> */}
+            {/* <Button variant="outline" className="flex justify-around align-middle w-28">
               <FaGoogle />Google
-            </Button>
+            </Button> */}
+            <SignInWithGoogle/>
           </div>
           <div className="flex items-center my-2">
             <hr className="flex-grow border-gray-300 rounded-md border-[1.5px]" />
@@ -86,8 +88,12 @@ export default function RegisterForm() {
           </div>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="fullname">Full Name</Label>
-              <Input required id="fullname" placeholder="Type your full name" {...register('fullname')} />
+              <Label htmlFor="firstname">First Name</Label>
+              <Input required id="firstname" placeholder="Type your First name" {...register('firstname')} />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="lastname">Last Name</Label>
+              <Input required id="lastname" placeholder="Type your Last name" {...register('lastname')} />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>

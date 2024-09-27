@@ -19,6 +19,7 @@ import { baseUrl } from "@/common/common"
 import { toast } from "react-toastify"
 import { login } from "@/store/authSlice"
 import { VscLoading } from "react-icons/vsc";
+import SignInWithGoogle from "./signInWithGoogle"
 
 export default function LoginForm() {
 
@@ -80,13 +81,14 @@ export default function LoginForm() {
           <CardDescription>Enter your details to sign in to your account.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-around align-middle pb-2">
-            <Button variant="outline" className="flex justify-around align-middle w-28">
+          <div className="pb-2">
+            {/* <Button variant="outline" className="flex justify-around align-middle w-28">
               <FaGithub />Github
-            </Button>
-            <Button variant="outline" className="flex justify-around align-middle w-28">
+            </Button> */}
+            {/* <Button variant="outline" className="flex justify-around align-middle w-28">
               <FaGoogle />Google
-            </Button>
+            </Button> */}
+            <SignInWithGoogle/>
           </div>
           <div className="flex items-center my-2">
             <hr className="flex-grow border-gray-300 rounded-md border-[1.5px]" />

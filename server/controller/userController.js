@@ -21,11 +21,8 @@ const getUserDetails = async (req, res, next) => {
 const getUserByRole = async (req, res, next) => {
     try {
         const { role } = req.query;
-
-        // Split the role query param by commas and use the $in operator for roles.
         const roles = role ? role.split(',') : [];
 
-        // Find users with roles that match either 'user' or 'admin'
         const users = await userModel.find({ role: { $in: roles } });
 
         if (users.length === 0) {
@@ -45,38 +42,36 @@ const registerUser = async (req, res, next) => {
     try {
         const { 
             username, 
-            fullname, 
+            firstname,
+            lastname, 
             email, 
             password, 
-            department, 
+            branch, 
             yearOfStudy, 
-            studentID, 
-            clubs, 
-            skills, 
+            interests, 
             myevents, 
             contact 
         } = req.body;
 
-        // Check if user exists before proceeding
+        // Check if user exists
         let user = await userModel.findOne({ email });
         if (user) {
             return res.status(403).json({ status: "Error", response: "User already exists" });
         }
 
-        // Hash password asynchronously using await
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create new user
         let createdUser = await userModel.create({
             username,
-            fullname,
+            firstname,
+            lastname,
             email,
             password: hashedPassword,
-            department,
+            branch,
             yearOfStudy,
-            studentID,
-            clubs,
-            skills,
+            interests,
             myevents,
             contact
         });
@@ -98,19 +93,16 @@ const loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
-        // Fetch user by email
         let user = await userModel.findOne({ email });
         if (!user) {
             return res.status(403).json({ status: "Error", response: "Email or Password Incorrect" });
         }
 
-        // Check password validity
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(403).json({ status: "Error", response: "Email or Password Incorrect" });
         }
 
-        // Generate token and set cookie
         const token = generateToken(user);
         res.cookie("token", token);
 
@@ -126,7 +118,6 @@ const loginUser = async (req, res, next) => {
 const updateUserRole = async (req, res) => {
     try {
       const { userId, role } = req.body;
-    //   console.log(req.body);
       const user = await userModel.findByIdAndUpdate(userId, { role }, { new: true });
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -135,47 +126,41 @@ const updateUserRole = async (req, res) => {
     } catch (err) {
       return res.status(500).json({ message: "Error updating user role", error: err.message });
     }
-  };
-  
+};
 
 const userUpdate = async (req, res, next) => {
     try {
         let { 
             username, 
-            fullname, 
+            firstname, 
+            lastname, 
             email, 
             password, 
-            department, 
+            branch, 
             yearOfStudy, 
-            studentID, 
-            clubs, 
-            skills, 
+            interests, 
             role, 
             myevents, 
             contact 
         } = req.body;
 
-        // Prepare updated data
         let updatedData = { 
             username, 
-            fullname, 
+            firstname, 
+            lastname, 
             email, 
-            department, 
+            branch, 
             yearOfStudy, 
-            studentID, 
-            clubs, 
-            skills, 
+            interests, 
             role, 
             myevents, 
             contact 
         };
 
-        // Hash new password if provided
         if (password) {
             updatedData.password = await bcrypt.hash(password, 10);
         }
 
-        // Update user details
         let updatedUser = await userModel.findByIdAndUpdate(req.params.id, updatedData, { new: true });
 
         if (!updatedUser) {
@@ -193,30 +178,33 @@ const userUpdate = async (req, res, next) => {
 
 const addOrganisedEvent = async (req, res) => {
     const { userId, eventId } = req.body;
-    console.log(req.body);
-    
     try {
-      // Find the user and add the event ID to eventsorganised
       await userModel.findByIdAndUpdate(userId, { $push: { eventsorganised: eventId } });
       res.status(200).json({ message: "Event added to user's organised events" });
     } catch (err) {
       res.status(500).json({ message: "Failed to update user's organised events", error: err });
     }
-  }
+};
 
-  const deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
     try {
-        console.log(req.query.id);
         let user = await userModel.findOneAndDelete({ _id: req.query.id });
         res.status(200).json({
             status: "success",
             response: `User deleted`
-        })
+        });
     } catch (err) {
         res.status(400).json({ status: "Error", response: err.message });
     }
 };
 
-
-module.exports = { getUserDetails, registerUser, loginUser, userUpdate, 
-    updateUserRole, getUserByRole,addOrganisedEvent,deleteUser };
+module.exports = { 
+    getUserDetails, 
+    registerUser, 
+    loginUser, 
+    userUpdate, 
+    updateUserRole, 
+    getUserByRole, 
+    addOrganisedEvent, 
+    deleteUser 
+};

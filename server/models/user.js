@@ -27,31 +27,31 @@ image:{
     type:String,
     default:"https://img.freepik.com/free-photo/cartoon-character-with-fashion-bag_71767-98.jpg?t=st=1724727574~exp=1724731174~hmac=a1b9c25e086fe2c938a61cd9fa2a155f6ec34debd47c147014cb6022df4759c5&w=740"
 },
-myevents:[{
+myevents: [{
+    event: {
+        type: ObjectId,
+        ref: 'event',
+    },
+    paymentStatus: {
+        type: String,
+        default: 'pending', // 'pending', 'accepted'
+        enum: ['pending', 'accepted']
+    },
+    paymentScreenshot: {
+        type: String, // URL of the uploaded payment screenshot
+        default: '' // Initially empty until the user uploads it
+    }
+}],
+eventsorganised:[{  //only for admin and super admin
     type: ObjectId,
     ref: 'event'
 }],
-eventsorganised:[{
-    type: ObjectId,
-    ref: 'event'
-}],
-department: {
-    type: String,
-    // required: true
- },
+branch: String,
  yearOfStudy: {
     type: Number,
     // required: true
  },
- studentID: {
-    type: String,
-    unique: true,
-    // required: true
- },
- clubs: [{
-    type: String
- }],
- skills: [{
+ interests: [{
     type: String
  }],  
 contact: {

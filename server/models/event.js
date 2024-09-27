@@ -1,15 +1,35 @@
 const mongoose = require("mongoose")
 
 const eventSchema = mongoose.Schema({
-title:String,
-description:String,
-image:String,
-category:String,
+title:{
+    type:String,
+    required:true
+},
+description:{
+    type:String,
+    required:true
+},
+image:{
+    type:String,
+    required:true
+},
+organisedBy:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
+},
+organizingBranch:{
+    type:String,
+    required:true
+},
+category:[
+    {
+        type:String
+    }
+],
 coordinator:[
     {
-//    type: mongoose.Schema.Types.ObjectId,
-//     ref: 'user'
-    type:String,
+   type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
 }
 ],
 price:{
@@ -23,9 +43,13 @@ participants:[
 }
 ],
 date:{
-    type:String
+    type:Date,
+    required:true
 },
-venue:String
+venue:{
+    type:String,
+    required:true
+}
 },
 {
     timestamps: true 
