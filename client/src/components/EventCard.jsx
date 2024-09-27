@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-
+import { IndianRupee } from "lucide-react";
 
 function EventCard({ event }) {
   return (
@@ -14,7 +14,16 @@ function EventCard({ event }) {
             className="w-full h-48 object-cover"
           />
           <div className="absolute top-5 left-5 bg-white rounded-md px-4 py-2 text-sm font-bold shadow-sm">
-          {String(event.price) === '0' || event.price === '' ? 'FREE' : `$${event.price}`}
+          {String(event.price) === '0' || event.price === '' ? (
+              <>
+              <div className="text-sm font-bold text-green-600">FREE</div>
+              </>
+            ) : (
+              <>
+                <IndianRupee className="inline-block w-3 h-3 mb-0.5" strokeWidth={3} />
+                {event.price}
+              </>
+            )}
           </div>
           <div className="absolute top-5 right-5 bg-black text-white rounded-md px-4 py-2 text-sm font-bold shadow-sm">
             +12 student
