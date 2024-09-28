@@ -41,7 +41,6 @@ const getUserByRole = async (req, res, next) => {
 const registerUser = async (req, res, next) => {
     try {
         const { 
-              
             firstname,
             lastname, 
             email, 
@@ -64,7 +63,7 @@ const registerUser = async (req, res, next) => {
 
         // Create new user
         let createdUser = await userModel.create({
-             
+    
             firstname,
             lastname,
             email,
@@ -131,7 +130,7 @@ const updateUserRole = async (req, res) => {
 const userUpdate = async (req, res, next) => {
     try {
         let { 
-              
+        
             firstname, 
             lastname, 
             email, 
@@ -145,7 +144,6 @@ const userUpdate = async (req, res, next) => {
         } = req.body;
 
         let updatedData = { 
-              
             firstname, 
             lastname, 
             email, 

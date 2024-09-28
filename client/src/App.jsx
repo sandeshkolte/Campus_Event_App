@@ -44,7 +44,6 @@ const App = () => {
         axios.post(baseUrl + `/api/user/getuser/?userid=${userId}`).then((result) => {
           if (result.status === 200) {
             const userDetails = result.data.response
-            
             dispatch(login(userDetails))
           }
         })

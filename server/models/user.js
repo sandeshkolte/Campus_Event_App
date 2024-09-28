@@ -43,7 +43,8 @@ eventsorganised:[{  //only for admin and super admin
 }],
 branch: String,
  yearOfStudy: {
-    type: Number,
+    type: String,
+    default:""
     // required: true
  },
  interests: [{
@@ -52,6 +53,7 @@ branch: String,
 contact: {
     type:String,
     default:"",
+    // unique:true
 },
 }, 
 {
