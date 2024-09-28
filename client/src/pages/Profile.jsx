@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { Button } from "@/components/ui/button";
@@ -17,10 +17,9 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Accordion,
-  AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
@@ -28,6 +27,10 @@ import { Gamepad2, Music, Code, Pen } from "lucide-react";
 import "react-profile/themes/default";
 import { openEditor } from "react-profile";
 import ProfileSidebar from "@/components/ProfileSidebar";
+import { login, updateUserInfo } from "@/store/authSlice";
+import axios from "axios";
+import { baseUrl } from "@/common/common";
+import { toast } from "react-toastify";
 
 const initialInterestAreas = [
   {
@@ -66,6 +69,7 @@ const initialInterestAreas = [
 ];
 
 export default function Profile() {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth?.userInfo);
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [profileImage, setProfileImage] = useState(
@@ -74,13 +78,34 @@ export default function Profile() {
   );
   const fileInputRef = useRef(null);
   const [openPopover, setOpenPopover] = useState(null);
-  const [firstName, setFirstName] = useState(user?.firstName || "Ritesh");
-  const [lastName, setLastName] = useState(user?.lastName || "Doijad");
-  const [year, setYear] = useState(user?.year || "1");
-  const [branch, setBranch] = useState(user?.branch || "cse");
   const [isEditable, setIsEditable] = useState(false);
+  const [securityChange ,setSecurityChange]=useState(false);
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    yearOfStudy: "",
+    branch: "",
+    // profileImage: "",
+    interests: [],
+    email: "",
+    contact: "",
+  });
 
-  // No type annotations
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstname: user.firstname || "",
+        lastname: user.lastname || "",
+        yearOfStudy: user.yearOfStudy || "",
+        branch: user.branch || "",
+        // profileImage: user.image || "default-image-url",
+        interests: user.interests || [],
+        email: user.email || "",
+        contact: user.contact || "90759******",
+      });
+      setSelectedFilters(user.interests || []);
+    }
+  }, [user]);
 
   const handleFilterChange = (label) => {
     setSelectedFilters((prev) =>
@@ -90,31 +115,101 @@ export default function Profile() {
 
   const change = async (e) => {
     const newImage = await openEditor({ src: e.target.files[0], square: true });
-    console.log(newImage);
     if (newImage) {
       setProfileImage(newImage?.editedImage?.getDataURL());
+      setFormData((prev) => ({
+        ...prev,
+        profileImage: newImage?.editedImage?.getDataURL(), 
+      }));
     } else {
       console.error("Image editor returned no image.");
+      toast.error("Image editor returned no image.")
     }
   };
+  
 
   const triggerFileInput = () => {
     fileInputRef.current.click();
   };
 
   const toggleEdit = () => {
+    if (isEditable) {
+      handleUpdateUserInfo();
+    }
     setIsEditable((prev) => !prev);
   };
+
+  const handleUpdateUserInfo = async () => {
+    const updatedInfo = {
+        ...formData,
+        interests: selectedFilters,
+        password: user?.password,
+    };
+
+    // Check if formData has changed
+    const hasChanged = Object.keys(updatedInfo).some(
+        (key) => updatedInfo[key] !== user[key]
+    );
+
+    if (!hasChanged) {
+        toast.info("No changes made."); // Display toast if no changes
+        return; // Exit the function early
+    }
+
+    try {
+        const response = await axios.post(`${baseUrl}/api/user/update/${user._id}`, updatedInfo);
+
+        if (response.status === 200) {
+            dispatch(updateUserInfo(response.data));
+
+            setFormData((prev) => ({
+                ...prev,
+                ...response.data, 
+                interests: selectedFilters, 
+            }));
+            setSelectedFilters(response.data.interests || []);
+            toast.success("Profile updated successfully.");
+        }
+    } catch (err) {
+        console.log("Failed to update profile. Please try again.");
+        toast.error("Failed to update profile. Please try again.");
+    } finally {
+        fetchUserDetails();
+    }
+};
+
+const fetchUserDetails = async () => {
+  try {
+    if (user._id) {
+      axios.post(baseUrl + `/api/user/getuser/?userid=${user._id}`).then((result) => {
+        if (result.status === 200) {
+          const userDetails = result.data.response
+          dispatch(login(userDetails))
+        }
+      })
+    }
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+const toggleSecurityChange=()=>{
+  if(securityChange){
+    handleUpdateUserInfo()
+  }
+  setSecurityChange((prev)=>!prev)
+}
 
   return (
     <div className="flex flex-col lg:flex-row min-h-fit bg-gray-100">
       {/* Sidebar */}
-    <ProfileSidebar/>
+      <ProfileSidebar />
       {/* Main content */}
       <main className="flex-1 p-6">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mr-5">
           <div>
-            <h1 className="text-2xl font-bold">Hello "{user?.fullname}"</h1>
+            <h1 className="text-2xl font-bold">Hello "{user?.firstname}"</h1>
             <p className="text-gray-600 font-semibold mb-5">
               welcome to your Profile dashboard
             </p>
@@ -131,7 +226,7 @@ export default function Profile() {
           {/* User Info Card */}
           <div className="gap-3 grid sm:grid-flow-row sm:grid-cols-6 lg:grid-rows-1 lg:grid-cols-8">
             {/* User Profile Card */}
-            <Card className="bg-white py-12 px-16 rounded-3xl sm:col-span-2 lg:col-span-2">
+            <Card className="bg-white hover:bg-blue-50 transition-colors duration-200 py-12 px-16 rounded-3xl sm:col-span-2 lg:col-span-2">
               <div className="flex flex-col justify-center text-center items-center">
                 <div className="relative">
                   <img
@@ -159,14 +254,14 @@ export default function Profile() {
                 </div>
                 <div className="mt-2">
                   <CardTitle className="text-lg text-gray-700">
-                    {user?.fullname}
+                      {user?.firstname}
                   </CardTitle>
-                  <p className="text-sm text-gray-500">+91 9075991567</p>
+                  <p className="text-sm text-gray-500">+91{user?.contact || "907599****"}</p>
                 </div>
               </div>
             </Card>
             {/* Personal Information Card */}
-            <Card className="bg-white min-w-sm rounded-3xl lg:col-span-3 sm:col-span-4">
+            <Card className="bg-white hover:bg-blue-50 transition-colors duration-200 min-w-sm rounded-3xl lg:col-span-3 sm:col-span-4">
               <CardHeader>
                 <CardTitle className="text-xl text-gray-700">
                   Personal Information
@@ -176,28 +271,38 @@ export default function Profile() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label
-                      htmlFor="firstName"
+                      htmlFor="firstname"
                       className="text-sm text-gray-500"
                     >
                       First name
                     </Label>
                     <Input
-                      id="firstName"
-                      value={firstName}
+                      id="firstname"
+                      value={formData.firstname}
                       disabled={!isEditable}
-                      onChange={(e) => setFirstName(e.target.value)}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          firstname: e.target.value,
+                        }))
+                      } // Update state on change
                       className="bg-gray-50"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName" className="text-sm text-gray-500">
+                    <Label htmlFor="lastname" className="text-sm text-gray-500">
                       Last name
                     </Label>
                     <Input
-                      id="lastName"
-                      value={lastName}
+                      id="lastname"
+                      value={formData.lastname}
                       disabled={!isEditable}
-                      onChange={(e) => setLastName(e.target.value)}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          lastname: e.target.value,
+                        }))
+                      }
                       className="bg-gray-50"
                     />
                   </div>
@@ -206,7 +311,7 @@ export default function Profile() {
             </Card>
 
             {/* interseted Area */}
-            <Card className="w-full space-y-4 min-w-sm rounded-3xl p-5 sm:col-span-3 bg-white lg:col-span-3">
+            <Card className="w-full hover:bg-blue-50 transition-colors duration-200 space-y-4 min-w-sm rounded-3xl p-5 sm:col-span-3 bg-white lg:col-span-3">
               <CardTitle className="text-xl text-gray-700 pb-2">
                 Interested Area
               </CardTitle>
@@ -265,7 +370,7 @@ export default function Profile() {
               </Accordion>
             </Card>
             {/* Academic Information Card */}
-            <Card className="w-full min-w-sm  bg-white sm:col-span-3 lg:col-span-3">
+            <Card className="w-full min-w-sm  bg-white hover:bg-blue-50 transition-colors duration-200 sm:col-span-3 lg:col-span-3">
               <CardHeader>
                 <CardTitle className="text-xl text-gray-700">
                   Academic Information
@@ -273,39 +378,42 @@ export default function Profile() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="year">Student Year</Label>
+                  <Label htmlFor="year">Student year</Label>
                   <Select
                     disabled={!isEditable}
-                    value={year}
-                    onValueChange={setYear}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, yearOfStudy: value }))
+                    }
                   >
                     <SelectTrigger id="year">
-                      <SelectValue placeholder="Select year" />
+                      <SelectValue
+                        placeholder={formData.yearOfStudy || "Select your Study year"}
+                      />
                     </SelectTrigger>
                     <SelectContent className="bg-white">
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="1"
+                        value="1st year"
                       >
-                        1st Year
+                        1st year
                       </SelectItem>
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="2"
+                        value="2nd year"
                       >
-                        2nd Year
+                        2nd year
                       </SelectItem>
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="3"
+                        value="3rd year"
                       >
-                        3rd Year
+                        3rd year
                       </SelectItem>
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="4"
+                        value="4th year"
                       >
-                        4th Year
+                        4th year
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -314,46 +422,49 @@ export default function Profile() {
                   <Label htmlFor="branch">Branch</Label>
                   <Select
                     disabled={!isEditable}
-                    value={branch}
-                    onValueChange={setBranch}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, branch: value }))
+                    }
                   >
                     <SelectTrigger id="branch">
-                      <SelectValue placeholder="Select branch" />
+                      <SelectValue
+                        placeholder={formData?.branch || "Select branch"}
+                      />
                     </SelectTrigger>
                     <SelectContent className="bg-white">
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="cse"
+                        value="CSE"
                       >
                         CSE
                       </SelectItem>
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="entc"
+                        value="ENTC"
                       >
                         ENTC
                       </SelectItem>
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="me"
+                        value="ME"
                       >
                         ME
                       </SelectItem>
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="ce"
+                        value="CE"
                       >
                         CE
                       </SelectItem>
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="ee"
+                        value="EE"
                       >
                         EE
                       </SelectItem>
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="ie"
+                        value="IE"
                       >
                         IE
                       </SelectItem>
@@ -363,7 +474,7 @@ export default function Profile() {
               </CardContent>
             </Card>
             {/* Security Card */}
-            <Card className="bg-white rounded-3xl sm:col-span-6 lg:col-span-5">
+            <Card className="bg-white hover:bg-blue-50 transition-colors duration-200 rounded-3xl sm:col-span-6 lg:col-span-5">
               <CardHeader>
                 <CardTitle className="text-xl text-gray-700">
                   Security
@@ -377,8 +488,14 @@ export default function Profile() {
                     </Label>
                     <Input
                       id="email"
-                      value={user?.email || ""}
-                      readOnly
+                      disabled={!securityChange}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
+                      value={formData.email || "example@gamil.com"}
                       className="bg-gray-50"
                     />
                   </div>
@@ -387,6 +504,7 @@ export default function Profile() {
                       Password
                     </Label>
                     <Input
+                     disabled={!securityChange}
                       id="password"
                       type="password"
                       value="••••••"
@@ -402,25 +520,28 @@ export default function Profile() {
                       Phone number
                     </Label>
                     <Input
-                      id="phoneNumber"
-                      value="PhoneNumber"
-                      readOnly
+                      id="contact"
+                      value={formData.contact}
+                      disabled={!securityChange}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          contact: e.target.value,
+                        }))
+                      } // Update state on change
                       className="bg-gray-50"
                     />
                   </div>
                 </div>
-                <div className="flex w-[60%] flex-col sm:flex-row gap-4">
+                <div className="">
                   <Button
+                  onClick={toggleSecurityChange}
+                  disabled={isEditable}
                     variant="outline"
                     className="flex-1 rounded-xl text-green-500 font-bold border-green-500 border-2 hover:bg-green-100"
                   >
-                    Change password
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="flex-1 rounded-xl text-green-500 font-bold border-green-500 border-2 hover:bg-green-100"
-                  >
-                    Change phone number
+                    {securityChange ? "Save Changes" : "Change Security Setting"}
+                    
                   </Button>
                 </div>
               </CardContent>

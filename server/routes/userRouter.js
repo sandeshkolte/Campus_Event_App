@@ -10,7 +10,7 @@ router.post('/register',upload.single("image"),registerUser)
 router.post('/login', loginUser)
 router.post('/getuser', getUserDetails)
 router.get('/userrole', getUserByRole)
-router.post('/update', userUpdate)
+router.post('/update/:id', userUpdate)
 router.post('/delete', deleteUser)
 router.post("/updateRole", updateUserRole);
 router.post("/addOrganisedEvent", addOrganisedEvent);

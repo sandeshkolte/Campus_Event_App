@@ -1,120 +1,88 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { logout } from '@/store/authSlice';
-import { toggleSidebar } from '@/store/navSlice';
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { logout } from '@/store/authSlice'
+import { toggleSidebar } from '@/store/navSlice'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import { LogOut, User, Ticket, History, Award, Home, ChevronRight } from 'lucide-react'
 
+export default function ProfileSidebar() {
+  const dispatch = useDispatch()
+  const sidebar = useSelector((state) => state.nav.sidebar)
+  const navigate = useNavigate()
 
+  const handleLogout = () => {
+    dispatch(logout())
+    dispatch(toggleSidebar())
+    navigate("/")
+  }
 
-const ProfileSidebar = () => {
-    const dispatch=useDispatch()
-    const sidebar = useSelector((state) => state.nav.sidebar);
-    const navigate = useNavigate();
+  const handleLinkClick = (path) => {
+    navigate(path)
+    // Toggle sidebar only on small screens
+    if (sidebar) {
+      dispatch(toggleSidebar())
+    }
+  }
 
+  const NavItem = ({ icon: Icon, children, path }) => (
+    <Button
+      variant="ghost"
+      className="w-full justify-start text-gray-700 hover:text-blue-500 hover:bg-blue-50 transition-colors duration-200"
+      onClick={() => handleLinkClick(path)}
+    >
+      <Icon className="mr-2 h-5 w-5" />
+      <span className="flex-grow text-left">{children}</span>
+      <ChevronRight className="ml-auto h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+    </Button>
+  )
 
-    const handleLogout = () => {
-      dispatch(logout()); // Dispatch the logout action
-      navigate("/");      // Navigate to home page after logging out
-    };
+  const SidebarContent = () => (
+    <div className="flex h-full flex-col bg-white">
+      <Separator />
+      <ScrollArea className="flex-1">
+        <div className="space-y-1 p-4">
+          <NavItem icon={User} path="/profile">User Profile</NavItem>
+          <NavItem icon={Ticket} path="/mytickets">My Tickets</NavItem>
+          <NavItem icon={History} path="/">History</NavItem>
+          <NavItem icon={Award} path="/">Certificate</NavItem>
+          <NavItem icon={Home} path="/" className="lg:hidden">Home</NavItem>
+        </div>
+      </ScrollArea>
+      <Separator />
+      <div className="p-4">
+        <Button 
+          variant="destructive" 
+          className="w-full group hover:bg-gray-100 hover:text-blue-500 transition-colors duration-200"
+          onClick={handleLogout}
+        >
+          <LogOut className="mr-2 h-5 w-5" />
+          <span className="flex-grow text-left">Sign out</span>
+          <ChevronRight className="ml-auto h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+        </Button>
+      </div>
+    </div>
+  )
 
-    const handleLinkClick = (path) => {
-      dispatch(toggleSidebar()); // Toggle the sidebar
-      navigate(path);           // Navigate to the new path
-    };
   return (
-    // <aside className={`lg:w-80 bg-white z-30 lg:static fixed p-10 w-1/2 min-h-screen md:w-1/3 ${sidebar==true?"translate-x-0":"-translate-x-[500px]"}`}>
-    <aside
-    className={`lg:w-80 bg-white rounded-lg z-30 shadow-md lg:static fixed p-5 md:p-10 w-1/2 max-h-screen md:w-1/3 
-    transition-transform duration-300 ease-in-out 
-    ${sidebar ? "translate-x-0" : "-translate-x-[500px]"} 
-    lg:translate-x-0`}
-  >
-      {/* <nav className="space-y-2">
-        <Link
-          to="/"
-          className="block py-2 px-4 text-blue-600 bg-blue-50 rounded"
-        >
-          User Profile
-        </Link>
-        <Link
-          to="/mytickets"
-          className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
-        >
-          My Tickets
-        </Link>
-        <Link
-          to="/"
-          className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
-        >
-         History 
-        </Link>
-        <Link
-          to="/"
-          className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
-        >
-         Certificate
-        </Link>
-        <Link
-          to="/"
-          className="block py-2 px-4 text-gray-700 lg:hidden hover:bg-gray-100 rounded"
-        >
-          Home
-        </Link>
-      </nav> */}
-      <nav className="space-y-2 ">
-    <button
-        onClick={() => handleLinkClick('/profile')}
-        className="flex items-center  pl-4 justify-start w-full text-blue-600 bg-blue-50 rounded py-2"
-    >
-        User Profile
-    </button>
-    <button
-        onClick={() => handleLinkClick('/mytickets')}
-        className="flex items-center pl-4 justify-start w-full text-gray-700 hover:bg-gray-100 rounded py-2"
-    >
-        My Tickets
-    </button>
-    <button
-        onClick={() => handleLinkClick('/')}
-        className="flex items-center pl-4 justify-start w-full text-gray-700 hover:bg-gray-100 rounded py-2"
-    >
-        History
-    </button>
-    <button
-        onClick={() => handleLinkClick('/')}
-        className="flex items-center pl-4 justify-start w-full text-gray-700 hover:bg-gray-100 rounded py-2"
-    >
-        Certificate
-    </button>
-    <button
-        onClick={() => handleLinkClick('/')}
-        className="flex items-center pl-4 justify-start w-full text-gray-700 lg:hidden hover:bg-gray-100 rounded py-2"
-    >
-        Home
-    </button>
-</nav>
+    <>
+      <Sheet open={sidebar} onOpenChange={() => dispatch(toggleSidebar())}>
+        <SheetContent side="left" className="w-[300px] sm:w-[400px] p-0 border-r shadow-lg">
+          <SheetHeader>
+          <SheetTitle ></SheetTitle>
+          <SheetDescription></SheetDescription>
+          </SheetHeader>
+          
 
-      <button
-      onClick={handleLogout}
-       className="mt-8 flex items-center text-red-500 hover:text-red-600">
-        <svg
-          className="w-5 h-5 mr-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-          />
-        </svg>
-        Sign out
-      </button>
-    </aside>
-  );
-};
-
-export default ProfileSidebar;
+          <SidebarContent />
+        </SheetContent>
+      </Sheet>
+      <aside className="hidden lg:block bg-white w-80 max-h-screen border-r shadow-lg">
+        <SidebarContent />
+      </aside>
+    </>
+  )
+}

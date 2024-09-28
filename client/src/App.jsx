@@ -39,19 +39,18 @@ const App = () => {
   const dispatch = useDispatch()
   const fetchUserDetails = async () => {
     try {
-      // if (userId) {
-      //   axios.post(baseUrl + `/api/user/getuser/?userid=${userId}`).then((result) => {
-      //     if (result.status === 200) {
-      //       const userDetails = result.data.response
-            
-      //       dispatch(login(userDetails))
-      //     }
-      //   })
-      // }
-      const userInfo = localStorage.getItem('userInfo')
-      if (userInfo) {
-        dispatch(login(JSON.parse(userInfo)))  // Rehydrate user info from localStorage
+      if (userId) {
+        axios.post(baseUrl + `/api/user/getuser/?userid=${userId}`).then((result) => {
+          if (result.status === 200) {
+            const userDetails = result.data.response
+            dispatch(login(userDetails))
+          }
+        })
       }
+      // const userInfo = localStorage.getItem('userInfo')
+      // if (userInfo) {
+      //   dispatch(login(JSON.parse(userInfo)))  // Rehydrate user info from localStorage
+      // }
 
     } catch (err) {
       console.log(err)
