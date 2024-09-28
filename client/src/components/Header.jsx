@@ -1,41 +1,35 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import { useSelector,useDispatch } from "react-redux";
-import SideSheet from "./Sheet";
-import { jwtDecode } from "jwt-decode";
-import AnimatedButton from "./AnimatedButton";
-import { Menu,SidebarClose} from "lucide-react"
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { Menu } from "lucide-react";
 import { toggleSidebar } from "@/store/navSlice";
+import { jwtDecode } from "jwt-decode";
+import useFetchUserDetails from "@/hooks/useFetchUserDetails";
 
 const Header = () => {
   const token = localStorage.getItem("userToken");
-  const userInfo = localStorage.getItem("userInfo");
+  const userInfo = useSelector((state) => state.auth?.userInfo);
   const dispatch = useDispatch();
   const sidebar = useSelector((state) => state.nav.sidebar);
-
-  let role = null;
-  let userimg = null;
-
-  if (userInfo) {
-    try {
-      userimg = JSON.parse(userInfo).image;
-      // console.log(role)
-      console.log(userimg);
-    } catch (error) {
-      console.error("Invalid info:", error);
-    }
-  }
+  const navigate = useNavigate(); // For redirecting to login page
+  const location=useLocation()
+  let userId = null;
 
   if (token && token.includes(".")) {
     try {
-      role = jwtDecode(String(token)).role;
-      userimg = JSON.parse(userInfo).image;
-      // console.log(role)
-      console.log(userimg);
+      const decodedToken = jwtDecode(token);
+      userId = decodedToken._id; // Assuming you have userId in the token
     } catch (error) {
       console.error("Invalid token:", error);
     }
   }
+
+  useFetchUserDetails(userId);
+
+  // Redirect to login page
+  const handleLoginRedirect = () => {
+    navigate("/login");
+  };
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full bg-white p-5 md:shadow-lg md:shadow-purple-200">
@@ -45,116 +39,121 @@ const Header = () => {
         </h1>
 
         <ul className="lg:flex justify-center items-center flex-row gap-5 font-semibold hidden">
-          {/* Login button to show for guest user */}
-          {/* <li>
-  <div className='bg-gray-950 px-2 py-1 rounded-md' >
-<span className='gradient-text text-transparent animate-gradient ' >Log in</span>
-  </div>
-</li> */}
+          {/* Show links only when user is logged in */}
+          {userInfo && (
+            <>
+              <li>
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    `${isActive ? "text-black underline" : "text-black"}`
+                  }
+                >
+                  Home
+                </NavLink>
+              </li>
 
-          {userInfo != null && (
-            <li>
-              <NavLink
-                to="/"
-                className={({ isActive }) => ` 
-                ${isActive ? "text-black underline" : "text-black"}
-            `}
-              >
-                Home
-              </NavLink>
-            </li>
-          )}
-
-          {
-          ((role === "superadmin" || role === "admin") && (
-            <li>
-              {/* <div className='bg-gray-950 text-white p-2 rounded-md ' > */}
-              <NavLink
-                to="/create"
-                className={({ isActive }) => `
-${isActive ? "text-black underline " : "text-black"}
-`}
-              >
-                <div className="bg-gray-950 text rounded-md py-1 text-white px-2">
-                  <h3 className="text-sm">Create Event</h3>
-                </div>
-              </NavLink>
-              {/* </div> */}
-            </li>
-          ))}
-           { (role === "user" && userInfo != null && (
               <li>
                 <NavLink
                   to="/mytickets"
-                  className={({ isActive }) => `
-                ${isActive ? "text-black underline" : "text-black"}
-            `}
+                  className={({ isActive }) =>
+                    `${isActive ? "text-black underline" : "text-black"}`
+                  }
                 >
                   My Tickets
                 </NavLink>
               </li>
-            ))}
-          <li>
-            {(role === "superadmin" || role === "admin") && (
-              <NavLink
-                to="/organised"
-                className={({ isActive }) => `
-                          ${isActive ? "text-black underline" : "text-black"}
-                          `}
-              >
-                Events Organised
-              </NavLink>
-            )}
-          </li>
-          {role === "user" && userInfo != null && (
-            <li>
-              <NavLink
-                to="/login"
-                className={({ isActive }) => `
-                ${isActive ? "text-black underline" : "text-black"}
-            `}
-              >
-                Photo Gallery
-              </NavLink>
-            </li>
-          )}
-          {userInfo != null && (
-            <li>
-              <NavLink
-                to="/profile"
-                className={({ isActive }) => `
-                ${isActive ? "text-black underline" : "text-black"}
-            `}
-              >
-                <div className="outline-black outline-4">
-                  <img
-                    className="h-10 rounded-3xl object-cover"
-                    src={userimg}
-                    alt="profile"
-                  />
-                </div>
-              </NavLink>
-            </li>
+
+              <li>
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    `${isActive ? "text-black underline" : "text-black"}`
+                  }
+                >
+                  Photo Gallery
+                </NavLink>
+              </li>
+
+              {/* userInfo?.role-based links */}
+              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
+                <li>
+                  <NavLink
+                    to="/create"
+                    className={({ isActive }) =>
+                      `${isActive ? "text-black underline" : "text-black"}`
+                    }
+                  >
+                    <div className="bg-gray-950 text rounded-md py-1 text-white px-2">
+                      <h3 className="text-sm">Create Event</h3>
+                    </div>
+                  </NavLink>
+                </li>
+              )}
+
+              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
+                <li>
+                  <NavLink
+                    to="/organised"
+                    className={({ isActive }) =>
+                      `${isActive ? "text-black underline" : "text-black"}`
+                    }
+                  >
+                    Events Organised
+                  </NavLink>
+                </li>
+              )}
+
+              <li>
+                <NavLink
+                  to="/profile"
+                  className={({ isActive }) =>
+                    `${isActive ? "text-black underline" : "text-black"}`
+                  }
+                >
+                  <div className="outline-black outline-4">
+                    <img
+                      className="h-10 rounded-3xl object-cover"
+                      src={userInfo?.image}
+                      alt="profile"
+                    />
+                  </div>
+                </NavLink>
+              </li>
+            </>
           )}
         </ul>
-        {/* <NavLink to='/profile' className={({ isActive }) => `
-                ${isActive ? " shadow-lg shadow-orange-300 rounded-3xl" : "text-black"}
-            `}>
-                    <div className='outline-black outline-4'>
-                        <img className='h-10 rounded-3xl object-cover' src={userInfo.image} alt="profile" />
-                    </div></NavLink> */}
-        {/* {token != null ? <SideSheet /> : <AnimatedButton />} */}
+
+        {/* Hamburger menu for mobile */}
+        {userInfo ? (
+          <Menu
+            onClick={() => dispatch(toggleSidebar())}
+            className={`${
+              sidebar === true ? "hidden" : "block lg:hidden"
+            } text-3xl absolute top-5 right-5`}
+          />
+        ) : (
+          // Show login button on small screens when no user is logged in
+          <div className="flex items-center gap-4 lg:mr-5">
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `hover:underline ${isActive ? "text-black underline" : "text-black"}`
+              }
+            >
+              Home
+            </NavLink>
+            {location.pathname !== "/login" && (
+              <button
+                onClick={handleLoginRedirect}
+                className="bg-gray-950 text-white px-2 py-1 md:px-4 md:py-2 rounded-md hover:bg-purple-700 transition-colors"
+              >
+                Log In
+              </button>
+            )}
+          </div>
+        )}
       </div>
-      <Menu onClick={()=>dispatch(toggleSidebar())}
-        className={`${
-          sidebar === true ? "hidden" : "block lg:hidden"
-        } text-3xl absolute top-5 right-5`}
-      />
-       <SidebarClose onClick={()=>dispatch(toggleSidebar())}
-        className={`${
-          sidebar === true ? "block lg:hidden" : "hidden"
-        } text-3xl absolute top-5 right-5`}
-      />
     </header>
   );
 };

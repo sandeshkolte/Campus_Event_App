@@ -3,11 +3,6 @@ const mongoose = require('mongoose')
 const ObjectId = mongoose.Schema.Types.ObjectId
 
 const userSchema= mongoose.Schema({
-username:{
-    type:String,
-    default:"",
-    unique:true
-},
 firstname:{
     type:String,
 },
@@ -48,16 +43,17 @@ eventsorganised:[{  //only for admin and super admin
 }],
 branch: String,
  yearOfStudy: {
-    type: Number,
+    type: String,
+    default:""
     // required: true
  },
  interests: [{
     type: String
  }],  
 contact: {
-    type:Number,
-    default:0,
-    unique:true
+    type:String,
+    default:"",
+    // unique:true
 },
 }, 
 {
