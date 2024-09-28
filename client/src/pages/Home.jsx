@@ -37,8 +37,6 @@ const fetchSearchResults = debounce(async(searchQuery)=>{
 
 const token = localStorage.getItem("userToken")
 const isAuthenticated = token !== null && token !== ""
-
-
   return (
 
     <div className='min-h-screen relative px-10'>
@@ -53,7 +51,7 @@ const isAuthenticated = token !== null && token !== ""
             <div className= ' mt-5 flex justify-center' >
         <img src="https://th.bing.com/th/id/OIP.U_AL86l48sLEcu0k2UhMzgHaHa?rs=1&pid=ImgDetMain" height={130} width={130} alt="" />
             </div>
-        <h1 className='font-bold text-7xl text-center p-5 pt-10'>GCOEC<br />  Where Campus Life<br />Comes <span className='gradient-text text-transparent animate-gradient' >Alive</span></h1>
+        <h1 className='font-bold text-7xl text-center p-5 pt-10'>GCOEC<br />Where Campus Life<br />Comes <span className='gradient-text text-transparent animate-gradient' >Alive</span></h1>
         <p className='font-semibold text-md text-center text-slate-800'>Discover, Register, and Participate in Events Around Campus</p>
        
        <div className='flex justify-center mt-2 gap-5'>

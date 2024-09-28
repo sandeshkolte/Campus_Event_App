@@ -41,7 +41,7 @@ const getUserByRole = async (req, res, next) => {
 const registerUser = async (req, res, next) => {
     try {
         const { 
-            username, 
+              
             firstname,
             lastname, 
             email, 
@@ -64,7 +64,7 @@ const registerUser = async (req, res, next) => {
 
         // Create new user
         let createdUser = await userModel.create({
-            username,
+             
             firstname,
             lastname,
             email,
@@ -131,7 +131,7 @@ const updateUserRole = async (req, res) => {
 const userUpdate = async (req, res, next) => {
     try {
         let { 
-            username, 
+              
             firstname, 
             lastname, 
             email, 
@@ -145,7 +145,7 @@ const userUpdate = async (req, res, next) => {
         } = req.body;
 
         let updatedData = { 
-            username, 
+              
             firstname, 
             lastname, 
             email, 
@@ -186,6 +186,20 @@ const addOrganisedEvent = async (req, res) => {
     }
 };
 
+
+const addMyEvent = async (req, res) => {
+    const {userId, eventId, paymentImage } = req.body;
+    console.log(req.body);
+    
+    try {
+      await userModel.findByIdAndUpdate(userId, { $push: { myevents: {eventId:eventId, paymentScreenshot:paymentImage} } });
+      res.status(200).json({ message: "Event added to user's events" });
+    } catch (err) {
+      res.status(500).json({ message: "Failed to update user's events", error: err });
+    }
+};
+
+
 const deleteUser = async (req, res) => {
     try {
         let user = await userModel.findOneAndDelete({ _id: req.query.id });
@@ -206,5 +220,6 @@ module.exports = {
     updateUserRole, 
     getUserByRole, 
     addOrganisedEvent, 
-    deleteUser 
+    deleteUser,
+    addMyEvent
 };

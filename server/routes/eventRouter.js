@@ -1,7 +1,8 @@
 const express = require('express');
 const {
    getEvent, createEvent, editEvent, deleteEvent, updateEvent,findEventByTitle, findEventByCategory,
-   eventDetails} = require('../controller/eventController');
+   eventDetails,
+   addParticipants} = require('../controller/eventController');
 const router = express.Router();
 const upload = require('../config/multer-config');
 const { isUserLoggedIn } = require('../middlewares/isLoggedIn');
@@ -21,6 +22,7 @@ router.delete('/delete/:id', isUserLoggedIn, deleteEvent);
 
 // Edit event
 router.get('/edit/:id', isUserLoggedIn, editEvent);
+router.post('/addParticipants', addParticipants);
 
 
 module.exports = router;

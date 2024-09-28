@@ -2,29 +2,36 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CalendarIcon, MapPinIcon } from "lucide-react"
-import { useParams } from "react-router-dom"
-import axios from "axios"
-import { baseUrl } from "@/common/common"
+import { useNavigate, useParams } from "react-router-dom"
+// import axios from "axios"
+// import { baseUrl } from "@/common/common"
 import React from "react"
+import { useSelector } from "react-redux"
 
 export default function EventDetail() {
-  const { id } = useParams()
-  const [eventDetails, setEventDetails] = React.useState(null)
+  // const { id } = useParams()
+  // const [eventDetails, setEventDetails] = React.useState(null)
 
-  React.useEffect(() => {
-    try {
-      axios.get(baseUrl + `/api/event/details?id=${id}`).then((result) => {
-        console.log(result.data.event)
-        setEventDetails(result.data.event)
-      })
-    } catch (err) {
-      console.log(err)
-    }
-  }, [id])
+  // React.useEffect(() => {
+  //   try {
+  //     axios.get(baseUrl + `/api/event/details?id=${id}`).then((result) => {
+  //       console.log(result.data.event)
+  //       setEventDetails(result.data.event)
+  //     })
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  // }, [id])
+
+  const { id } = useParams()
+const navigate = useNavigate()
+  const events = useSelector((state) => state.event?.events)
+  const eventDetails = events?.find((event) => event._id === id)
 
   if (!eventDetails) {
     return <div className="flex justify-center">Loading...</div>
   }
+
 
   return (
     <div className='flex justify-center bg-indigo-50'>
@@ -32,7 +39,7 @@ export default function EventDetail() {
       <div className="flex flex-col md:flex-row">
         <div className="w-full md:w-2/5">
           <div className="relative aspect-[4/3] flex items-center justify-center">
-         <img src={eventDetails.image} alt="image" loading="lazy" className="object-cover  " />
+         <img src={eventDetails.image} alt="image" className="object-cover  " />
              {/* <div className="relative text-white text-center z-10">
               <div className="mb-4">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-24 h-24 mx-auto">
@@ -53,7 +60,7 @@ export default function EventDetail() {
                 <Badge variant="secondary" className="bg-gray-100 text-gray-800 font-semibold">{eventDetails.category}</Badge>
                 <span className="text-sm text-purple-600 font-semibold ">{eventDetails.coordinator}</span>
               </div>
-              <Button className="bg-indigo-500 hover:bg-indigo-600 rounded-full text-white my-3">
+              <Button className="bg-indigo-500 hover:bg-indigo-600 rounded-full text-white my-3" onClick={()=> navigate(`/buyticket/${id}`)} >
                 Buy Ticket
               </Button>
             </div>

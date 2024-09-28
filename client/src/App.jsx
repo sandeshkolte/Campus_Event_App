@@ -18,6 +18,7 @@ import { toast } from 'react-toastify'
 import MyTickets from './pages/MyEvents'
 import EventsOrganised from './pages/EventsOrganised'
 import EventDetailsPage from './pages/EventDetailsPage'
+import BookingPage from './pages/BookingPage'
 
 const App = () => {
 
@@ -39,19 +40,19 @@ const App = () => {
   const dispatch = useDispatch()
   const fetchUserDetails = async () => {
     try {
-      // if (userId) {
-      //   axios.post(baseUrl + `/api/user/getuser/?userid=${userId}`).then((result) => {
-      //     if (result.status === 200) {
-      //       const userDetails = result.data.response
+      if (userId) {
+        axios.post(baseUrl + `/api/user/getuser/?userid=${userId}`).then((result) => {
+          if (result.status === 200) {
+            const userDetails = result.data.response
             
-      //       dispatch(login(userDetails))
-      //     }
-      //   })
-      // }
-      const userInfo = localStorage.getItem('userInfo')
-      if (userInfo) {
-        dispatch(login(JSON.parse(userInfo)))  // Rehydrate user info from localStorage
+            dispatch(login(userDetails))
+          }
+        })
       }
+      // const userInfo = localStorage.getItem('userInfo')
+      // if (userInfo) {
+      //   dispatch(login(JSON.parse(userInfo)))  // Rehydrate user info from localStorage
+      // }
 
     } catch (err) {
       console.log(err)
@@ -105,7 +106,7 @@ const App = () => {
             <Route path='/login' element={<Navigate to="/" />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/mytickets' element={<MyTickets />} />
-
+            <Route path='/buyticket/:id' element={<BookingPage />} />
 {(role==="admin"||"superadmin") && (
 <>
 <Route path='/create' element={<CreateEvent />} />

@@ -19,7 +19,7 @@ organisedBy:{
 },
 organizingBranch:{
     type:String,
-    required:true
+    // required:true
 },
 category:[
     {
