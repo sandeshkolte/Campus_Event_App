@@ -1,7 +1,8 @@
 const express = require('express')
 const {registerUser,loginUser, getUserDetails, getUserByRole, 
     userUpdate, updateUserRole, addOrganisedEvent, deleteUser,
-    addMyEvent} 
+    // addMyEvent
+} 
     = require('../controller/userController')
 
 const upload = require('../config/multer-config')
@@ -15,6 +16,6 @@ router.post('/update/:id', userUpdate)
 router.post('/delete', deleteUser)
 router.post("/updateRole", updateUserRole);
 router.post("/addOrganisedEvent", addOrganisedEvent);
-router.post("/addMyEvent", addMyEvent);
+// router.post("/addMyEvent", addMyEvent);
 
 module.exports = router

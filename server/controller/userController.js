@@ -119,11 +119,11 @@ const updateUserRole = async (req, res) => {
       const { userId, role } = req.body;
       const user = await userModel.findByIdAndUpdate(userId, { role }, { new: true });
       if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(403).json({ message: "User not found" });
       }
       return res.status(200).json({ message: "User role updated", user });
     } catch (err) {
-      return res.status(500).json({ message: "Error updating user role", error: err.message });
+      return res.status(403).json({ message: "Error updating user role", error: err.message });
     }
 };
 
@@ -162,7 +162,7 @@ const userUpdate = async (req, res, next) => {
         let updatedUser = await userModel.findByIdAndUpdate(req.params.id, updatedData, { new: true });
 
         if (!updatedUser) {
-            return res.status(404).json({ status: "Error", response: "User not found" });
+            return res.status(403).json({ status: "Error", response: "User not found" });
         }
 
         return res.status(200).json({
@@ -180,22 +180,22 @@ const addOrganisedEvent = async (req, res) => {
       await userModel.findByIdAndUpdate(userId, { $push: { eventsorganised: eventId } });
       res.status(200).json({ message: "Event added to user's organised events" });
     } catch (err) {
-      res.status(500).json({ message: "Failed to update user's organised events", error: err });
+      res.status(403).json({ message: "Failed to update user's organised events", error: err });
     }
 };
 
 
-const addMyEvent = async (req, res) => {
-    const {userId, eventId, paymentImage } = req.body;
-    console.log(req.body);
+// const addMyEvent = async (req, res) => {
+//     const {userId, eventId, paymentImage } = req.body;
+//     console.log(req.body);
     
-    try {
-      await userModel.findByIdAndUpdate(userId, { $push: { myevents: {eventId:eventId, paymentScreenshot:paymentImage} } });
-      res.status(200).json({ message: "Event added to user's events" });
-    } catch (err) {
-      res.status(500).json({ message: "Failed to update user's events", error: err });
-    }
-};
+//     try {
+//       await userModel.findByIdAndUpdate(userId, { $push: { myevents: {eventId:eventId, paymentScreenshot:paymentImage} } });
+//       res.status(200).json({ message: "Event added to user's events" });
+//     } catch (err) {
+//       res.status(500).json({ message: "Failed to update user's events", error: err });
+//     }
+// };
 
 
 const deleteUser = async (req, res) => {
@@ -206,7 +206,7 @@ const deleteUser = async (req, res) => {
             response: `User deleted`
         });
     } catch (err) {
-        res.status(400).json({ status: "Error", response: err.message });
+        res.status(403).json({ status: "Error", response: err.message });
     }
 };
 
@@ -219,5 +219,4 @@ module.exports = {
     getUserByRole, 
     addOrganisedEvent, 
     deleteUser,
-    addMyEvent
 };

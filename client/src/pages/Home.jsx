@@ -14,8 +14,6 @@ import axios from 'axios'
 import BranchCard from '@/components/event-card'
 // const AllEvents = React.lazy(() => import('../components/AllEvents')) 
 
-
-
 const Home = () => {
 
 // const events = useSelector((state) => state.event.events)

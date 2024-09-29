@@ -42,8 +42,16 @@ participants:[
     ref: 'user'
 }
 ],
-date:{
+startDate:{
     type:Date,
+    required:true
+},
+endDate:{
+    type:Date,
+    required:true
+},
+qrImage:{
+    type:String,
     required:true
 },
 venue:{

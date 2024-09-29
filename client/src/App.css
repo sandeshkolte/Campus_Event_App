@@ -1,0 +1,26 @@
+.react-datepicker {
+  @apply bg-gray-50 shadow-md rounded-lg p-4;
+}
+
+.react-datepicker__header {
+  @apply bg-green-500 text-white;
+}
+
+.react-datepicker__day {
+  @apply text-gray-700 hover:bg-gray-100 rounded-full;
+}
+
+.react-datepicker__day--selected {
+  @apply bg-gray-950 text-white;
+}
+
+.custom-datepicker {
+    border: 2px solid #3b82f6;
+    border-radius: 8px;
+  }
+  
+  .custom-calendar {
+    background-color: #f9fafb;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
