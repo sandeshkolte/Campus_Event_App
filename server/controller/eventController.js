@@ -12,7 +12,7 @@ const redis = new Redis({
 //create event working fine on postman
 const createEvent = async (req, res) => {
     try {
-      const {
+      let {
         title,
         description,
         image,
@@ -28,7 +28,7 @@ const createEvent = async (req, res) => {
         venue,
       } = req.body;
   
-      const newEvent = eventModel.create({
+      eventModel.create({
         title,
         description,
         image,
@@ -78,6 +78,23 @@ const createEvent = async (req, res) => {
   // Update an event
   const updateEvent = async (req, res) => {
     try {
+
+      let {
+        title,
+        description,
+        image,
+        organisedBy,
+        organizingBranch,
+        category,
+        coordinator,
+        price,
+        participants,
+        startDate,
+        endDate,
+        qrImage,
+        venue,
+      } = req.body;
+
       const updatedEvent = await eventModel.findByIdAndUpdate(
         req.params.id,
         {

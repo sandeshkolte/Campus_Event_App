@@ -36,12 +36,24 @@ price:{
     type:Number,
     default:0
 },
+isAuditCourse:{
+    type:Boolean,
+    default:false
+},
 participants:[
     {
    type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
 }
 ],
+isGroupEvent:{
+    type:Boolean,
+    default:false
+},
+participantSize:{
+    type:Number,
+    default:1
+},
 startDate:{
     type:Date,
     required:true
