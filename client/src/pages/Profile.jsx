@@ -216,9 +216,11 @@ const toggleSecurityChange=()=>{
           </div>
           <Button
             onClick={toggleEdit}
+            disabled={securityChange}
             className="bg-gray-900 mb-3 sm:mb-0 mr-auto sm:mr-0 hover:bg-gray-700 text-white transition-colors duration-200 sm:ml-auto"
           >
             <Pen className="w-4 h-4 mr-2" />
+            
             {isEditable ? "Save Changes" : "Edit Profile"}
           </Button>
         </div>
