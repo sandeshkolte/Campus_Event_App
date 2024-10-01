@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Menu } from "lucide-react";
 import { toggleSidebar } from "@/store/navSlice";
@@ -25,11 +25,6 @@ const Header = () => {
   }
 
   useFetchUserDetails(userId);
-
-  // Redirect to login page
-  const handleLoginRedirect = () => {
-    navigate("/login");
-  };
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full bg-white p-5 md:shadow-lg md:shadow-purple-200">
@@ -144,12 +139,11 @@ const Header = () => {
               Home
             </NavLink>
             {location.pathname !== "/login" && (
-              <button
-                onClick={handleLoginRedirect}
-                className="bg-gray-950 text-white px-2 py-1 md:px-4 md:py-2 rounded-md hover:bg-purple-700 transition-colors"
+              <Link to={"/login"}
+                className="bg-gray-950 text-white px-2 py-1 md:px-4 md:py-2 rounded-md hover:bg-gray-600 transition-colors"
               >
                 Log In
-              </button>
+              </Link>
             )}
           </div>
         )}

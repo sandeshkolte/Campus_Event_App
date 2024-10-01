@@ -1,6 +1,7 @@
 const express = require('express')
 const {registerUser,loginUser, getUserDetails, getUserByRole, 
     userUpdate, updateUserRole, addOrganisedEvent, deleteUser,
+    googleLogin,
     // addMyEvent
 } 
     = require('../controller/userController')
@@ -10,6 +11,7 @@ const router = express.Router()
 
 router.post('/register',upload.single("image"),registerUser)
 router.post('/login', loginUser)
+router.post('/google', googleLogin)
 router.post('/getuser', getUserDetails)
 router.get('/userrole', getUserByRole)
 router.post('/update/:id', userUpdate)
