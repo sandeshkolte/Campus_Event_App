@@ -11,12 +11,20 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { cn } from "@/lib/utils"
+import DatePicker from "react-datepicker"
+import { format } from "date-fns";
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "react-toastify"
 import { useForm } from "react-hook-form"
@@ -27,7 +35,11 @@ import { storage } from "../firebase"
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage"
 import { VscLoading } from "react-icons/vsc"
 import { CalendarIcon, Upload } from "lucide-react"
-import useAdminInfo from "@/hooks/useAdminInfo"
+import CategorySelector from "./CategorySelector"
+import { CoordinatorSelector } from "./CoordinatorSelector"
+import { CoordinatorProvider } from "@/hooks/useCoordinator"
+import { jwtDecode } from "jwt-decode"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 export default function Component() {
   const { register, handleSubmit, reset, setValue } = useForm()
@@ -35,42 +47,56 @@ export default function Component() {
   const [loading, setLoading] = React.useState(false)
   const [imagePreview, setImagePreview] = React.useState(null)
   const [uploadedFile, setUploadedFile] = React.useState(null)
+  const [qrPreview, setQRPreview] = React.useState(null)
+  const [uploadedQRFile, setUploadedQRFile] = React.useState(null)
+  const [startDateTime, setStartDateTime] = React.useState(null)
+  const [endDateTime, setEndDateTime] = React.useState(null)
+  const [isGroupEvent, setisGroupEvent] = React.useState(false)
+  const [isAuditCourse, setisAuditCourse] = React.useState(false)
 
-  const handleImageUpload = (file) => {
+  const handleImageUpload = (file, folderName) => {
     return new Promise((resolve, reject) => {
-      if (!file) reject("No file provided")
+      if (!file) reject("No file provided");
 
-      const storageRef = ref(storage, `eventimages/${file.name}`)
-      const uploadTask = uploadBytesResumable(storageRef, file)
+      const storageRef = ref(storage, `${folderName}/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on(
         "state_changed",
-        (snapshot) => {},
+        (snapshot) => { },
         (error) => {
-          toast.error("Image upload failed!")
-          reject(error)
+          toast.error("Image upload failed!");
+          reject(error);
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL)
-          })
+            resolve(downloadURL);
+          });
         }
-      )
-    })
-  }
+      );
+    });
+  };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
+  const handleFileChange = (e, type) => {
+    const file = e.target.files[0];
     if (file) {
-      setUploadedFile(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImagePreview(reader.result)
+      if (type === "eventImage") {
+        setUploadedFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      } else if (type === "qrImage") {
+        setUploadedQRFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setQRPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
       }
-      reader.readAsDataURL(file)
     }
-  }
-
+  };
   // const updateUserRoleToAdmin = async (userId) => {
   //   try {
   //     const response = await axios.put( baseUrl + `/api/user/updateRole`, { userId, role: "admin" });
@@ -82,65 +108,99 @@ export default function Component() {
   //     toast.error("Failed to update user role.");
   //   }
   // };
-  
 
-// Function to update 'eventsorganised' field
-const addEventToUser = async (userId, eventId) => {
-  try {
-    const response = await axios.put(`${baseUrl}/api/user/addEvent`, { userId, eventId });
-    if (response.status === 200) {
-      console.log(`Event added to user ${userId}`);
+
+  // Function to update 'eventsorganised' field
+  const addtoOrganisedEvent = async (userId, eventId) => {
+    try {
+      const response = await axios.put(`${baseUrl}/api/user/addOrganisedEvent`, { userId, eventId });
+      if (response.status === 200) {
+        console.log(`Event added to organised event`);
+      }
+    } catch (error) {
+      console.error("Failed to add event to user:", error);
+      toast.error("Failed to add event to user.");
     }
-  } catch (error) {
-    console.error("Failed to add event to user:", error);
-    toast.error("Failed to add event to user.");
+  };
+
+
+  const token = localStorage.getItem("userToken");
+  let userId = null;
+
+  if (token && token.includes(".")) {
+    try {
+      const decodedToken = jwtDecode(token);
+      userId = decodedToken._id; // Assuming you have userId in the token
+    } catch (error) {
+      console.error("Invalid token:", error);
+    }
   }
-};
 
-const formSubmit = async (data) => {
-  setLoading(true)
-  try {
-    const file = uploadedFile
-    if (file) {
-      const downloadURL = await handleImageUpload(file)
-      data.image = downloadURL
+  const formSubmit = async (data) => {
+    setLoading(true);
+
+    if (data.price < 0) {
+      toast.error("Price cannot be negative.");
+      setLoading(false);
+      return;
     }
-    data.coordinator = [data.coordinator1, data.coordinator2];
 
-    // Create the event
-    const eventResponse = await axios.post(`${baseUrl}/api/event/create`, data);
-    const eventId = eventResponse.data._id; // Get the new event ID
-    if (eventResponse.status === 201) {
-      console.log("Event created successfully", eventResponse.data);
-      toast.success("Event created successfully!");
-
-      // Update the roles of the selected coordinators
-      // await Promise.all([
-      //   updateUserRoleToAdmin(data.coordinator1),
-      //   updateUserRoleToAdmin(data.coordinator2)
-      // ]);
-
-      // Update 'eventsorganised' field for coordinators
-      await Promise.all([
-        addEventToUser(data.coordinator1, eventId),
-        addEventToUser(data.coordinator2, eventId)
-      ]);
-
-      reset(); // Reset the form fields
-      setImagePreview(null); // Reset the image preview
-      setUploadedFile(null); // Reset the uploaded file state
-      navigate("/"); // Navigate to the home route
-      window.location.reload();
-    }
-  } catch (err) {
-    toast.error("Failed to create event " + err.message);
-  } finally {
+     // Check if it's a group event and validate participant size
+  if (isGroupEvent && (!data.participantSize || data.participantSize < 1)) {
+    toast.error("Please enter a valid group size.");
     setLoading(false);
+    return;
   }
-}
 
-  const adminInfo = useAdminInfo()
-  const adminOptions = adminInfo.length > 0 ? adminInfo : []
+
+    try {
+      const eventFolderName = `events/${new Date().toISOString()}`; // Create a unique folder name for each event
+      const file = uploadedFile;
+      const qrFile = uploadedQRFile; // Assuming you have set this when handling QR code file input
+
+      if (file) {
+        const downloadURL = await handleImageUpload(file, eventFolderName);
+        data.image = downloadURL; // Store the event image URL
+      }
+
+      if (qrFile) {
+        const qrDownloadURL = await handleImageUpload(qrFile, eventFolderName); // Upload QR image
+        data.qrImage = qrDownloadURL; // Store the QR code image URL
+      }
+
+          data.isGroupEvent = isGroupEvent;
+    if (!isGroupEvent) {
+      data.participantSize = 1; // For individual events, default size is 1
+    }
+    data.isAuditCourse = isAuditCourse;
+      // Create the event
+      console.log("The created data: ",data);
+      
+      const eventResponse = await axios.post(`${baseUrl}/api/event/create`, data);
+      const eventId = eventResponse.data._id; // Get the new event ID
+      // if (eventResponse.status === 201) {
+      //   console.log("Event created successfully", eventResponse.data);
+      //   toast.success("Event created successfully!");
+
+      //   // Update 'eventsorganised' field for coordinators
+      //   await Promise.all([
+      //     addtoOrganisedEvent(`${userId}`, eventId),
+      //   ]);
+
+      //   reset(); // Reset the form fields
+      //   setImagePreview(null); // Reset the image preview
+      //   setUploadedFile(null); // Reset the uploaded file state
+      //   setQRPreview(null); // Reset QR preview
+      //   setUploadedQRFile(null); // Reset uploaded QR file state
+      //   navigate("/"); // Navigate to the home route
+      //   window.location.reload();
+      // }
+    } catch (err) {
+      toast.error("Failed to create event " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Card className="w-full max-w-6xl">
@@ -157,26 +217,22 @@ const formSubmit = async (data) => {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="price">Price</Label>
-              <Input id="price" type="number" placeholder="0.00" {...register("price")} />
+              <Input id="price" type="number" placeholder="0.00" {...register("price", { valueAsNumber: true, min: 0 })} />
             </div>
             <div className="flex flex-col space-y-1.5 sm:col-span-1">
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" placeholder="Describe your event" rows={4} {...register("description")} />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="title">Category</Label>
-              <Input id="category" placeholder="Enter Category" {...register("category")} />
+              <Textarea id="description" placeholder="Describe your event" rows={6} {...register("description")} />
             </div>
             <div className="flex flex-col space-y-1.5 sm:col-span-1">
               <div className="space-y-2">
-                <Label htmlFor="image">Upload Image</Label>
+                <Label htmlFor="image">Upload Event Banner</Label>
                 <div className="flex flex-col items-center space-y-4">
                   <div className="relative w-full">
                     <Input
                       id="image"
                       type="file"
                       className="sr-only"
-                      onChange={handleFileChange} // Only handle file changes here
+                      onChange={(e) => handleFileChange(e, "eventImage")}
                       accept="image/*"
                     />
                     <Label
@@ -193,7 +249,7 @@ const formSubmit = async (data) => {
                         <div className="text-center">
                           <Upload className="mx-auto h-12 w-12 text-gray-400" />
                           <span className="mt-2 block text-sm font-medium text-gray-700">
-                            Upload Image
+                            Upload Event Banner
                           </span>
                         </div>
                       )}
@@ -204,8 +260,8 @@ const formSubmit = async (data) => {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        setImagePreview(null)
-                        setUploadedFile(null)
+                        setImagePreview(null);
+                        setUploadedFile(null);
                       }}
                       className="w-full"
                     >
@@ -215,47 +271,236 @@ const formSubmit = async (data) => {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="coordinator">Coordinator 1</Label>
-              <Select onValueChange={(value) => setValue("coordinator1", value)}>
-                <SelectTrigger id="coordinator1">
-                  <SelectValue placeholder="Select coordinator 1" />
+
+            <div>
+              <hr className="bg-black " />
+              <div className="flex flex-col space-y-1.5 sm:col-span-1 mt-5">
+                <div className="space-y-2">
+                  <Label htmlFor="qrImage" className={"text-xl"}>✔️ Add Payment QR</Label>
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="relative w-full">
+                      <Input
+                        id="qrImage"
+                        type="file"
+                        className="sr-only"
+                        onChange={(e) => handleFileChange(e, "qrImage")}
+                        accept="image/*"
+                      />
+                      <Label
+                        htmlFor="qrImage"
+                        className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors"
+                      >
+                        {qrPreview ? (
+                          <img
+                            src={qrPreview}
+                            alt="QR Preview"
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        ) : (
+                          <div className="text-center">
+                            <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                            <span className="mt-2 block text-sm font-medium text-gray-700">
+                              Upload QR Image
+                            </span>
+                          </div>
+                        )}
+                      </Label>
+                    </div>
+                    {qrPreview && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setQRPreview(null);
+                          setUploadedQRFile(null);
+                        }}
+                        className="w-full"
+                      >
+                        Remove
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+{/* Participation type */}
+            <div className="p-8 flex flex-col gap-5 " >
+              <Label htmlFor="">Participation Type</Label>
+              <div className="flex gap-x-10 " >
+              <RadioGroup 
+              defaultValue={false}
+        onValueChange={(value) => {
+          setisGroupEvent(value)
+          setValue("isGroupEvent",value)
+        }
+
+        }
+              >
+                <div className="flex items-center space-x-2 ">
+                  <RadioGroupItem value={false} id="r1" />
+                  <Label htmlFor="r1">Individual</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value={true} id="r2" />
+                  <Label htmlFor="r1">Group</Label>
+                </div>
+              </RadioGroup>
+            {  isGroupEvent &&  <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="participantSize">Enter Group Size</Label>
+              <Input id="participantSize" required type="number" className={"w-20"} placeholder="2" min={2} {...register("participantSize", {min: 2 })} />
+            </div>}
+              </div>
+            </div>
+
+            <div className="flex flex-col space-y-1.5 font-semibold">
+              <Label htmlFor="organizers">Organizing Committe</Label>
+              <Select onValueChange={(value) => setValue("organizingBranch", value)}>
+                <SelectTrigger id="organizers">
+                  <SelectValue placeholder="Select Committe" />
                 </SelectTrigger>
-                <SelectContent className="bg-white">
-                {adminOptions.map((admin) => (
-                    <SelectItem key={admin._id} value={admin._id}>
-                      {admin.fullname}
-                    </SelectItem>
-                  ))}
-                  {/* <SelectItem value="John Doe">John Doe</SelectItem>
-                  <SelectItem value="Jane Smith">Jane Smith</SelectItem>
-                  <SelectItem value="Bob Johnson">Bob Johnson</SelectItem> */}
+                <SelectContent className="bg-white  font-semibold">
+                  <SelectItem value={"Abhirang"}>
+                    Abhirang
+                  </SelectItem>
+                  <SelectItem value={"Technotsav"}>
+                    Technotsav
+                  </SelectItem>
+                  <SelectItem value={"ACSES"}>
+                    ACSES
+                  </SelectItem>
+                  <SelectItem value={"EESA"}>
+                    EESA
+                  </SelectItem>
+                  <SelectItem value={"MESA"}>
+                    MESA
+                  </SelectItem>
+                  <SelectItem value={"CESA"}>
+                    CESA
+                  </SelectItem>
                 </SelectContent>
               </Select>
+              <div className="flex flex-col space-y-1.5 pt-5">
+              <Label htmlFor="coordinator">Coordinators</Label>
+              <CoordinatorProvider>
+                <CoordinatorSelector setValue={setValue} />
+              </CoordinatorProvider>
             </div>
+            </div>
+
+            <div className="p-8 flex flex-col gap-5" >
+              <Label htmlFor="">Audit Course</Label>
+              <div className="flex gap-x-10" >
+              <RadioGroup 
+              defaultValue={false}
+        onValueChange={(value) => {
+          setisAuditCourse(value)
+          setValue("isAuditCourse", value)
+        }}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value={false} id="a1" />
+                  <Label htmlFor="a1">No</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value={true} id="a2" />
+                  <Label htmlFor="a2">Yes</Label>
+                </div>
+              </RadioGroup>
+              {/* {`Selected : ${isAuditCourse}`} */}
+              </div>
+            </div>
+
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="coordinator">Coordinator 2</Label>
-              <Select onValueChange={(value) => setValue("coordinator2", value)}>
-                <SelectTrigger id="coordinator2">
-                  <SelectValue placeholder="Select coordinator 2" />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                {adminOptions.map((admin) => (
-                    <SelectItem key={admin._id} value={admin._id}>
-                      {admin.fullname}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="category">Category</Label>
+              <CategorySelector setValue={setValue} />
+              {/* <Input id="category" placeholder="Enter Category" {...register("category")} /> */}
             </div>
+            {/* <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="coordinator">Coordinators</Label>
+              <CoordinatorProvider>
+                <CoordinatorSelector setValue={setValue} />
+              </CoordinatorProvider>
+            </div> */}
+
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="venue">Venue</Label>
               <Input id="venue" placeholder="Enter event venue" {...register("venue")} />
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="date">Date</Label>
-              <Input id="date" type="date" {...register("date")} />
+              <Label htmlFor="">Start Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[280px] justify-start text-left font-semibold",
+                      !startDateTime && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {startDateTime ? format(startDateTime, "PPP p") : <span>Pick a date and time</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <DatePicker
+                    selected={startDateTime}
+                    onChange={(date) => {
+                      setStartDateTime(date);
+                      setValue("startDate", date); // Update form value
+                      // Reset end date if it's before or the same as the new start date
+                      if (endDateTime && date >= endDateTime) {
+                        setEndDateTime(null);
+                      }
+                    }}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    minDate={new Date()} // Start time cannot be in the past
+                    inline
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
+
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="">End Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[280px] justify-start text-left font-semibold",
+                      !endDateTime && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {endDateTime ? format(endDateTime, "PPP p") : <span>Pick a date and time</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <DatePicker
+                    selected={endDateTime}
+                    onChange={(date) => {
+                      setEndDateTime(date);
+                      setValue("endDate", date); // Update form value
+                    }}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    minDate={startDateTime || new Date()} // End date cannot be before start date
+                    minTime={startDateTime && endDateTime && startDateTime.toDateString() === endDateTime.toDateString() ? startDateTime : new Date(0, 0, 0, 0, 0, 0, 0)} // Ensure end time is after start time
+                    maxTime={new Date(0, 0, 0, 23, 59, 59, 999)} // Maximum time set to the end of the day
+                    inline
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+
+
           </div>
         </CardContent>
         <CardFooter className="flex justify-end space-x-2">
@@ -263,6 +508,8 @@ const formSubmit = async (data) => {
             reset()
             setImagePreview(null)
             setUploadedFile(null)
+            setQRPreview(null)
+            setUploadedQRFile(null)
             navigate("/")
           }}>Cancel</Button>
           <Button type="submit" className="bg-gray-950 text-white">
