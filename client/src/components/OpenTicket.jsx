@@ -67,7 +67,7 @@ export default function TicketBooking({ isOpen, onClose }) {
         <div className="bg-gray-100 p-3 rounded-xl mb-2">
           <div className="flex items-center justify-between">
             <Label className="text-sm font-medium text-gray-700">Ticket Amount:</Label>
-            <span className="text-lg font-semibold text-gray-800">$3000</span>
+            <span className="text-lg font-semibold text-gray-800">$4000</span>
           </div>
         </div>
 
