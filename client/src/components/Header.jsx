@@ -35,7 +35,7 @@ const Header = () => {
 
         <ul className="lg:flex justify-center items-center flex-row gap-5 font-semibold hidden">
           {/* Show links only when user is logged in */}
-          {userInfo && (
+          {token && (
             <>
               <li>
                 <NavLink
@@ -109,7 +109,7 @@ const Header = () => {
                   <div className="outline-black outline-4">
                     <img
                       className="h-10 rounded-3xl object-cover"
-                      src={userInfo?.image}
+                      src={userInfo?.image || "ProfileImage.jpeg"}
                       alt="profile"
                     />
                   </div>
@@ -120,7 +120,7 @@ const Header = () => {
         </ul>
 
         {/* Hamburger menu for mobile */}
-        {userInfo ? (
+        {token ? (
           <Menu
             onClick={() => dispatch(toggleSidebar())}
             className={`${

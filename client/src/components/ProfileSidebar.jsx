@@ -14,20 +14,22 @@ export default function ProfileSidebar() {
   const sidebar = useSelector((state) => state.nav.sidebar)
   const navigate = useNavigate()
 
+  // Handle user logout and navigation after logout
   const handleLogout = () => {
     dispatch(logout())
     dispatch(toggleSidebar())
     navigate("/")
   }
 
+  // Handle link clicks to navigate to different pages
   const handleLinkClick = (path) => {
     navigate(path)
-    // Toggle sidebar only on small screens
     if (sidebar) {
-      dispatch(toggleSidebar())
+      dispatch(toggleSidebar()) // Close sidebar only on small screens
     }
   }
 
+  // Define navigation items for the sidebar
   const NavItem = ({ icon: Icon, children, path }) => (
     <Button
       variant="ghost"
@@ -40,6 +42,7 @@ export default function ProfileSidebar() {
     </Button>
   )
 
+  // Sidebar content that appears both in the sheet and as a static sidebar
   const SidebarContent = () => (
     <div className="flex h-full flex-col bg-white">
       <Separator />
@@ -69,17 +72,18 @@ export default function ProfileSidebar() {
 
   return (
     <>
+      {/* Sheet for small screens, opening from the right side */}
       <Sheet open={sidebar} onOpenChange={() => dispatch(toggleSidebar())}>
-        <SheetContent side="left" className="w-[300px] sm:w-[400px] p-0 border-r shadow-lg">
+        <SheetContent side="right" className="w-[300px] sm:w-[400px] p-0 border-l shadow-lg">
           <SheetHeader>
-          <SheetTitle ></SheetTitle>
-          <SheetDescription></SheetDescription>
+            <SheetTitle></SheetTitle>
+            <SheetDescription></SheetDescription>
           </SheetHeader>
-          
-
           <SidebarContent />
         </SheetContent>
       </Sheet>
+
+      {/* Static sidebar for larger screens */}
       <aside className="hidden lg:block bg-white w-80 max-h-screen border-r shadow-lg">
         <SidebarContent />
       </aside>
