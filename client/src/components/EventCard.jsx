@@ -4,7 +4,7 @@ import { IndianRupee } from "lucide-react";
 
 function EventCard({ event }) {
   return (
-    <Card className="w-80 sm:w-96 min-h-80 transition-transform duration-300 ease-in-out hover:shadow-lg hover:scale-105 overflow-hidden rounded-xl shadow-md">
+    <Card className="w-96 min-h-80 transition-transform duration-300 ease-in-out hover:shadow-lg hover:scale-105 overflow-hidden rounded-xl shadow-md">
       <CardHeader className="p-0">
         <div className="relative">
           <img
