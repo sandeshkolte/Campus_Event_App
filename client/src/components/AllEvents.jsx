@@ -8,7 +8,7 @@ const AllEvents = () => {
   const events = useSelector((state) => state.event?.events)
   return (
     <div>
-      <ul className='flex flex-wrap gap-8 p-10 w-full justify-center' >
+      <ul className='flex flex-wrap gap-8 mt-5 md:p-10 w-full justify-center' >
         {events.map((event) => (
           <li className='event' key={event._id} >
             <Link to={`/eventdetails/${event._id}`} >

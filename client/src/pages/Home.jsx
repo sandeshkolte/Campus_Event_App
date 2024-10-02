@@ -113,22 +113,22 @@ const Home = () => {
           <div className="absolute inset-y-0 right-0 w-6 md:w-16  bg-gradient-to-l from-white to-transparent pointer-events-none z-10" />
 
           <Marquee speed={30} gradient={false} pauseOnHover={true} className="flex whitespace-nowrap">
-            <div className="mx-1 md:mx-3">
+            <div className="mx-1 md:mx-5">
               <BranchCard title={"CSE"} />
             </div>
-            <div className="mx-1 md:mx-3">
+            <div className="mx-1 md:mx-5">
               <BranchCard title={"Mech"} />
             </div>
-            <div className="mx-1 md:mx-3">
+            <div className="mx-1 md:mx-5">
               <BranchCard title={"ENTC"} />
             </div>
-            <div className="mx-1 md:mx-3">
+            <div className="mx-1 md:mx-5">
               <BranchCard title={"Civil"} />
             </div>
-            <div className="mx-1 md:mx-3">
+            <div className="mx-1 md:mx-5">
               <BranchCard title={"Elec"} />
             </div>
-            <div className="mx-1 md:mx-3">
+            <div className="mx-1 md:mx-5">
               <BranchCard title={"Instru"} />
             </div>
           </Marquee>

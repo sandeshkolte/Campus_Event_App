@@ -16,9 +16,15 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Organizer from "./Organizer";
 import Marquee from "react-fast-marquee";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import TicketBooking from "./OpenTicket";
 
 export default function EventDetails() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const openDialog = () => setIsDialogOpen(true);
+  const closeDialog = () => setIsDialogOpen(false);
+
   const { id } = useParams();
   const events = useSelector((state) => state.event?.events);
   const eventDetails = events.find((event) => event._id === id);
@@ -46,9 +52,10 @@ export default function EventDetails() {
     <Card className="w-80 bg-white/95 backdrop-blur-sm shadow-xl">
       <div className="p-6 space-y-4">
         <EventDateTime />
-        <Button className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors">
+        <Button onClick={openDialog} className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors">
           Book Now (Free)
         </Button>
+      
         <p className="text-sm text-gray-500 text-center">No Refunds</p>
       </div>
     </Card>
@@ -81,6 +88,43 @@ export default function EventDetails() {
     </div>
   );
 
+  const preventDefault = useCallback((e) => {
+    e.preventDefault();
+  }, []);
+
+  useEffect(() => {
+    if (isDialogOpen) {
+      // Store the current scroll position
+      const scrollY = window.scrollY;
+      
+      // Apply styles to prevent scrolling
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      
+      // Prevent touchmove events
+      document.addEventListener('touchmove', preventDefault, { passive: false });
+    } else {
+      // Remove styles and restore scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      
+      // Remove touchmove event listener
+      document.removeEventListener('touchmove', preventDefault);
+    }
+
+    return () => {
+      // Cleanup: ensure scrolling is re-enabled when component unmounts
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.removeEventListener('touchmove', preventDefault);
+    };
+  }, [isDialogOpen, preventDefault]);
+ 
   const interested = [
     "Indonesia Events",
     "Jakarta Events",
@@ -96,6 +140,7 @@ export default function EventDetails() {
   return (
     <div className="min-h-screen bg-white border-1 px-4 md:px-10 lg:px-20 py-8 shadow-lg">
       <header className=""></header>
+      <TicketBooking isOpen={isDialogOpen} onClose={closeDialog} />
       <Card className="w-full overflow-hidden">
         {/* Large and medium screen layout */}
         <div className="hidden md:block relative">
@@ -153,9 +198,10 @@ export default function EventDetails() {
               <Plus className="mr-2 h-4 w-4" /> Add to Calendar
             </Button>
             <div className="flex">
-              <Button className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors">
+              <Button onClick={openDialog} className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors">
                 Book Now (Free)
               </Button>
+              <TicketBooking isOpen={isDialogOpen} onClose={closeDialog} />
             </div>
           </CardContent>
           <CardFooter>
@@ -165,7 +211,7 @@ export default function EventDetails() {
           </CardFooter>
         </div>
       </Card>
-      <main className="max-w-6xl mx-auto py-8 px-5 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <main className="max-w-7xl mx-auto py-8 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
           <section>
             <h3 className="text-2xl font-semibold mb-4">Description</h3>
@@ -197,13 +243,13 @@ export default function EventDetails() {
               <div className="absolute inset-y-0 right-0 w-6 md:w-10  bg-gradient-to-l from-white to-transparent pointer-events-none z-10" />
 
               <Marquee speed={30} gradient={false} pauseOnHover={true}>
-                <div className="mx-1">
+                <div className="mx-2">
                   <Organizer />
                 </div>
-                <div className="mx-1">
+                <div className="mx-2">
                   <Organizer />
                 </div>
-                <div className="mx-1">
+                <div className="mx-2">
                   <Organizer />
                 </div>
               </Marquee>
