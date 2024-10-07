@@ -21,17 +21,17 @@ import { useNavigate } from "react-router-dom"
     const navigate = useNavigate()
 
     const handleLogout = () => {
-        console.log("logout called");
+        // console.log("logout called");
     dispatch(logout())
     navigate('/')
-    window.location.reload();
+    // window.location.reload();
     }
 
     return (
       <div>
         <AlertDialog>
       <AlertDialogTrigger
-       className="absolute top-0 right-0 m-2 opacity-100 group-hover:opacity-0 transition-opacity duration-300 outline outline-1 outline-gray-300 bg-white cursor-default rounded-md px-3 py-2 font-semibold " 
+       className=" " 
        varient="outline" >{title}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

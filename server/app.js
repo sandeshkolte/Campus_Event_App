@@ -1,4 +1,5 @@
 const express = require('express');
+const userModel = require('./models/user')
 const userRouter = require('./routes/userRouter');
 const eventRouter = require('./routes/eventRouter');
 const appLogger = require('./middlewares/appLogger');
@@ -37,6 +38,34 @@ db.on('error', (err) => {
 db.on('disconnected', () => {
   console.log('Mongoose disconnected from MongoDB Atlas');
 });
+
+app.get('/verify-email', async (req, res) => {
+  const { token } = req.query;
+
+  try {
+    // Find the user with the matching token
+    const user = await userModel.findOne({ verificationToken: token, tokenExpiry: { $gt: Date.now() } });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired token.' });
+    }
+
+    // Mark the user as verified
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.tokenExpiry = undefined;
+    
+    await user.save();
+console.log("Email verified successfully");
+
+    res.status(200).json({ message: 'Email verified successfully. You can now log in.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+    console.log("Error: ",error);
+    
+  }
+});
+
 
 app.use('/api/user', userRouter);
 // app.use('/api/admin', adminRouter);

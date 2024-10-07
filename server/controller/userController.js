@@ -1,6 +1,12 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../models/user');
 const { generateToken } = require('../utils/generateToken');
+const crypto = require('crypto');
+const { sendVerificationEmail } = require('../config/email-verification');
+
+const generateVerificationToken = () => {
+    return crypto.randomBytes(32).toString('hex');
+  };
 
 const getUserDetails = async (req, res, next) => {
     try {
@@ -72,17 +78,27 @@ const registerUser = async (req, res, next) => {
             yearOfStudy,
             interests,
             myevents,
-            contact
+            contact,
+            isVerified: false, // Mark as unverified initially
+            verificationToken: generateVerificationToken(),
+            tokenExpiry: Date.now() + 3600000, // 1 hour expiry
         });
+
+        await createdUser.save();
+
+        // Send verification email
+        sendVerificationEmail(createdUser, createdUser.verificationToken);
+    
+        res.status(200).json({ message: 'User registered. Please verify your email.' });
 
         // Generate token and set cookie
-        const token = generateToken(createdUser);
-        res.cookie("token", token);
+        // const token = generateToken(createdUser);
+        // res.cookie("token", token);
 
-        return res.status(201).json({
-            status: "Success",
-            response: { createdUser, token }
-        });
+        // return res.status(201).json({
+        //     status: "Success",
+        //     response: { createdUser, token }
+        // });
     } catch (err) {
         next(err);
     }
@@ -95,6 +111,10 @@ const loginUser = async (req, res, next) => {
         let user = await userModel.findOne({ email });
         if (!user) {
             return res.status(403).json({ status: "Error", response: "Email or Password Incorrect" });
+        }
+
+        if (!user.isVerified) {
+            return res.status(400).json({ status: "Error", response: 'Email not verified' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);

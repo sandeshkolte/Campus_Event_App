@@ -13,10 +13,11 @@ import debounce from "lodash.debounce";
 import axios from "axios";
 import BranchCard from "@/components/event-card";
 import Marquee from "react-fast-marquee";
+import { useSelector } from "react-redux";
 // const AllEvents = React.lazy(() => import('../components/AllEvents'))
 
 const Home = () => {
-  // const events = useSelector((state) => state.event.events)
+  const events = useSelector((state) => state.event?.events)
 
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,10 +37,10 @@ const Home = () => {
   const isAuthenticated = token !== null && token !== "";
   return (
     <div className="min-h-screen relative px-6 md:px-10">
-      <div className="absolute top-[15%] right-[20%] translate-y-[-50%] translate-x-[-50%]">
-        <div className="w-28 h-28 blur-3xl max-sm:bg-transparent bg-purple-500 rounded-3xl"></div>
+      <div className="absolute top-44 right-[20%] translate-y-[-50%] translate-x-[-50%]">
+        <div className="w-28 h-28 blur-3xl max-sm:bg-transparent bg-purple-400 rounded-3xl"></div>
       </div>
-      <div className="absolute top-[20%] left-[20%] translate-y-[-50%] translate-x-[-50%]">
+      <div className="absolute top-56 left-[20%] translate-y-[-50%] translate-x-[-50%]">
         <div className="w-20 h-20 blur-3xl max-sm:bg-transparent bg-violet-500 rounded-3xl"></div>
       </div>
 
@@ -49,7 +50,8 @@ const Home = () => {
             src="https://th.bing.com/th/id/OIP.U_AL86l48sLEcu0k2UhMzgHaHa?rs=1&pid=ImgDetMain"
             height={130}
             width={130}
-            alt=""
+            alt="logo"
+            className="h-20 w-20 md:h-32 md:w-32"
           />
         </div>
         <h1 className="font-bold text-7xl text-center p-5 pt-10">
@@ -138,7 +140,14 @@ const Home = () => {
       {/* <div className='flex flex-wrap gap-16 p-10 w-full justify-center'> */}
       {/* <Suspense fallback={<div>Loading...</div>} > */}
       <h3 className="mt-5 text-2xl font-bold ">Upcoming Events</h3>
-      <AllEvents />
+      { events.length !=0 ?      <AllEvents /> :
+       <div  className="my-5 flex justify-center items-center h-52 border border-gray-300 rounded-xl">
+        <div>
+        <h3 className="font-semibold text-center text-3xl text-gray-800" >No events yet</h3>
+        <h3 className="text-center text-lg text-gray-800 ">come back later!</h3>
+        </div>
+      </div>
+      }
       {/* </Suspense> */}
 
       {/* </div> */}

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { LogOut, User, Ticket, History, Award, Home, ChevronRight } from 'lucide-react'
+import AlertComponent from './alert-dialog'
 
 export default function ProfileSidebar() {
   const dispatch = useDispatch()
@@ -17,7 +18,7 @@ export default function ProfileSidebar() {
   // Handle user logout and navigation after logout
   const handleLogout = () => {
     dispatch(logout())
-    dispatch(toggleSidebar())
+    // dispatch(toggleSidebar())
     navigate("/")
   }
 
@@ -56,16 +57,16 @@ export default function ProfileSidebar() {
         </div>
       </ScrollArea>
       <Separator />
-      <div className="p-4">
-        <Button 
-          variant="destructive" 
-          className="w-full group hover:bg-gray-100 hover:text-blue-500 transition-colors duration-200"
-          onClick={handleLogout}
+      <div className="p-2 ">
+        <div 
+          // variant="destructive" 
+          className="w-full p-2 rounded-md flex items-center group hover:bg-sky-50 hover:text-blue-500 transition-colors duration-200"
+          // onClick={handleLogout}
         >
           <LogOut className="mr-2 h-5 w-5" />
-          <span className="flex-grow text-left">Sign out</span>
+          <AlertComponent title='Sign Out' />
           <ChevronRight className="ml-auto h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-        </Button>
+        </div>
       </div>
     </div>
   )

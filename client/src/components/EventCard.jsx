@@ -1,10 +1,10 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { IndianRupee } from "lucide-react";
+import { IndianRupee, UserRound } from "lucide-react";
 
 function EventCard({ event }) {
   return (
-    <Card className="w-96 min-h-80 transition-transform duration-300 ease-in-out hover:shadow-lg hover:scale-105 overflow-hidden rounded-xl shadow-md">
+    <Card className="w-96 min-h-80 md:transition-transform duration-300 ease-in-out hover:shadow-lg md:hover:scale-105 overflow-hidden rounded-xl shadow-md">
       <CardHeader className="p-0">
         <div className="relative">
           <img
@@ -25,24 +25,24 @@ function EventCard({ event }) {
               </>
             )}
           </div>
-          <div className="absolute top-5 right-5 bg-black text-white rounded-md px-4 py-2 text-sm font-bold shadow-sm">
-            +12 student
+          <div className="absolute flex top-5 right-5 backdrop-blur-sm bg-gray-900 bg-opacity-50 text-white rounded-md text-xs p-2">
+            {event.participants.length}<UserRound className="h-4" />
           </div>
         </div>
       </CardHeader>
       <CardContent className="p-6">
         <div className="flex items-center space-x-3">
           <div className=" font-semibold text-center mr-1">
-            <div className="text-sm text-purple-600 leading-none"> {new Date(event.date).toLocaleString('en-US', {
+            <div className="text-sm text-purple-600 leading-none"> {new Date(event.startDate).toLocaleString('en-US', {
                 month: 'short',
               })}</div>
-            <div className="text-2xl leading-none mt-2 font-bold "> {new Date(event.date).toLocaleString('en-US', {
+            <div className="text-2xl leading-none mt-2 font-bold "> {new Date(event.startDate).toLocaleString('en-US', {
                 day: 'numeric',
               })}</div>
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-600 leading-tight mb-1">{event.title}</h3>
-            <p className="text-sm font-semibold text-gray-400 line-clamp-2 leading-snug">{event.description}</p>
+            <h3 className="text-lg font-bold text-gray-800 leading-tight mb-1">{event.title}</h3>
+            <p className="text-sm text-gray-500 line-clamp-2 leading-snug">{event.description}</p>
           </div>
         </div>
       </CardContent>

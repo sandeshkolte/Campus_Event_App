@@ -37,7 +37,9 @@ export default function LoginForm() {
       setLoading(true)
       try {
         await axios.post(baseUrl + '/api/user/login', data).then((response) => {
-          // if (response.status === 200) {
+          console.log("Response: "+response.status);
+          
+          if (response.status === 200) {
             // toast.success("Product Created Successfully!")
             // console.log(JSON.stringify(response.data.response.user))
             toast.success("User Login Successfully!")
@@ -48,21 +50,36 @@ export default function LoginForm() {
             reset();
             navigate('/')
             window.location.reload();
-          // } else if (response.status === 403) {
-          //   toast.error("Invalid User Details!")
-          // }
+          } else if (response.status === 400) {
+            toast.error("Email not verified.")
+            console.log("Email not verified.")
+          }
           // setProgressPercent(0);
         })
-      } catch (err) {
-        if (axios.isCancel(err)) {
-          console.log("Fetch aborted");
-          toast.error("Fetch aborted");
+      } catch (error) {
+        if (error.response) {
+          const errorMessage = error.response.data.response;
+          
+          // Handle the case where email is not verified
+          if (errorMessage === "Email not verified") {
+            toast.error("Your email is not verified. Please verify your email before logging in.");
+          } else if (errorMessage === "Email or Password Incorrect") {
+            toast.error("Incorrect email or password.");
+          } else {
+            toast.error("An error occurred during login.");
+          }
+        } if (error.response) {
+        const errorMessage = error.response.data.response;
+        
+        // Handle the case where email is not verified
+        if (errorMessage === "Email not verified") {
+          toast.error("Your email is not verified. Please verify your email before logging in.");
+        } else if (errorMessage === "Email or Password Incorrect") {
+          toast.error("Incorrect email or password.");
+        } else {
+          toast.error("An error occurred during login.");
         }
-        else {
-          console.error("Login failed:", err);
-          toast.error("Invalid User Details!")
-          // toast.error("Invalid User Details!")
-        }
+      }
       } finally {
         setLoading(false)
       }

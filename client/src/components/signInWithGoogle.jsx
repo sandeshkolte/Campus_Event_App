@@ -24,7 +24,7 @@ const provider = new GoogleAuthProvider();
 signInWithPopup(auth,provider).then( async (result) =>{
 console.log(result);
 if(result.user){
-    console.log(result.user.displayName.split(' ')[0]);
+    console.log(result.user.displayName);
     try {
       await axios.post(baseUrl + '/api/user/google', { 
         "email" : result.user.email,

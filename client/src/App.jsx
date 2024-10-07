@@ -19,6 +19,8 @@ import MyTickets from './pages/MyEvents'
 import EventsOrganised from './pages/EventsOrganised'
 import EventDetailsPage from './pages/EventDetailsPage'
 import BookingPage from './pages/BookingPage'
+import VerifyEmail from './pages/VerificationPage'
+import PhotoGallery from './pages/PhotoGallery'
 
 const App = () => {
 
@@ -90,6 +92,8 @@ const App = () => {
         <Route path='/' element={<Layout />} >
           <Route path='' element={<Home />} />
           <Route path='/eventdetails/:id' element={<EventDetailsPage />} />
+          <Route path='/verify-email' element={<VerifyEmail />} />
+          <Route path='/gallery' element={<PhotoGallery />} />
 
           {/* Unauthorized Routes */}
           {!isAuthenticated && (
