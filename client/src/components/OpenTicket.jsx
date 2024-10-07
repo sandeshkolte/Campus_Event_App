@@ -2,117 +2,145 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CalendarIcon, MapPinIcon, ClockIcon, UploadIcon } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { QrCode, Upload, Plus, Users, DollarSign, GraduationCap, BookOpen, Phone, CrossIcon, X, CircleX, IndianRupee } from 'lucide-react';
+import { FaClosedCaptioning } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
-export default function TicketBooking({ isOpen, onClose }) {
-  const [paymentScreenshot, setPaymentScreenshot] = useState(null);
-  const qrCodeForPayment = "https://png.pngtree.com/png-clipart/20220729/original/pngtree-qr-code-png-image_8438558.png";
+export default function TicketBooking({ isOpen, onClose,eventDetails }) {
+  const currentUser = useSelector((state)=>state.auth?.userInfo) // Replace with actual username from your state or props
+  const [groupMembers, setGroupMembers] = useState([]);
+  const [searchMember, setSearchMember] = useState('');
+  
+console.log(currentUser);
 
-  const handlePaymentScreenshotUpload = (event) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPaymentScreenshot(reader.result);
-      };
-      reader.readAsDataURL(file);
+  const handleAddMember = () => {
+    if (searchMember && !groupMembers.includes(searchMember)) {
+      setGroupMembers([...groupMembers, searchMember]);
+      setSearchMember('');
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div className="bg-white mx-4 max-w-sm md:max-w-md w-full Sm:mx-auto rounded-xl shadow-lg p-4 relative">
-        {/* Event Title */}
-        <div className="text-xl font-bold text-gray-800 text-center mb-3">
-          Summer Music Festival
-        </div>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-5">
+      <Card className="w-full max-w-2xl md:max-w-4xl mx-auto shadow-xl rounded-2xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r relative from-purple-600 via-pink-500 to-indigo-600 text-white p-3 md:p-6">
+          <CardTitle className="text-2xl md:text-4xl font-bold text-center">{eventDetails?.title}</CardTitle>
+          <CircleX onClick={onClose} className='w-6 h-6 absolute right-4'/>
+        </CardHeader>
+        <CardContent className="p-4 md:p-6 bg-gradient-to-b from-gray-50 to-white">
+          {/* Apply flex-row layout from md (medium) screen */}
+          <div className="flex flex-col md:flex-row md:space-x-6">
+            <div className="flex-1 space-y-2">
+              {/* Display current username */}
+              <div className="space-y-3">
+                <Label className="text-md md:text-xl font-semibold text-gray-800">Welcome,{`${currentUser.firstname} ${currentUser.lastname}`} </Label>
+              </div>
 
-        {/* Event Details */}
-        <div className="space-y-2 bg-gray-100 p-3 rounded-xl mb-3">
-          <div className="flex items-center text-gray-800">
-            <CalendarIcon className="w-5 h-5 mr-2 text-gray-600" />
-            <span className="text-sm font-medium">July 15, 2023</span>
-          </div>
-
-          <div className="flex items-center text-gray-800">
-            <ClockIcon className="w-5 h-5 mr-2 text-gray-600" />
-            <span className="text-sm font-medium">7:00 PM - 11:00 PM</span>
-          </div>
-
-          <div className="flex items-center text-gray-800">
-            <MapPinIcon className="w-5 h-5 mr-2 text-gray-600" />
-            <span className="text-sm font-medium">Central Park, New York City</span>
-          </div>
-        </div>
-
-        {/* QR Code for Payment */}
-        <div className="bg-gray-100 p-3 rounded-xl mb-3">
-          <Label htmlFor="qr-code-display" className="block text-sm font-medium text-gray-700 mb-2">
-            Scan QR Code to Make Payment
-          </Label>
-          <div className="flex items-center justify-center w-full">
-            <div className="relative w-28 h-28 bg-white p-1 rounded-lg shadow-md transition-transform duration-300 hover:scale-105">
-              <img
-                src={qrCodeForPayment}
-                alt="Payment QR Code"
-                className="w-full h-full object-contain"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Ticket Amount */}
-        <div className="bg-gray-100 p-3 rounded-xl mb-2">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-gray-700">Ticket Amount:</Label>
-            <span className="text-lg font-semibold text-gray-800">$5000</span>
-          </div>
-        </div>
-
-        {/* Payment Screenshot Upload */}
-        <div>
-          <Label htmlFor="payment-screenshot" className="block text-sm font-medium text-gray-700 mb-2">
-            Upload Payment Screenshot
-          </Label>
-          <div className="flex items-center justify-center w-full">
-            <label
-              htmlFor="payment-screenshot"
-              className="flex flex-col items-center justify-center w-full h-28 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-100 hover:bg-gray-200 transition duration-300 ease-in-out"
-            >
-              {paymentScreenshot ? (
-                <img src={paymentScreenshot} alt="Payment Screenshot" className="w-full h-full object-contain rounded-xl" />
+              {/* Conditionally render group members input or student information */}
+              {eventDetails?.isGroupEvent ? (
+                <div className="space-y-3">
+                  <Label htmlFor="search-member" className="text-sm md:text-lg font-semibold flex items-center space-x-2 text-gray-700">
+                    <Users className="w-5 h-5" />
+                    <span>Add Group Members</span>
+                  </Label>
+                  <div className="flex space-x-2">
+                    <Input
+                      id="search-member"
+                      placeholder="Enter member name"
+                      value={searchMember}
+                      onChange={(e) => setSearchMember(e.target.value)}
+                      className="flex-grow"
+                    />
+                    <Button type="button" onClick={handleAddMember} variant="secondary" className="bg-purple-500 text-white hover:bg-purple-600">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {groupMembers.map((member, index) => (
+                      <span key={index} className="bg-gradient-to-r from-purple-200 to-pink-200 text-purple-800 px-3 py-1 rounded-full text-xs font-medium">
+                        {member}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               ) : (
-                <div className="flex flex-col items-center justify-center pt-4 pb-5">
-                  <UploadIcon className="w-8 h-8 mb-2 text-gray-600" />
-                  <p className="mb-1 text-sm text-gray-600">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
-                  </p>
-                  <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                <div className="space-y-4 bg-white p-4">
+                  <div className="flex items-center space-x-2 text-sm md:text-xl font-medium text-gray-700">
+                    <GraduationCap className="w-6 h-6 text-purple-600" />
+                    <span>
+                      Year of Study:{" "}
+                      <span className="font-semibold">{currentUser.yearOfStudy || "NA"}</span>
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm md:text-xl font-medium text-gray-700">
+                    <BookOpen className="w-6 h-6 text-purple-600" />
+                    <span>
+                      Branch: <span className="font-semibold">{currentUser.branch || "NA"}</span>
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm md:text-xl font-medium text-gray-700">
+                    <Phone className="w-6 h-6 text-purple-600" />
+                    <span>
+                      Mobile Number:{" "}
+                      <span className="font-semibold">{currentUser.contact || "NA"}</span>
+                    </span>
+                  </div>
                 </div>
               )}
-              <Input
-                id="payment-screenshot"
-                type="file"
-                className="hidden"
-                onChange={handlePaymentScreenshotUpload}
-                accept="image/*"
-              />
-            </label>
-          </div>
-        </div>
 
-        {/* Modal Footer */}
-        <div className="flex justify-end mt-4 space-x-2">
-          <Button className="bg-gray-800 hover:bg-gray-700 text-white" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button className="bg-gray-800 hover:bg-gray-700 text-white" onClick={onClose}>
-            Confirm Payment
-          </Button>
-        </div>
-      </div>
+              {/* Payment screenshot upload - for medium and large screens */}
+              <div className="hidden md:block space-y-3">
+                <Label htmlFor="payment-screenshot-desktop" className="text-md md:text-lg font-semibold flex items-center space-x-2 text-gray-700">
+                  <Upload className="w-5 h-5" />
+                  <span>Upload Payment Screenshot</span>
+                </Label>
+                <div className="mt-1 flex items-center space-x-2">
+                  <Input id="payment-screenshot-desktop" type="file" accept="image/*" className="flex-grow" />
+                  <Button type="button" variant="outline" className="bg-purple-500 text-white hover:bg-purple-600">
+                    Upload
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* QR code, ticket price, and book ticket button */}
+            <div className="md:w-72 space-y-4 mt-6 md:mt-0">
+              <div className="flex flex-col items-center space-y-3 p-4 bg-gradient-to-b from-purple-50 to-indigo-50 rounded-lg shadow-md">
+                <Label className="text-md md:text-lg font-semibold text-gray-800">Scan QR Code for Payment</Label>
+                <div className="sm:w-32 sm:h-32 bg-white shadow-inner flex items-center justify-center rounded-lg">
+                  <img src={eventDetails?.qrImage} alt="" />
+                </div>
+                <div className="text-lg md:text-2xl font-bold text-purple-600 flex items-center">
+                  <IndianRupee className="w-5 h-5 mr-1" />
+                  {eventDetails?.price}
+                </div>
+              </div>
+
+              {/* Payment screenshot upload - for small screens */}
+              <div className="md:hidden space-y-3">
+                <Label htmlFor="payment-screenshot-mobile" className="text-md font-semibold flex items-center space-x-2 text-gray-700">
+                  <Upload className="w-5 h-5" />
+                  <span>Upload Payment Screenshot</span>
+                </Label>
+                <div className="mt-1 flex flex-col space-y-2">
+                  <Input id="payment-screenshot-mobile" type="file" accept="image/*" className="w-full" />
+                  <Button type="button" variant="outline" className="w-full">
+                    Upload
+                  </Button>
+                </div>
+              </div>
+
+              <Button onClick={onClose} className="w-full text-md md:text-lg py-4 md:py-6 bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 hover:from-purple-700 hover:via-pink-600 hover:to-indigo-700 text-white transition-all duration-300 shadow-lg rounded-lg">
+                Book Ticket
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
