@@ -35,7 +35,7 @@ const Home = () => {
   const token = localStorage.getItem("userToken");
   const isAuthenticated = token !== null && token !== "";
   return (
-    <div className="min-h-screen relative px-6 md:px-10">
+    <div className="min-h-screen relative px-4 md:px-10">
       <div className="absolute top-[15%] right-[20%] translate-y-[-50%] translate-x-[-50%]">
         <div className="w-28 h-28 blur-3xl max-sm:bg-transparent bg-purple-500 rounded-3xl"></div>
       </div>
