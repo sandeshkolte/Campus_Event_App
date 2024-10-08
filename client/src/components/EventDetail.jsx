@@ -232,7 +232,7 @@ export default function EventDetails() {
               >
                 Book Now (Free)
               </Button>
-              <TicketBooking isOpen={isDialogOpen} onClose={closeDialog} />
+              <TicketBooking isOpen={isDialogOpen} onClose={closeDialog} eventDetails={eventDetails} />
             </div>
           </CardContent>
           <CardFooter>
