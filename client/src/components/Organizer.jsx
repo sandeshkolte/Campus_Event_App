@@ -11,7 +11,7 @@ export default function Component({organizer}) {
           <AvatarFallback className="text-xl font-bold text-white bg-gradient-to-br from-blue-500 to-indigo-600">AM</AvatarFallback>
         </Avatar>
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-1">{`${organizer.firstname} ${organizer.lastname}`}</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-1">{`${organizer?.firstname} ${organizer?.lastname}`}</h2>
           <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 hover:shadow-lg">
             Event Organizer
           </Badge>
@@ -21,15 +21,15 @@ export default function Component({organizer}) {
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div className="bg-white bg-opacity-70 p-2 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md hover:bg-opacity-90">
             <p className="text-gray-500 text-xs">Year of Study</p>
-            <p className="font-bold text-indigo-700">{organizer.yearOfStudy || "NA"}</p>
+            <p className="font-bold text-indigo-700">{organizer?.yearOfStudy || "NA"}</p>
           </div>
           <div className="bg-white bg-opacity-70 p-2 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md hover:bg-opacity-90">
             <p className="text-gray-500 text-xs">Branch</p>
-            <p className="font-bold text-indigo-700">{organizer.branch || "NA"}</p>
+            <p className="font-bold text-indigo-700">{organizer?.branch || "NA"}</p>
           </div>
           <div className="bg-white bg-opacity-70 col-span-2 p-2 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md hover:bg-opacity-90">
             <p className="text-gray-500 text-xs">Contact Number</p>
-            <p className="font-bold text-indigo-700">{organizer.contact || "NA"}</p>
+            <p className="font-bold text-indigo-700">{organizer?.contact || "NA"}</p>
           </div>
         </div>
       </div>
