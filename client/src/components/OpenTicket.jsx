@@ -30,7 +30,7 @@ console.log(currentUser);
           <CardTitle className="text-2xl md:text-4xl font-bold text-center">{eventDetails?.title}</CardTitle>
           <CircleX onClick={onClose} className='w-6 h-6 absolute right-4'/>
         </CardHeader>
-        <CardContent className="p-4 md:p-6 bg-gradient-to-b from-gray-50 to-white">
+        <CardContent className="px-4 py-2 md:p-6 bg-gradient-to-b from-gray-50 to-white">
           {/* Apply flex-row layout from md (medium) screen */}
           <div className="flex flex-col md:flex-row md:space-x-6">
             <div className="flex-1 space-y-2">
@@ -68,7 +68,7 @@ console.log(currentUser);
                   </div>
                 </div>
               ) : (
-                <div className="space-y-4 bg-white p-4">
+                <div className="space-y-2 md:space-y-4 bg-white p-4">
                   <div className="flex items-center space-x-2 text-sm md:text-xl font-medium text-gray-700">
                     <GraduationCap className="w-6 h-6 text-purple-600" />
                     <span>
@@ -108,10 +108,10 @@ console.log(currentUser);
             </div>
 
             {/* QR code, ticket price, and book ticket button */}
-            <div className="md:w-72 space-y-4 mt-6 md:mt-0">
-              <div className="flex flex-col items-center space-y-3 p-4 bg-gradient-to-b from-purple-50 to-indigo-50 rounded-lg shadow-md">
+            <div className="md:w-72 space-y-2 md:space-y-4 mt-3 md:mt-0">
+              <div className="flex flex-col items-center space-y-3 md:p-4 bg-gradient-to-b from-purple-50 to-indigo-50 rounded-lg shadow-md">
                 <Label className="text-md md:text-lg font-semibold text-gray-800">Scan QR Code for Payment</Label>
-                <div className="sm:w-32 sm:h-32 bg-white shadow-inner flex items-center justify-center rounded-lg">
+                <div className="w-28 h-28 sm:w-32 sm:h-32 bg-white shadow-inner flex items-center justify-center rounded-lg">
                   <img src={eventDetails?.qrImage} alt="" />
                 </div>
                 <div className="text-lg md:text-2xl font-bold text-purple-600 flex items-center">
