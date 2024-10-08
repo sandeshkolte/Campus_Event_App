@@ -36,7 +36,7 @@ console.log(currentUser);
             <div className="flex-1 space-y-2">
               {/* Display current username */}
               <div className="space-y-3">
-                <Label className="text-md md:text-xl font-semibold text-gray-800">Welcome,{`${currentUser.firstname} ${currentUser.lastname}`} </Label>
+                <Label className="text-md md:text-xl font-semibold text-gray-800">Welcome,{`${currentUser?.firstname} ${currentUser?.lastname}`} </Label>
               </div>
 
               {/* Conditionally render group members input or student information */}
@@ -73,20 +73,20 @@ console.log(currentUser);
                     <GraduationCap className="w-6 h-6 text-purple-600" />
                     <span>
                       Year of Study:{" "}
-                      <span className="font-semibold">{currentUser.yearOfStudy || "NA"}</span>
+                      <span className="font-semibold">{currentUser?.yearOfStudy || "NA"}</span>
                     </span>
                   </div>
                   <div className="flex items-center space-x-2 text-sm md:text-xl font-medium text-gray-700">
                     <BookOpen className="w-6 h-6 text-purple-600" />
                     <span>
-                      Branch: <span className="font-semibold">{currentUser.branch || "NA"}</span>
+                      Branch: <span className="font-semibold">{currentUser?.branch || "NA"}</span>
                     </span>
                   </div>
                   <div className="flex items-center space-x-2 text-sm md:text-xl font-medium text-gray-700">
                     <Phone className="w-6 h-6 text-purple-600" />
                     <span>
                       Mobile Number:{" "}
-                      <span className="font-semibold">{currentUser.contact || "NA"}</span>
+                      <span className="font-semibold">{currentUser?.contact || "NA"}</span>
                     </span>
                   </div>
                 </div>

@@ -7,18 +7,20 @@ import {
 } from "@/components/ui/card";
 import { MapPin, Calendar, Clock, Plus, ArrowLeft } from "lucide-react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Organizer from "./Organizer";
 import Marquee from "react-fast-marquee";
 import { useCallback, useEffect, useState } from "react";
 import TicketBooking from "./OpenTicket";
+import { toast } from "react-toastify";
 
 export default function EventDetails() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const user=useSelector((state)=>state.auth?.userInfo)
 
   const openDialog = () => setIsDialogOpen(true);
   const closeDialog = () => setIsDialogOpen(false);
-
+  const navigate=useNavigate()
   const { id } = useParams();
   const events = useSelector((state) => state.event?.events);
   const eventDetails = events.find((event) => event._id === id);
@@ -48,7 +50,7 @@ export default function EventDetails() {
       <div className="p-6 space-y-4">
         <EventDateTime />
         <Button
-          onClick={openDialog}
+          onClick={handleBookNow}
           className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors"
         >
           Book Now (Free)
@@ -152,6 +154,16 @@ export default function EventDetails() {
     }
   }, [eventDetails]);
 
+  const handleBookNow = () => {
+    if (!user) {
+      // If user is not logged in, redirect to the login page
+      toast.error("You Need To Login First")
+    } else {
+      // If user is logged in, open the ticket booking dialog
+      openDialog();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white border-1 px-4 md:px-10 lg:px-20 py-8 shadow-lg">
       <header className=""></header>
@@ -215,7 +227,7 @@ export default function EventDetails() {
             </Button>
             <div className="flex">
               <Button
-                onClick={openDialog}
+                onClick={handleBookNow}
                 className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors"
               >
                 Book Now (Free)
