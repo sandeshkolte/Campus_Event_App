@@ -7,7 +7,7 @@ export default function Component({organizer}) {
     <Card className="max-w-sm bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 rounded-xl overflow-hidden transform transition-all duration-300">
       <div className="flex px-4 pt-4 pb-2 bg-gradient-to-br from-white via-blue-50 to-indigo-100">
         <Avatar className="w-14 h-14 mr-4 rounded-full">
-          <AvatarImage src="https://th.bing.com/th/id/OIP.SsuAjOuhzPAUdg5ndn--wQHaJJ?rs=1&pid=ImgDetMain" alt="Alex Morrison" className="object-cover" />
+          <AvatarImage src="https://images.app.goo.gl/Zf5aFxmDFY3QcNrJ7" alt="Alex Morrison" className="object-cover" />
           <AvatarFallback className="text-xl font-bold text-white bg-gradient-to-br from-blue-500 to-indigo-600">AM</AvatarFallback>
         </Avatar>
         <div>
