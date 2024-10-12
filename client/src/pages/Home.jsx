@@ -9,8 +9,6 @@ import {
 } from "@/components/ui/select";
 // import { motion } from 'framer-motion'
 import AllEvents from "@/components/AllEvents";
-import debounce from "lodash.debounce";
-import axios from "axios";
 import BranchCard from "@/components/event-card";
 import Marquee from "react-fast-marquee";
 import { useSelector } from "react-redux";
@@ -19,19 +17,7 @@ import { useSelector } from "react-redux";
 const Home = () => {
   const events = useSelector((state) => state.event?.events)
 
-  const [query, setQuery] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const fetchSearchResults = debounce(async (searchQuery) => {
-    setLoading(true);
-    try {
-      const response = await axios.get("/api/event/", searchQuery);
-      setResults(response.data.events);
-    } catch (err) {
-      console.error(err);
-    }
-    setLoading(false);
-  }, 300);
 
   const token = localStorage.getItem("userToken");
   const isAuthenticated = token !== null && token !== "";

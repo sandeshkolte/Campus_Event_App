@@ -10,8 +10,6 @@ const Layout = () => {
   // Check if the current route is the profile page
   const isProfilePage = location.pathname === '/profile';
 
-
-
   return (
     <div >
         <Header/>
@@ -23,7 +21,7 @@ const Layout = () => {
         <div className='pt-8'>
         <Outlet/>
         </div>
-        <Footer/>
+        {/* <Footer/> */}
         {/* <NavBar/> */}
     </div>
   )

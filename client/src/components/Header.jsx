@@ -13,11 +13,15 @@ const Header = () => {
   const navigate = useNavigate(); // For redirecting to login page
   const location=useLocation()
   let userId = null;
+  let role = null;
 
   if (token && token.includes(".")) {
     try {
       const decodedToken = jwtDecode(token);
       userId = decodedToken.id;  
+      role = decodedToken.role;
+      console.log(role);
+        
     } catch (error) {
       console.error("Invalid token:", error);
     }
@@ -28,7 +32,7 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 z-50 w-full h-10 backdrop-blur-lg bg-white bg-opacity-30 pr-3">
       <div className="flex justify-between items-center">
-        <h1 className="bg-gradient-to-r md:ml-6 from-purple-400 to-indigo-600 font-bold text-xl text-transparent bg-clip-text">
+        <h1 className="bg-gradient-to-r ml-3 md:ml-6 from-purple-400 to-indigo-600 font-bold text-xl text-transparent bg-clip-text">
           Eventify
         </h1>
 
@@ -59,12 +63,13 @@ const Header = () => {
               </li>
 
               {/* userInfo?.role-based links */}
-              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
+              {(role === "superadmin" || role === "admin") && (
                 <li>
                   <NavLink
                     to="/create"
                     className={({ isActive }) =>
-                      ` ${isActive ? "md:text-black" : "md:text-gray-600"} bg-gray-50 backdrop-blur-md bg-opacity-40 py-1 px-2 text-black md:text-gray-500 md:hover:text-black font-medium border border-gray-400 rounded-md text-sm`
+                      `bg-gray-50 backdrop-blur-md bg-opacity-40 py-1 px-2 text-sm font-medium border border-gray-400 rounded-md 
+                       ${isActive ? "text-black" : "md:text-gray-600 md:hover:text-black"}`
                     }
                   >
                     Create Event
@@ -72,15 +77,15 @@ const Header = () => {
                 </li>
               )}
 
-              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
+              {(role === "superadmin" || role === "admin") && (
                 <li>
                   <NavLink
-                    to="/organised"
+                    to="/organized"
                     className={({ isActive }) =>
                       ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
                     }
                   >
-                    Events Organised
+                    Events Organized
                   </NavLink>
                 </li>
               ) || ( <li>

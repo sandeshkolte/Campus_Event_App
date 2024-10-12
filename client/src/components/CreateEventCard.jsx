@@ -36,10 +36,10 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage"
 import { VscLoading } from "react-icons/vsc"
 import { CalendarIcon, Upload } from "lucide-react"
 import CategorySelector from "./CategorySelector"
-import { CoordinatorSelector } from "./CoordinatorSelector"
 import { CoordinatorProvider } from "@/hooks/useCoordinator"
 import { jwtDecode } from "jwt-decode"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import CoordinatorSelector from "./CoordinatorSelector"
 
 export default function Component() {
   const { register, handleSubmit, reset, setValue } = useForm()
@@ -53,6 +53,20 @@ export default function Component() {
   const [endDateTime, setEndDateTime] = React.useState(null)
   const [isGroupEvent, setisGroupEvent] = React.useState(false)
   const [isAuditCourse, setisAuditCourse] = React.useState(false)
+
+  // const [query, setQuery] = useState("");
+  const [userLoading, setUserLoading] = React.useState(false);
+
+  // const fetchSearchResults = debounce(async (searchQuery) => {
+  //   setUserLoading(true);
+  //   try {
+  //     const response = await axios.get( baseUrl+ "/api/user/userrole/?role=user,admin", searchQuery);
+  //     setResults(response.data.events);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  //   setUserLoading(false);
+  // }, 300);
 
   const handleImageUpload = (file, folderName) => {
     return new Promise((resolve, reject) => {

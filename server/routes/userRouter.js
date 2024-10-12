@@ -1,7 +1,8 @@
 const express = require('express')
-const {registerUser,loginUser, getUserDetails, getUserByRole, 
+const {registerUser,loginUser, getUserDetails,  
     userUpdate, updateUserRole, addOrganisedEvent, deleteUser,
     googleLogin,
+    getUsersByName,
     // addMyEvent
 } 
     = require('../controller/userController')
@@ -14,7 +15,7 @@ router.post('/register',checkTokenExpiry,registerUser)
 router.post('/login', loginUser)
 router.post('/google', googleLogin)
 router.post('/getuser', getUserDetails)
-router.get('/userrole', getUserByRole)
+router.post('/getallusers', getUsersByName)
 router.post('/update/:id', userUpdate)
 router.post('/delete', deleteUser)
 router.post("/updateRole", updateUserRole);

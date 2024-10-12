@@ -24,12 +24,26 @@ const getUserDetails = async (req, res, next) => {
     }
 };
 
-const getUserByRole = async (req, res, next) => {
+const getUsersByName = async (req, res, next) => {
     try {
-        const { role } = req.query;
-        const roles = role ? role.split(',') : [];
+        const { search } = req.body;
 
-        const users = await userModel.find({ role: { $in: roles } });
+        // Create a query object to filter users by role
+        let query = {
+            role: { $in: ['admin', 'user'] }  // Only fetch users with roles "admin" or "user"
+        };
+
+        // If search parameter is present, look for users by first name or last name
+        if (search) {
+            query.$or = [
+                { firstname: { $regex: search, $options: 'i' } },  // Case-insensitive search by first name
+                { lastname: { $regex: search, $options: 'i' } },   // Case-insensitive search by last name
+                { email: { $regex: search, $options: 'i' } }        // Optional: Case-insensitive search by email
+            ];
+        }
+
+        // Find users based on the constructed query
+        const users = await userModel.find(query);
 
         if (users.length === 0) {
             return res.status(404).json({ status: "Error", response: "No users found" });
@@ -43,6 +57,7 @@ const getUserByRole = async (req, res, next) => {
         next(err);
     }
 };
+
 
 const registerUser = async (req, res, next) => {
     try {
@@ -279,4 +294,4 @@ const deleteUser = async (req, res) => {
 };
 
 
-module.exports = {getUserByRole,getUserDetails,registerUser,loginUser,googleLogin,updateUserRole,userUpdate,addOrganisedEvent,deleteUser}
+module.exports = {getUsersByName,getUserDetails,registerUser,loginUser,googleLogin,updateUserRole,userUpdate,addOrganisedEvent,deleteUser}
