@@ -18,7 +18,7 @@ const Layout = () => {
           <ProfileSidebar />
         </div>
       )}
-        <div className='pt-8'>
+        <div className='pt-10'>
         <Outlet/>
         </div>
         {/* <Footer/> */}

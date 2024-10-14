@@ -193,21 +193,21 @@ export default function Component() {
       const eventResponse = await axios.post(`${baseUrl}/api/event/create`, data);
       const eventId = eventResponse.data._id; // Get the new event ID
       // if (eventResponse.status === 201) {
-      //   console.log("Event created successfully", eventResponse.data);
-      //   toast.success("Event created successfully!");
+        console.log("Event created successfully", eventResponse.data);
+        toast.success("Event created successfully!");
 
-      //   // Update 'eventsorganised' field for coordinators
-      //   await Promise.all([
-      //     addtoOrganisedEvent(`${userId}`, eventId),
-      //   ]);
+        // Update 'eventsorganised' field for coordinators
+        await Promise.all([
+          addtoOrganisedEvent(`${userId}`, eventId),
+        ]);
 
-      //   reset(); // Reset the form fields
-      //   setImagePreview(null); // Reset the image preview
-      //   setUploadedFile(null); // Reset the uploaded file state
-      //   setQRPreview(null); // Reset QR preview
-      //   setUploadedQRFile(null); // Reset uploaded QR file state
-      //   navigate("/"); // Navigate to the home route
-      //   window.location.reload();
+        reset(); // Reset the form fields
+        setImagePreview(null); // Reset the image preview
+        setUploadedFile(null); // Reset the uploaded file state
+        setQRPreview(null); // Reset QR preview
+        setUploadedQRFile(null); // Reset uploaded QR file state
+        navigate("/"); // Navigate to the home route
+        window.location.reload();
       // }
     } catch (err) {
       toast.error("Failed to create event " + err.message);

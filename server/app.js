@@ -2,6 +2,7 @@ const express = require('express');
 const userModel = require('./models/user')
 const userRouter = require('./routes/userRouter');
 const eventRouter = require('./routes/eventRouter');
+const galleryRouter = require('./routes/galleryRouter');
 const appLogger = require('./middlewares/appLogger');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -70,6 +71,7 @@ console.log("Email verified successfully");
 app.use('/api/user', userRouter);
 // app.use('/api/admin', adminRouter);
 app.use('/api/event', eventRouter);
+app.use('/api/gallery', galleryRouter);
 
 app.listen(PORT,"0.0.0.0", () => {
   console.log(`Server started on port ${PORT}`);

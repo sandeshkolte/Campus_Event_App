@@ -28,7 +28,7 @@ const createEvent = async (req, res) => {
         venue,
       } = req.body;
   
-      eventModel.create({
+     await eventModel.create({
         title,
         description,
         image,

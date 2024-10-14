@@ -30,7 +30,7 @@ const Header = () => {
   // useFetchUserDetails(userId);
 
   return (
-    <header className="fixed top-0 left-0 z-50 w-full h-10 backdrop-blur-lg bg-white bg-opacity-30 pr-3">
+    <header className="fixed top-0 left-0 z-50 w-full h-15 backdrop-blur-lg bg-white bg-opacity-30 pr-5 py-2">
       <div className="flex justify-between items-center">
         <h1 className="bg-gradient-to-r ml-3 md:ml-6 from-purple-400 to-indigo-600 font-bold text-xl text-transparent bg-clip-text">
           Eventify
@@ -140,7 +140,7 @@ const Header = () => {
             </NavLink>
             {location.pathname !== "/login" && (
               <Link to={"/login"}
-                className="bg-gray-50 py-1 px-2 text-black md:text-gray-500 md:hover:text-black font-medium border border-gray-400 rounded-md text-sm"
+                className="bg-gray-950 py-1 px-2 text-white md:hover:text-white rounded-md text-sm"
               >
                 Log In
               </Link>
