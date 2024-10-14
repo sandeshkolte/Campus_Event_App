@@ -1,17 +1,21 @@
 const express = require('express')
-const {registerUser,loginUser, getUserDetails, getUserByRole, 
+const {registerUser,loginUser, getUserDetails,  
     userUpdate, updateUserRole, addOrganisedEvent, deleteUser,
+    googleLogin,
+    getUsersByName,
     // addMyEvent
 } 
     = require('../controller/userController')
 
-const upload = require('../config/multer-config')
+// const upload = require('../config/multer-config')
+const checkTokenExpiry = require('../middlewares/check-token-expiry')
 const router = express.Router()
 
-router.post('/register',upload.single("image"),registerUser)
+router.post('/register',checkTokenExpiry,registerUser)
 router.post('/login', loginUser)
+router.post('/google', googleLogin)
 router.post('/getuser', getUserDetails)
-router.get('/userrole', getUserByRole)
+router.post('/getallusers', getUsersByName)
 router.post('/update/:id', userUpdate)
 router.post('/delete', deleteUser)
 router.post("/updateRole", updateUserRole);

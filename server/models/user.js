@@ -55,6 +55,16 @@ contact: {
     default:"",
     // unique:true
 },
+isVerified: {
+    type: Boolean,
+    default: false, // New field to track email verification status
+  },
+  verificationToken: {
+    type: String, // New field for email verification token
+  },
+  tokenExpiry: {
+    type: Date, // New field for token expiration time
+  },
 }, 
 {
     timestamps: true 

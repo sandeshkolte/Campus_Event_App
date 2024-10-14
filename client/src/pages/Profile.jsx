@@ -73,7 +73,6 @@ export default function Profile() {
   const user = useSelector((state) => state.auth?.userInfo);
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [profileImage, setProfileImage] = useState(
-    user?.image ||
       "https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg"
   );
   const fileInputRef = useRef(null);
@@ -104,6 +103,7 @@ export default function Profile() {
         contact: user.contact || "90759******",
       });
       setSelectedFilters(user.interests || []);
+     setProfileImage(user.image)
     }
   }, [user]);
 

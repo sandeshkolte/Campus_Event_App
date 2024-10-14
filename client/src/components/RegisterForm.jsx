@@ -36,21 +36,19 @@ export default function RegisterForm() {
     setLoading(true)
     try {
       await axios.post(baseUrl + '/api/user/register', data).then((response) => {
-        // if(response.status === 200) {
-        // toast.success("Product Created Successfully!")
         console.log(JSON.stringify(data))
-        toast.success("User Registered Successfully!")
-        const { token } = response.data.response
-        // const {fullname, email } = response.data.response.createdUser;
-        localStorage.setItem('userToken', token)
-        dispatch(login(response.data.response.createdUser))
+        // toast.success("User Registered Successfully!")
+        // const { token } = response.data.response
+        // localStorage.setItem('userToken', token)
+        // dispatch(login(response.data.response.createdUser))
+        // reset();
+        // navigate('/')
+        // window.location.reload();
+
+        toast.success("User Registered Successfully! Please verify your email.");
         reset();
-        navigate('/')
-        window.location.reload();
-        // }else if(response.status===403) {
-        //   toast.error("User Already Exist !")
-        // }
-        // setProgressPercent(0);
+        navigate('/login');
+
       })
     } catch (err) {
       if (axios.isCancel(err)) {

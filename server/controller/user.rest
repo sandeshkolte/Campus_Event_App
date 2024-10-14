@@ -1,0 +1,8 @@
+POST http://localhost:3000/api/user/google
+
+{ 
+    "email" :"sandeshgoogle@login.in",
+    "firstname" : "Sandesh",
+    "lastname" : "Kolte",
+    "photoURL":"https://lh3.googleusercontent.com/a/ACg8ocKezzINNj9ZK6CD278B0Y90EfdTmOCw-Kby4yG94SyXVAnPWH86=s96-c"
+}

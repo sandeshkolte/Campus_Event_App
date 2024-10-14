@@ -27,7 +27,7 @@ export default function EventDetails() {
   const [organizerAndCoordinator, setOrganizerAndCoordinator] = useState([]);
 
   const imageUrl = eventDetails?.image;
-  console.log("all events :", events);
+  // console.log("all events :", events);
 
   const EventDetails = () => (
     <div className="space-y-6 max-w-2xl">

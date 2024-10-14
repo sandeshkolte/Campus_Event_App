@@ -34,11 +34,11 @@ function EventCard({ event }) {
               )}
             </div>
             <motion.div
-              className="absolute top-4 right-4 bg-purple-600 text-white rounded-full px-4 py-2 text-sm font-bold shadow-md flex items-center"
+              className="absolute top-4 right-4 backdrop-blur-md bg-opacity-50 bg-purple-600 text-white rounded-full px-4 py-2 text-sm font-bold shadow-md flex items-center"
               whileHover={{ scale: 1.05 }}
             >
               <Users className="w-4 h-4 mr-1" />
-              <span>+12 students</span>
+              <span>{event.participants.length}</span>
             </motion.div>
           </div>
         </CardHeader>

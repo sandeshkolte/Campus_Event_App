@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const EventsOrganised = () => {
+const EventsOrganized = () => {
   return (
     <div className='mt-5'>
      <div className='h-20 bg-indigo-50 w-full flex items-center justify-center sm:justify-between md:px-32' >
@@ -24,4 +24,4 @@ const EventsOrganised = () => {
   )
 }
 
-export default EventsOrganised
+export default EventsOrganized

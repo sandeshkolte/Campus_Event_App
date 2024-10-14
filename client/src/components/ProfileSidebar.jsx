@@ -1,29 +1,27 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { logout } from '@/store/authSlice'
 import { toggleSidebar } from '@/store/navSlice'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { LogOut, User, Ticket, History, Award, Home, ChevronRight } from 'lucide-react'
+import { LogOut, User, Ticket, History, Award, Home, ChevronRight, PenBox, StarIcon } from 'lucide-react'
+import AlertComponent from './alert-dialog'
+import { FcPhotoReel } from 'react-icons/fc'
+import { TbPhoto } from 'react-icons/tb'
 
 export default function ProfileSidebar() {
   const dispatch = useDispatch()
   const sidebar = useSelector((state) => state.nav.sidebar)
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
+  const userInfo = useSelector((state) => state.auth?.userInfo);
 
-  // Handle user logout and navigation after logout
-  const handleLogout = () => {
-    dispatch(logout())
-    dispatch(toggleSidebar())
-    navigate("/")
-  }
 
   // Handle link clicks to navigate to different pages
-  const handleLinkClick = (path) => {
-    navigate(path)
+  const handleLinkClick = () => {
+    // navigate(path)
     if (sidebar) {
       dispatch(toggleSidebar()) // Close sidebar only on small screens
     }
@@ -31,15 +29,18 @@ export default function ProfileSidebar() {
 
   // Define navigation items for the sidebar
   const NavItem = ({ icon: Icon, children, path }) => (
-    <Button
-      variant="ghost"
-      className="w-full justify-start text-gray-700 hover:text-blue-500 hover:bg-blue-50 transition-colors duration-200"
-      onClick={() => handleLinkClick(path)}
+    <NavLink
+      // variant="ghost"
+       className={({ isActive }) =>` ${isActive ? "text-blue-500 bg-blue-50":"" }  w-full justify-start text-gray-700 hover:text-blue-500 hover:bg-blue-50 transition-colors duration-200`}
+      onClick={() => handleLinkClick()}
+      to={path}
     >
+      <div className='flex py-2' >
       <Icon className="mr-2 h-5 w-5" />
       <span className="flex-grow text-left">{children}</span>
       <ChevronRight className="ml-auto h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-    </Button>
+      </div>
+    </NavLink>
   )
 
   // Sidebar content that appears both in the sheet and as a static sidebar
@@ -49,6 +50,13 @@ export default function ProfileSidebar() {
       <ScrollArea className="flex-1">
         <div className="space-y-1 p-4">
           <NavItem icon={User} path="/profile">User Profile</NavItem>
+          {(userInfo?.role === "admin" || userInfo?.role==="superadmin") && (
+            <>
+          <NavItem icon={PenBox} path="/create">Create Event</NavItem>
+          <NavItem icon={TbPhoto} path="/gallery">Photo Gallery</NavItem>
+          <NavItem icon={StarIcon} path="/organized">Events Organised</NavItem>
+            </>
+          ) }
           <NavItem icon={Ticket} path="/mytickets">My Tickets</NavItem>
           <NavItem icon={History} path="/">History</NavItem>
           <NavItem icon={Award} path="/">Certificate</NavItem>
@@ -56,16 +64,16 @@ export default function ProfileSidebar() {
         </div>
       </ScrollArea>
       <Separator />
-      <div className="p-4">
-        <Button 
-          variant="destructive" 
-          className="w-full group hover:bg-gray-100 hover:text-blue-500 transition-colors duration-200"
-          onClick={handleLogout}
+      <div className="p-2 ">
+        <div 
+          // variant="destructive" 
+          className="w-full p-2 rounded-md flex items-center group hover:bg-sky-50 hover:text-blue-500 transition-colors duration-200"
+          // onClick={handleLogout}
         >
           <LogOut className="mr-2 h-5 w-5" />
-          <span className="flex-grow text-left">Sign out</span>
+          <AlertComponent title='Sign Out' />
           <ChevronRight className="ml-auto h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-        </Button>
+        </div>
       </div>
     </div>
   )

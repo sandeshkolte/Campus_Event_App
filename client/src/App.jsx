@@ -13,12 +13,13 @@ import { baseUrl } from './common/common'
 import { useDispatch } from 'react-redux'
 import { login } from './store/authSlice'
 import { allEvents } from './store/eventSlice'
-import EventDetail from './components/EventDetail'
 import { toast } from 'react-toastify'
 import MyTickets from './pages/MyEvents'
-import EventsOrganised from './pages/EventsOrganised'
 import EventDetailsPage from './pages/EventDetailsPage'
 import BookingPage from './pages/BookingPage'
+import VerifyEmail from './pages/VerificationPage'
+import PhotoGallery from './pages/PhotoGallery'
+import EventsOrganized from './pages/EventsOrganized'
 
 const App = () => {
 
@@ -90,6 +91,8 @@ const App = () => {
         <Route path='/' element={<Layout />} >
           <Route path='' element={<Home />} />
           <Route path='/eventdetails/:id' element={<EventDetailsPage />} />
+          <Route path='/verify-email' element={<VerifyEmail />} />
+          <Route path='/gallery' element={<PhotoGallery />} />
 
           {/* Unauthorized Routes */}
           {!isAuthenticated && (
@@ -109,7 +112,7 @@ const App = () => {
 {(role==="admin"||"superadmin") && (
 <>
 <Route path='/create' element={<CreateEvent />} />
-<Route path='/organised' element={<EventsOrganised />} />
+<Route path='/organized' element={<EventsOrganized />} />
 </>
 ) 
 }

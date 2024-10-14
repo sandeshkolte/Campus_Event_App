@@ -1,10 +1,9 @@
-import React from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Menu } from "lucide-react";
 import { toggleSidebar } from "@/store/navSlice";
 import { jwtDecode } from "jwt-decode";
-import useFetchUserDetails from "@/hooks/useFetchUserDetails";
 
 const Header = () => {
   const token = localStorage.getItem("userToken");
@@ -14,27 +13,26 @@ const Header = () => {
   const navigate = useNavigate(); // For redirecting to login page
   const location=useLocation()
   let userId = null;
+  let role = null;
 
   if (token && token.includes(".")) {
     try {
       const decodedToken = jwtDecode(token);
-      userId = decodedToken._id; // Assuming you have userId in the token
+      userId = decodedToken.id;  
+      role = decodedToken.role;
+      console.log(role);
+        
     } catch (error) {
       console.error("Invalid token:", error);
     }
   }
 
-  useFetchUserDetails(userId);
-
-  // Redirect to login page
-  const handleLoginRedirect = () => {
-    navigate("/login");
-  };
+  // useFetchUserDetails(userId);
 
   return (
-    <header className="fixed top-0 left-0 z-50 w-full bg-white p-5 md:shadow-lg md:shadow-purple-200">
+    <header className="fixed top-0 left-0 z-50 w-full h-10 backdrop-blur-lg bg-white bg-opacity-30 pr-3">
       <div className="flex justify-between items-center">
-        <h1 className="bg-gradient-to-r md:ml-6 from-purple-400 to-indigo-600 font-bold text-xl text-transparent bg-clip-text">
+        <h1 className="bg-gradient-to-r ml-3 md:ml-6 from-purple-400 to-indigo-600 font-bold text-xl text-transparent bg-clip-text">
           Eventify
         </h1>
 
@@ -46,7 +44,7 @@ const Header = () => {
                 <NavLink
                   to="/"
                   className={({ isActive }) =>
-                    `${isActive ? "text-black underline" : "text-black"}`
+                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
                   }
                 >
                   Home
@@ -55,20 +53,9 @@ const Header = () => {
 
               <li>
                 <NavLink
-                  to="/mytickets"
+                  to="/gallery"
                   className={({ isActive }) =>
-                    `${isActive ? "text-black underline" : "text-black"}`
-                  }
-                >
-                  My Tickets
-                </NavLink>
-              </li>
-
-              <li>
-                <NavLink
-                  to="/"
-                  className={({ isActive }) =>
-                    `${isActive ? "text-black underline" : "text-black"}`
+                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
                   }
                 >
                   Photo Gallery
@@ -76,33 +63,41 @@ const Header = () => {
               </li>
 
               {/* userInfo?.role-based links */}
-              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
+              {(role === "superadmin" || role === "admin") && (
                 <li>
                   <NavLink
                     to="/create"
                     className={({ isActive }) =>
-                      `${isActive ? "text-black underline" : "text-black"}`
+                      `bg-gray-50 backdrop-blur-md bg-opacity-40 py-1 px-2 text-sm font-medium border border-gray-400 rounded-md 
+                       ${isActive ? "text-black" : "md:text-gray-600 md:hover:text-black"}`
                     }
                   >
-                    <div className="bg-gray-950 text rounded-md py-1 text-white px-2">
-                      <h3 className="text-sm">Create Event</h3>
-                    </div>
+                    Create Event
                   </NavLink>
                 </li>
               )}
 
-              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
+              {(role === "superadmin" || role === "admin") && (
                 <li>
                   <NavLink
-                    to="/organised"
+                    to="/organized"
                     className={({ isActive }) =>
-                      `${isActive ? "text-black underline" : "text-black"}`
+                      ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
                     }
                   >
-                    Events Organised
+                    Events Organized
                   </NavLink>
                 </li>
-              )}
+              ) || ( <li>
+                <NavLink
+                  to="/mytickets"
+                  className={({ isActive }) =>
+                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
+                  }
+                >
+                  My Tickets
+                </NavLink>
+              </li>) }
 
               <li>
                 <NavLink
@@ -130,26 +125,25 @@ const Header = () => {
             onClick={() => dispatch(toggleSidebar())}
             className={`${
               sidebar === true ? "hidden" : "block lg:hidden"
-            } text-3xl absolute top-5 right-5`}
+            } text-3xl absolute top-2 right-2`}
           />
         ) : (
           // Show login button on small screens when no user is logged in
-          <div className="flex items-center gap-4 lg:mr-5">
+          <div className="flex items-center py-1 gap-4 mr-5 text-center">
             <NavLink
               to="/"
               className={({ isActive }) =>
-                `hover:underline ${isActive ? "text-black underline" : "text-black"}`
+                ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
               }
             >
               Home
             </NavLink>
             {location.pathname !== "/login" && (
-              <button
-                onClick={handleLoginRedirect}
-                className="bg-gray-950 text-white px-2 py-1 md:px-4 md:py-2 rounded-md hover:bg-purple-700 transition-colors"
+              <Link to={"/login"}
+                className="bg-gray-50 py-1 px-2 text-black md:text-gray-500 md:hover:text-black font-medium border border-gray-400 rounded-md text-sm"
               >
                 Log In
-              </button>
+              </Link>
             )}
           </div>
         )}
