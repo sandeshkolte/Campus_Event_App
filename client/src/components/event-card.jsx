@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { CalendarIcon } from "lucide-react"
+import { Link } from 'react-router-dom';
 
 export default function BranchCard({title}) {
   return (
@@ -29,10 +30,12 @@ export default function BranchCard({title}) {
         <p className="text-sm text-muted-foreground">Bringing innovation and collaboration to life—organized by the ACSES Committee.</p>
       </CardContent>
       <CardFooter>
+      <Link to='/committeepage'>
         <Button className="w-full bg-gray-950 text-white" >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          Show Events
+          Show Details 
         </Button>
+        </Link>
       </CardFooter>
     </Card>
   )

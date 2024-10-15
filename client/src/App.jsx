@@ -20,6 +20,7 @@ import BookingPage from './pages/BookingPage'
 import VerifyEmail from './pages/VerificationPage'
 import PhotoGallery from './pages/PhotoGallery'
 import EventsOrganized from './pages/EventsOrganized'
+import CSECommittee from './pages/CommitteePage'
 
 const App = () => {
 
@@ -93,6 +94,7 @@ const App = () => {
           <Route path='/eventdetails/:id' element={<EventDetailsPage />} />
           <Route path='/verify-email' element={<VerifyEmail />} />
           <Route path='/gallery' element={<PhotoGallery />} />
+          <Route path='/committeepage' element={<CSECommittee/>}/>
 
           {/* Unauthorized Routes */}
           {!isAuthenticated && (
