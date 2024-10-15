@@ -202,7 +202,7 @@ const toggleSecurityChange=()=>{
 }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-fit bg-gray-100">
+    <div className="flex flex-col lg:mt-10 lg:flex-row min-h-fit bg-gray-100">
       {/* Sidebar */}
       <ProfileSidebar />
       {/* Main content */}
