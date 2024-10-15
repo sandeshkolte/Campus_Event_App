@@ -9,9 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { ChevronDown, ChevronUp } from "lucide-react"
 
 const predefinedCategories = [
-  "Technology", "Health", "Finance", "Education", "Entertainment",
-  "Sports", "Travel", "Food", "Fashion", "Art", "Music", "Science",
-  "Politics", "Environment", "Literature"
+  "Technology", "Health", "Sports", "Cultural",
 ]
 
 export default function CategorySelector({setValue}) {

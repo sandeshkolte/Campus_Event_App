@@ -140,17 +140,20 @@ userInfo?.role === "admin" &&
           photos.map((photo) => (
             <div key={photo._id} className="photo-item relative">
               <img 
-                src={photo.imageUrl.replace('/upload/', '/upload/w_150,h_150,c_fill/')} 
+                src={photo.imageUrl.replace('/upload/', '/upload/w_300/')} 
                 alt={photo.imageName} 
                 className='cursor-pointer'
                 onClick={() => setSelectedImage(photo.imageUrl)} // Open modal with original image
               />
+              {
+                userInfo?.role === "admin" &&
               <button 
               className='absolute bottom-2 left-2 text-red-700 bg-white text-xl' 
               onClick={(e) =>deleteImage(photo.imageName)}
             >
               <AiFillDelete />
             </button>
+              }
             </div>
           ))
         ) : (
