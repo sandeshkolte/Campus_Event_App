@@ -73,8 +73,32 @@ const registerUser = async (req, res, next) => {
             contact
         } = req.body;
 
+        // Check if required fields are present
+        if (!firstname || !lastname || !email || !password) {
+            return res.status(400).json({ status: "Error", response: "All fields are required" });
+        }
+
         // Check if user exists
         let user = await userModel.findOne({ email });
+        
+        // If the user exists and is not verified
+        if (user && !user.isVerified) {
+            // Check if the verification token has expired
+            if (Date.now() > user.tokenExpiry) {
+                // Generate a new token and send a new verification email
+                user.verificationToken = generateVerificationToken();
+                user.tokenExpiry = Date.now() + 3600000; // 1 hour expiry
+                await user.save();
+                
+                // Resend the verification email
+                sendVerificationEmail(user, user.verificationToken);
+                return res.status(200).json({ status: "Success", response: "A new verification email has been sent" });
+            } else {
+                return res.status(400).json({ status: "Error", response: "Please check your email for the verification link" });
+            }
+        }
+
+        // If the user is already verified
         if (user) {
             return res.status(403).json({ status: "Error", response: "User already exists" });
         }
@@ -84,7 +108,6 @@ const registerUser = async (req, res, next) => {
 
         // Create new user
         let createdUser = await userModel.create({
-
             firstname,
             lastname,
             email,
@@ -104,20 +127,14 @@ const registerUser = async (req, res, next) => {
         // Send verification email
         sendVerificationEmail(createdUser, createdUser.verificationToken);
     
-        res.status(200).json({ message: 'User registered. Please verify your email.' });
-
-        // Generate token and set cookie
-        // const token = generateToken(createdUser);
-        // res.cookie("token", token);
-
-        // return res.status(201).json({
-        //     status: "Success",
-        //     response: { createdUser, token }
-        // });
+        res.status(200).json({ status: "Success", response: 'User registered. Please verify your email.' });
     } catch (err) {
-        next(err);
+        console.error(err);
+        return res.status(500).json({ status: "Error", response: "An internal server error occurred" });
     }
 };
+
+
 
 const loginUser = async (req, res, next) => {
     try {
@@ -129,6 +146,17 @@ const loginUser = async (req, res, next) => {
         }
 
         if (!user.isVerified) {
+            // Check if the verification token has expired
+            if (Date.now() > user.tokenExpiry) {
+                // Generate a new token and send a new verification email
+                user.verificationToken = generateVerificationToken();
+                user.tokenExpiry = Date.now() + 3600000; // 1 hour expiry
+                await user.save();
+                
+                sendVerificationEmail(user, user.verificationToken);
+                return res.status(400).json({ status: "Error", response: "Verification token expired. A new verification email has been sent" });
+            }
+
             return res.status(400).json({ status: "Error", response: 'Email not verified' });
         }
 
@@ -149,6 +177,30 @@ const loginUser = async (req, res, next) => {
     }
 };
 
+const resendVerificationEmail = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ status: "Error", response: "User not found" });
+        }
+
+        if (user.isVerified) {
+            return res.status(400).json({ status: "Error", response: "User is already verified" });
+        }
+
+        // Generate a new token and resend the verification email
+        user.verificationToken = generateVerificationToken();
+        user.tokenExpiry = Date.now() + 3600000; // 1 hour expiry
+        await user.save();
+
+        sendVerificationEmail(user, user.verificationToken);
+        res.status(200).json({ status: "Success", response: "Verification email resent" });
+    } catch (err) {
+        next(err);
+    }
+};
 
 const googleLogin = async (req, res, next) => {
     try {
@@ -294,4 +346,4 @@ const deleteUser = async (req, res) => {
 };
 
 
-module.exports = {getUsersByName,getUserDetails,registerUser,loginUser,googleLogin,updateUserRole,userUpdate,addOrganisedEvent,deleteUser}
+module.exports = {getUsersByName,getUserDetails,registerUser,loginUser,googleLogin,updateUserRole,userUpdate,addOrganisedEvent,deleteUser,resendVerificationEmail}

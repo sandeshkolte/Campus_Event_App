@@ -6,12 +6,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QrCode, Upload, Plus, Users, DollarSign, GraduationCap, BookOpen, Phone, CrossIcon, X, CircleX, IndianRupee } from 'lucide-react';
 import { FaClosedCaptioning } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import { storage } from '@/firebase';
+import { toast } from 'react-toastify';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import axios from 'axios';
+import { baseUrl } from '@/common/common';
+import { useNavigate } from 'react-router-dom';
 
 export default function TicketBooking({ isOpen, onClose,eventDetails }) {
   const currentUser = useSelector((state)=>state.auth?.userInfo) // Replace with actual username from your state or props
   const [groupMembers, setGroupMembers] = useState([]);
   const [searchMember, setSearchMember] = useState('');
-  
+  const [isLoading, setisLoading] = useState(false);
+  const [paymentScreenshot, setPaymentScreenshot] = React.useState(null)
+  const [file, setFile] = React.useState(null)
+  const navigate = useNavigate()
+
 console.log(currentUser);
 
   const handleAddMember = () => {
@@ -22,6 +32,75 @@ console.log(currentUser);
   };
 
   if (!isOpen) return null;
+
+  const handleImageUpload = (file) => {
+    setisLoading(true)
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        setisLoading(false)
+        reject("No file provided");
+      }
+
+      const storageRef = ref(storage, `payment-screenshots/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => { },
+        (error) => {
+          toast.error("Image upload failed!");
+          reject(error);
+          setisLoading(false)
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+            setisLoading(false)
+            setPaymentScreenshot(downloadURL)
+            console.log("payment ss Url: ",downloadURL);
+            
+          });
+        }
+      );
+    });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        setFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+        };
+        reader.readAsDataURL(file);
+      
+    }
+  };
+
+const handleBookEvent = async() => {
+  try{
+    const userId=currentUser?._id, eventId=eventDetails._id, paymentImage=paymentScreenshot
+    console.log(`The data to upload: ${userId} ${eventId} ${paymentImage} ` );
+    
+    const response = await axios.post(baseUrl+'/api/event/addEventAndParticipants',{userId:userId, eventId:eventId, paymentImage:paymentImage }).then(response => {
+  if(response.status===200){
+  console.log("result: ",result);
+  
+    console.log("Event Booked Successfully");
+    toast.success("Event Booked Successfully")
+navigate('/mytickets')
+  } 
+})
+
+  }catch(error) {
+    if (error.response) {
+      const errorMessage = error.message;
+      console.log(errorMessage);
+      toast.error("Error:",errorMessage)
+      
+    }
+  }
+}
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-5">
@@ -99,10 +178,20 @@ console.log(currentUser);
                   <span>Upload Payment Screenshot</span>
                 </Label>
                 <div className="mt-1 flex items-center space-x-2">
-                  <Input id="payment-screenshot-desktop" type="file" accept="image/*" className="flex-grow" />
-                  <Button type="button" variant="outline" className="bg-purple-500 text-white hover:bg-purple-600">
+                  <Input id="payment-screenshot-desktop" 
+                  type="file" 
+                  accept="image/*"
+                  className="flex-grow" 
+                  onChange={(e) => handleFileChange(e)} />
+                  {
+                    file && 
+                  <Button type="button" variant="outline"
+                  className="bg-purple-500 text-white hover:bg-purple-600"
+                  onClick={(e) =>handleImageUpload(file)}
+                  >
                     Upload
                   </Button>
+                  }
                 </div>
               </div>
             </div>
@@ -127,14 +216,27 @@ console.log(currentUser);
                   <span>Upload Payment Screenshot</span>
                 </Label>
                 <div className="mt-1 flex flex-col space-y-2">
-                  <Input id="payment-screenshot-mobile" type="file" accept="image/*" className="w-full" />
-                  <Button type="button" variant="outline" className="w-full">
+                  <Input 
+                  id="payment-screenshot-mobile" 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => handleFileChange(e)}
+                  className="w-full"
+                   />
+                   {
+                    file && 
+
+                  <Button type="button" variant="outline" className="w-full"
+                  onClick={(e) =>handleImageUpload(file)}
+                  >
                     Upload
                   </Button>
+                   }
+                  
                 </div>
               </div>
 
-              <Button onClick={onClose} className="w-full text-md md:text-lg py-4 md:py-6 bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 hover:from-purple-700 hover:via-pink-600 hover:to-indigo-700 text-white transition-all duration-300 shadow-lg rounded-lg">
+              <Button onClick={handleBookEvent} className="w-full text-md md:text-lg py-4 md:py-6 bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 hover:from-purple-700 hover:via-pink-600 hover:to-indigo-700 text-white transition-all duration-300 shadow-lg rounded-lg">
                 Book Ticket
               </Button>
             </div>

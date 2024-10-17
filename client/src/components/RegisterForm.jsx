@@ -11,19 +11,14 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { FaGithub, FaGoogle } from "react-icons/fa";
 import axios from "axios"
 import { baseUrl } from "@/common/common"
-import { useDispatch } from "react-redux"
 import { useForm } from "react-hook-form"
-import { login } from "@/store/authSlice"
 import { toast } from "react-toastify"
 import { VscLoading } from "react-icons/vsc";
 import SignInWithGoogle from "./signInWithGoogle"
 
 export default function RegisterForm() {
-
-  const dispatch = useDispatch()
 
   const navigate = useNavigate()
 
@@ -37,13 +32,6 @@ export default function RegisterForm() {
     try {
       await axios.post(baseUrl + '/api/user/register', data).then((response) => {
         console.log(JSON.stringify(data))
-        // toast.success("User Registered Successfully!")
-        // const { token } = response.data.response
-        // localStorage.setItem('userToken', token)
-        // dispatch(login(response.data.response.createdUser))
-        // reset();
-        // navigate('/')
-        // window.location.reload();
 
         toast.success("User Registered Successfully! Please verify your email.");
         reset();
@@ -51,11 +39,13 @@ export default function RegisterForm() {
 
       })
     } catch (err) {
-      if (axios.isCancel(err)) {
-        console.log("Fetch aborted");
+      if (err.response) {
+        const errorMessage = err.response.data.response;
+        
+        // Show the error message based on server response
+        toast.error(errorMessage);
       } else {
-        console.error("Registration failed:", err);
-        toast.error("User Already Exist !")
+        toast.error("Registration failed. Please try again.");
       }
     } finally {
       setLoading(false)
@@ -71,12 +61,6 @@ export default function RegisterForm() {
         </CardHeader>
         <CardContent>
           <div className="pb-2">
-           {/* <Button variant="outline" className="flex justify-around align-middle w-28">
-              <FaGithub />Github
-            </Button> */}
-            {/* <Button variant="outline" className="flex justify-around align-middle w-28">
-              <FaGoogle />Google
-            </Button> */}
             <SignInWithGoogle/>
           </div>
           <div className="flex items-center my-2">

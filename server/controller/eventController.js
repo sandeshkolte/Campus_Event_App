@@ -272,14 +272,29 @@ const addParticipantandEvent = async (req, res) => {
 
     const {userId, eventId, paymentImage } = req.body;
     console.log(req.body);
-    
     try {
-        await userModel.findByIdAndUpdate(userId, { $push: { myevents: {eventId:eventId, paymentScreenshot:paymentImage} } });
-        await eventModel.findByIdAndUpdate(eventId, { $push: { participants: userId } });
-        res.status(200).json({ message: "User added as event participant and event added to user event" });
-    } catch (err) {
-        res.status(403).json({ status: "Error", response: err.message });
-    }
+      const userUpdate = await userModel.findByIdAndUpdate(userId, {
+        $push: { myevents: { eventId, paymentScreenshot: paymentImage } },
+      }, { new: true }); // `new: true` returns the updated document
+  
+      if (!userUpdate) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      const eventUpdate = await eventModel.findByIdAndUpdate(eventId, {
+        $push: { participants: userId },
+      }, { new: true });
+  
+      if (!eventUpdate) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+  
+      res.status(200).json({ message: "User added as event participant and event added to user event" });
+  } catch (err) {
+      console.error("Error during user/event update:", err.message);
+      res.status(500).json({ status: "Error", response: err.message });
+  }
+  
 };
 
 module.exports = {

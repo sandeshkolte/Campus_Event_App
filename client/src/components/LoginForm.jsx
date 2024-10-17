@@ -1,6 +1,6 @@
-import * as React from "react"
-import { Button } from "@/components/ui/button"
-import { Link, useNavigate } from "react-router-dom"
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -8,105 +8,75 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { FaGithub, FaGoogle } from "react-icons/fa";
-import { useForm } from "react-hook-form"
-import { useDispatch } from "react-redux"
-import axios from "axios"
-import { baseUrl } from "@/common/common"
-import { toast } from "react-toastify"
-import { login } from "@/store/authSlice"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { FaGoogle } from "react-icons/fa";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { baseUrl } from "@/common/common";
+import { toast } from "react-toastify";
+import { login } from "@/store/authSlice";
 import { VscLoading } from "react-icons/vsc";
-import SignInWithGoogle from "./signInWithGoogle"
+import SignInWithGoogle from "./signInWithGoogle";
 
 export default function LoginForm() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { register, handleSubmit, reset, setError, formState: { errors } } = useForm();
 
-  const navigate = useNavigate()
-
-  const dispatch = useDispatch()
-
-  const { register, handleSubmit, reset } = useForm()
-
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = React.useState(false);
 
   const formSubmit = async (data) => {
-    if (data.email != "" || data.password != "") {
-      // console.log(data);
-      setLoading(true)
+    if (data.email !== "" && data.password !== "") {
+      setLoading(true);
       try {
-        await axios.post(baseUrl + '/api/user/login', data).then((response) => {
-          console.log("Response: "+response.status);
-          
-          if (response.status === 200) {
-            // toast.success("Product Created Successfully!")
-            // console.log(JSON.stringify(response.data.response.user))
-            toast.success("User Login Successfully!")
-            const { token } = response.data.response
-            const userData = response.data.response.user;
-            localStorage.setItem('userToken', token)
-            dispatch(login(userData))
-            reset();
-            navigate('/')
-            window.location.reload();
-          } else if (response.status === 400) {
-            toast.error("Email not verified.")
-            console.log("Email not verified.")
-          }
-          // setProgressPercent(0);
-        })
+        const response = await axios.post(baseUrl + '/api/user/login', data);
+        
+        if (response.status === 200) {
+          toast.success("User Login Successfully!");
+          const { token, user } = response.data.response;
+          localStorage.setItem('userToken', token);
+          dispatch(login(user));
+          reset();
+          navigate('/');
+          window.location.reload();
+        } else if (response.status === 400) {
+          toast.error("Email not verified.");
+        }
       } catch (error) {
         if (error.response) {
           const errorMessage = error.response.data.response;
           
-          // Handle the case where email is not verified
           if (errorMessage === "Email not verified") {
             toast.error("Your email is not verified. Please verify your email before logging in.");
+            setError("email", { message: "Your email is not verified." });
           } else if (errorMessage === "Email or Password Incorrect") {
             toast.error("Incorrect email or password.");
+            setError("email", { message: "Incorrect email or password." });
+            setError("password", { message: "Incorrect email or password." });
           } else {
             toast.error("An error occurred during login.");
           }
-        } if (error.response) {
-        const errorMessage = error.response.data.response;
-        
-        // Handle the case where email is not verified
-        if (errorMessage === "Email not verified") {
-          toast.error("Your email is not verified. Please verify your email before logging in.");
-        } else if (errorMessage === "Email or Password Incorrect") {
-          toast.error("Incorrect email or password.");
-        } else {
-          toast.error("An error occurred during login.");
         }
-      }
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
+    } else {
+      toast.error("Please fill out the form.");
     }
-    else {
-      toast.error("Fill the form")
-    }
-  }
-
+  };
 
   return (
     <Card className="w-[400px]">
-      <form onSubmit={handleSubmit(formSubmit)} >
+      <form onSubmit={handleSubmit(formSubmit)}>
         <CardHeader>
           <CardTitle>Login</CardTitle>
           <CardDescription>Enter your details to sign in to your account.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="pb-2">
-            {/* <Button variant="outline" className="flex justify-around align-middle w-28">
-              <FaGithub />Github
-            </Button> */}
-            {/* <Button variant="outline" className="flex justify-around align-middle w-28">
-              <FaGoogle />Google
-            </Button> */}
-            <SignInWithGoogle/>
-          </div>
+          <SignInWithGoogle />
           <div className="flex items-center my-2">
             <hr className="flex-grow border-gray-300 rounded-md border-[1.5px]" />
             <p className="mx-2 text-xs text-gray-400 uppercase">or continue with</p>
@@ -116,25 +86,39 @@ export default function LoginForm() {
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input required id="email" type="email" placeholder="Type your email" {...register('email')} />
+              <Input 
+                required 
+                id="email" 
+                type="email" 
+                placeholder="Type your email" 
+                {...register('email')} 
+              />
+              {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input required id="password" type="password" placeholder="Type your password" {...register('password')} />
+              <Input 
+                required 
+                id="password" 
+                type="password" 
+                placeholder="Type your password" 
+                {...register('password')} 
+              />
+              {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
             </div>
           </div>
-
         </CardContent>
-        <CardFooter className="grid" >
-          <Button className="w-full bg-gray-900 text-white" >{loading ? <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "SIGN IN"}</Button>
+        <CardFooter className="grid">
+          <Button className="w-full bg-gray-900 text-white">
+            {loading ? <VscLoading className="text-white animate-spin-slow text-2xl" /> : "SIGN IN"}
+          </Button>
           <hr className="mt-3 border-gray-300 rounded-md border-[1.5px]" />
-          <div className="flex py-2 justify-center" >
-            <p className="" >Don't Have an Account?</p>
-            <Link to={"/register"} className="pl-2 underline" >Sign Up</Link>
+          <div className="flex py-2 justify-center">
+            <p>Don't Have an Account?</p>
+            <Link to="/register" className="pl-2 underline">Sign Up</Link>
           </div>
-
         </CardFooter>
       </form>
     </Card>
-  )
+  );
 }
