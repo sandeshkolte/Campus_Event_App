@@ -53,7 +53,7 @@ function useSearchUsers(searchTerm) {
   return { data, loading };
 }
 
-export default function CoordinatorSelector({ setValue }) {
+export default function CoordinatorSelector({ setValue,selector }) {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -61,7 +61,7 @@ export default function CoordinatorSelector({ setValue }) {
   const { data, loading } = useSearchUsers(searchTerm); // Use custom hook for search
 
   useEffect(() => {
-    setValue("coordinator", selectedCoordinators);
+    setValue(selector, selectedCoordinators);
   }, [selectedCoordinators, setValue]);
 
   const toggleCoordinator = (value) => {

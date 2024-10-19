@@ -14,6 +14,7 @@ import { useCallback, useEffect, useState } from "react";
 import TicketBooking from "./OpenTicket";
 import { toast } from "react-toastify";
 import { ChevronDown, ChevronUp } from "lucide-react"
+import { CoordinatorProvider } from "@/hooks/useCoordinator";
 
 export default function EventDetails() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -61,10 +62,10 @@ export default function EventDetails() {
           className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors"
         >
           Book Now ({String(eventDetails?.price) === '0' || eventDetails?.price === '' ? (
-                <span className="text-green-600">FREE</span>
+                <span className="">FREE</span>
               ) : (
                 <span className="flex items-center">
-                  <IndianRupee className="w-3 h-3 mr-1" strokeWidth={3} />
+                  <IndianRupee className="w-3 h-3" strokeWidth={3} />
                   {eventDetails?.price}
                 </span>
               )})
@@ -182,7 +183,9 @@ export default function EventDetails() {
   return (
     <div className="min-h-screen bg-white border-1 px-4 md:px-10 lg:px-20 py-8 shadow-lg">
       <header className=""></header>
+      <CoordinatorProvider>
       <TicketBooking isOpen={isDialogOpen} onClose={closeDialog} eventDetails={eventDetails}/>
+      </CoordinatorProvider>
 
       <Card className="w-full overflow-hidden">
         {/* Large and medium screen layout */}
@@ -247,15 +250,17 @@ export default function EventDetails() {
                 className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors"
               >
                 Book Now ({String(eventDetails?.price) === '0' || eventDetails?.price === '' ? (
-                <span className="text-green-600">FREE</span>
+                <span className="">FREE</span>
               ) : (
                 <span className="flex items-center">
-                  <IndianRupee className="w-3 h-3 mr-1" strokeWidth={3} />
+                  <IndianRupee className="w-3 h-3" strokeWidth={3} />
                   {eventDetails?.price}
                 </span>
               )})
               </Button>
+              <CoordinatorProvider>
               <TicketBooking isOpen={isDialogOpen} onClose={closeDialog} eventDetails={eventDetails} />
+              </CoordinatorProvider>
             </div>
           </CardContent>
           <CardFooter>

@@ -1,31 +1,27 @@
-import React, { useEffect } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import React from "react";
+import { NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Menu } from "lucide-react";
 import { toggleSidebar } from "@/store/navSlice";
-import { jwtDecode } from "jwt-decode";
-
 const Header = () => {
   const token = localStorage.getItem("userToken");
   const userInfo = useSelector((state) => state.auth?.userInfo);
   const dispatch = useDispatch();
   const sidebar = useSelector((state) => state.nav.sidebar);
-  const navigate = useNavigate(); // For redirecting to login page
-  const location=useLocation()
-  let userId = null;
-  let role = null;
+  // let userId = null;
+  // let userInfo?.role = null;
 
-  if (token && token.includes(".")) {
-    try {
-      const decodedToken = jwtDecode(token);
-      userId = decodedToken.id;  
-      role = decodedToken.role;
-      console.log(role);
+  // if (token && token.includes(".")) {
+  //   try {
+  //     const decodedToken = jwtDecode(token);
+  //     userId = decodedToken.id;  
+  //     userInfo?.role = decodedToken.userInfo?.role;
+  //     console.log(userInfo?.role);
         
-    } catch (error) {
-      console.error("Invalid token:", error);
-    }
-  }
+  //   } catch (error) {
+  //     console.error("Invalid token:", error);
+  //   }
+  // }
 
   // useFetchUserDetails(userId);
 
@@ -62,8 +58,8 @@ const Header = () => {
                 </NavLink>
               </li>
 
-              {/* userInfo?.role-based links */}
-              {(role === "superadmin" || role === "admin") && (
+              {/* userInfo?.userInfo?.role-based links */}
+              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
                 <li>
                   <NavLink
                     to="/create"
@@ -77,7 +73,7 @@ const Header = () => {
                 </li>
               )}
 
-              {(role === "superadmin" || role === "admin") && (
+              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
                 <li>
                   <NavLink
                     to="/organized"
@@ -138,13 +134,13 @@ const Header = () => {
             >
               Home
             </NavLink>
-            {location.pathname !== "/login" && (
-              <Link to={"/login"}
-                className="bg-gray-950 py-1 px-2 text-white md:hover:text-white rounded-md text-sm"
+            {/* {location.pathname !== "/login" && ( */}
+              <NavLink to="/login"
+               className={({ isActive }) =>` ${isActive ? "hidden" : "bg-gray-950 py-1 px-2 text-white md:hover:text-white rounded-md text-sm"} `}
               >
                 Log In
-              </Link>
-            )}
+              </NavLink>
+            {/* )} */}
           </div>
         )}
       </div>

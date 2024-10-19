@@ -282,7 +282,7 @@ const addParticipantandEvent = async (req, res) => {
       }
   
       const eventUpdate = await eventModel.findByIdAndUpdate(eventId, {
-        $push: { participants: userId },
+        $push: { participants: {userId} },
       }, { new: true });
   
       if (!eventUpdate) {
@@ -297,6 +297,67 @@ const addParticipantandEvent = async (req, res) => {
   
 };
 
+const addGroupParticipants = async (req, res) => {
+  try {
+      const { eventId, groupName, participants, paymentImage } = req.body;
+      
+      const event = await eventModel.findById(eventId);
+      if (!event) return res.status(404).json({ message: "Event not found" });
+
+      if (!event.isGroupEvent) {
+          return res.status(400).json({ message: "This event is not marked as a group event" });
+      }
+
+      // Adding participants to the event with the same groupName
+      participants.forEach(async (participantId) => {
+          event.participants.push({ userId: participantId, groupName });
+          
+          // Optionally update each user's myevents to reflect the group registration
+          await userModel.findByIdAndUpdate(participantId, {
+              $push: {
+                  myevents: {
+                      eventId: eventId,
+                      paymentStatus: 'pending',
+                      paymentScreenshot: paymentImage
+                  }
+              }
+          });
+      });
+
+      await event.save();
+      res.status(200).json({ message: "Group participants added successfully", event });
+
+  } catch (error) {
+      res.status(500).json({ message: "Error adding group participants", error });
+  }
+};
+
+const updateGroupPaymentStatus = async (req, res) => {
+  try {
+      const { eventId, groupName } = req.body;
+
+      const event = await Event.findById(eventId);
+      if (!event) return res.status(404).json({ message: "Event not found" });
+
+      // Get all participants in the group
+      const groupParticipants = event.participants.filter(p => p.groupName === groupName);
+
+      // Update payment status for each participant in the group
+      for (const participant of groupParticipants) {
+          await User.updateOne(
+              { _id: participant.userId, "myevents.eventId": eventId },
+              { $set: { "myevents.$.paymentStatus": "accepted" } }
+          );
+      }
+
+      res.status(200).json({ message: "Payment status updated for all group members" });
+
+  } catch (error) {
+      res.status(500).json({ message: "Error updating payment status", error });
+  }
+};
+
+
 module.exports = {
     getEvent,
     findEventByCategory,
@@ -306,5 +367,7 @@ module.exports = {
     createEvent,
     editEvent,
     eventDetails,
-    addParticipantandEvent
+    addParticipantandEvent,
+    addGroupParticipants,
+    updateGroupPaymentStatus
 };

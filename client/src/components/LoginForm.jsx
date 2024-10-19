@@ -20,6 +20,8 @@ import { toast } from "react-toastify";
 import { login } from "@/store/authSlice";
 import { VscLoading } from "react-icons/vsc";
 import SignInWithGoogle from "./signInWithGoogle";
+import { InfoIcon } from "lucide-react";
+import { PopoverComponent } from "./PopOverComponent";
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -71,7 +73,15 @@ export default function LoginForm() {
   return (
     <Card className="w-[400px]">
       <form onSubmit={handleSubmit(formSubmit)}>
-        <CardHeader>
+        <CardHeader className="relative">
+          <div className="absolute right-7 top-8 " >
+            <PopoverComponent trigger={ <InfoIcon className="text-rose-400 h-5" />} content={
+              <div >
+                <p className="text-sm " >If you Sign in with Google then you cannot use manual login with that email</p>
+              </div>
+            } />
+           
+            </div>
           <CardTitle>Login</CardTitle>
           <CardDescription>Enter your details to sign in to your account.</CardDescription>
         </CardHeader>
