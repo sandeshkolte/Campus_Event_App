@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Search } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 const events = [
   {
@@ -68,6 +69,14 @@ const events = [
 ]
 
 export default function VerifyTickets() {
+ 
+
+  const navigate=useNavigate();
+
+  const handleCardClick = (eventId) => {
+    navigate(`/event/${eventId}`); 
+  };
+
   return (
     <div className="container max-w-6xl mx-auto p-4 bg-white text-gray-900">
       <h1 className="text-3xl font-bold mb-6">Verify Events Tickets</h1>
@@ -90,7 +99,9 @@ export default function VerifyTickets() {
       </div>
       <div className="space-y-2">
         {events.map((event) => (
-          <Card key={event.id} className="flex flex-col sm:flex-row items-center">
+          <Card key={event.id}
+           className="flex flex-col sm:flex-row items-center"
+           onClick={() => handleCardClick(event.id)}>
             <div className="w-full sm:w-24 h-24 relative">
               <img
                 src={event.image}

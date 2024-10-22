@@ -58,7 +58,7 @@ const Header = () => {
                 </NavLink>
               </li>
 
-              {(role === "superadmin" || role === "admin") && (
+              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
                 <li>
                   <NavLink
                     to="/verifytickets"
@@ -81,7 +81,7 @@ const Header = () => {
               </li>) }
 
               {/* userInfo?.role-based links */}
-              {(role === "superadmin" || role === "admin") && (
+              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
                 <li>
                   <NavLink
                     to="/create"
