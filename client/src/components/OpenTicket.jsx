@@ -12,15 +12,23 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import axios from 'axios';
 import { baseUrl } from '@/common/common';
 import { useNavigate } from 'react-router-dom';
+import { CoordinatorProvider } from '@/hooks/useCoordinator';
+import CoordinatorSelector from './CoordinatorSelector';
+import { useForm } from 'react-hook-form';
+import { VscLoading } from 'react-icons/vsc';
+import { TbSelect } from 'react-icons/tb';
 
 export default function TicketBooking({ isOpen, onClose,eventDetails }) {
   const currentUser = useSelector((state)=>state.auth?.userInfo) // Replace with actual username from your state or props
   const [groupMembers, setGroupMembers] = useState([]);
   const [searchMember, setSearchMember] = useState('');
   const [isLoading, setisLoading] = useState(false);
-  const [paymentScreenshot, setPaymentScreenshot] = React.useState(null)
+  const [isBookingLoading, setisBookingLoading] = useState(false);
+  const [isPaymentUploaded, setisPaymentUploaded] = useState(false);
+  const [paymentScreenshot, setPaymentScreenshot] = React.useState("")
   const [file, setFile] = React.useState(null)
   const navigate = useNavigate()
+  const { register, handleSubmit, reset, setValue } = useForm()
 
 console.log(currentUser);
 
@@ -77,39 +85,69 @@ console.log(currentUser);
     }
   };
 
-const handleBookEvent = async() => {
-  try{
-    const userId=currentUser?._id, eventId=eventDetails._id, paymentImage=paymentScreenshot
-    console.log(`The data to upload: ${userId} ${eventId} ${paymentImage} ` );
-    
-    const response = await axios.post(baseUrl+'/api/event/addEventAndParticipants',{userId:userId, eventId:eventId, paymentImage:paymentImage }).then(response => {
-  if(response.status===200){
-  console.log("result: ",result);
+  const handleBookEvent = async (data) => {
+    setisBookingLoading(true);
   
-    console.log("Event Booked Successfully");
-    toast.success("Event Booked Successfully")
-navigate('/mytickets')
-  } 
-})
+    try {
+      if (eventDetails?.isGroupEvent && data.groupName === "") {
+        toast.error("Group Name is Required!");
+        setisBookingLoading(false);
+        return;
+      }
+  
+      if (paymentScreenshot === "") {
+        toast.error("Upload Payment Screenshot!");
+        setisBookingLoading(false);
+        return;
+      }
+  
+      data = { ...data, userId: currentUser?._id, eventId: eventDetails._id, paymentImage: paymentScreenshot };
 
-  }catch(error) {
-    if (error.response) {
-      const errorMessage = error.message;
-      console.log(errorMessage);
-      toast.error("Error:",errorMessage)
-      
+      console.log(`The data to upload: ${data.userId} ${data.eventId} ${data.paymentImage}`);
+  
+      if (!eventDetails?.isGroupEvent) {
+        // Solo event booking
+        await axios.post(baseUrl + '/api/event/add-participants', data).then((response) => {
+          if (response.status === 200) {
+            console.log("result: ", response);
+            toast.success("Event Booked Successfully");
+            navigate('/mytickets');
+          }
+        });
+      } else {
+        // Group event booking
+        if (data.participants.length === eventDetails?.participantSize) {
+          await axios.post(baseUrl + '/api/event/add-group-participants', data).then((response) => {
+            if (response.status === 200) {
+              console.log("result: ", response);
+              toast.success("Event Booked Successfully");
+              navigate('/mytickets');
+            }
+          });
+        } else {
+          // Participant size does not match event participant size
+          const size = eventDetails?.participantSize;
+          toast.error(`Participant size must be ${size}`);
+        }
+      }
+    } catch (error) {
+      console.log("error: ",error);
+      toast.error(`Error: ${error}`);
+    } finally {
+      setisBookingLoading(false);
     }
-  }
-}
+  };
+  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-5">
       <Card className="w-full max-w-2xl md:max-w-4xl mx-auto shadow-xl rounded-2xl overflow-hidden">
-        <CardHeader className="bg-gradient-to-r relative from-purple-600 via-pink-500 to-indigo-600 text-white p-3 md:p-6">
+        <CardHeader className="bg-gradient-to-r relative from-purple-500 via-purple-900 to-indigo-600 text-white p-3 md:p-6">
           <CardTitle className="text-2xl md:text-4xl font-bold text-center">{eventDetails?.title}</CardTitle>
           <CircleX onClick={onClose} className='w-6 h-6 absolute right-4'/>
         </CardHeader>
         <CardContent className="px-4 py-2 md:p-6 bg-gradient-to-b from-gray-50 to-white">
+        <form onSubmit={handleSubmit(handleBookEvent)}>
           {/* Apply flex-row layout from md (medium) screen */}
           <div className="flex flex-col md:flex-row md:space-x-6">
             <div className="flex-1 space-y-2">
@@ -120,32 +158,18 @@ navigate('/mytickets')
 
               {/* Conditionally render group members input or student information */}
               {eventDetails?.isGroupEvent ? (
-                <div className="space-y-3">
-                  <Label htmlFor="search-member" className="text-sm md:text-lg font-semibold flex items-center space-x-2 text-gray-700">
-                    <Users className="w-5 h-5" />
-                    <span>Add Group Members</span>
-                  </Label>
-                  <div className="flex space-x-2">
-                    <Input
-                      id="search-member"
-                      placeholder="Enter member name"
-                      value={searchMember}
-                      onChange={(e) => setSearchMember(e.target.value)}
-                      className="flex-grow"
-                    />
-                    <Button type="button" onClick={handleAddMember} variant="secondary" className="bg-purple-500 text-white hover:bg-purple-600">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {groupMembers.map((member, index) => (
-                      <span key={index} className="bg-gradient-to-r from-purple-200 to-pink-200 text-purple-800 px-3 py-1 rounded-full text-xs font-medium">
-                        {member}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                <>
+                 <div className="flex flex-col space-y-1.5">
+                 <Label htmlFor="group">Group Name</Label>
+                 <Input id="groupName" placeholder="Enter Group Name" {...register("groupName")} />
+               </div>
+               <div className="flex flex-col space-y-1.5 pt-5">
+               <Label htmlFor="member">Members</Label>
+               <CoordinatorProvider>
+                 <CoordinatorSelector selector={"participants"} setValue={setValue} />
+               </CoordinatorProvider>
+             </div>
+             </>
               ) : (
                 <div className="space-y-2 md:space-y-4 bg-white p-4">
                   <div className="flex items-center space-x-2 text-sm md:text-xl font-medium text-gray-700">
@@ -186,10 +210,13 @@ navigate('/mytickets')
                   {
                     file && 
                   <Button type="button" variant="outline"
-                  className="bg-purple-500 text-white hover:bg-purple-600"
+                  className="bg-indigo-500 text-white hover:bg-purple-600"
                   onClick={(e) =>handleImageUpload(file)}
                   >
-                    Upload
+                    {
+isLoading ?
+                   <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "Upload"
+                    }
                   </Button>
                   }
                 </div>
@@ -229,18 +256,23 @@ navigate('/mytickets')
                   <Button type="button" variant="outline" className="w-full"
                   onClick={(e) =>handleImageUpload(file)}
                   >
-                    Upload
+                    { isLoading ?
+                   <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : paymentScreenshot==="" ? "Upload" : "Uploaded"
+                    }
                   </Button>
                    }
                   
                 </div>
               </div>
 
-              <Button onClick={handleBookEvent} className="w-full text-md md:text-lg py-4 md:py-6 bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 hover:from-purple-700 hover:via-pink-600 hover:to-indigo-700 text-white transition-all duration-300 shadow-lg rounded-lg">
-                Book Ticket
+              <Button onClick={handleBookEvent} className="w-full text-md md:text-lg py-4 md:py-6 bg-gradient-to-r from-purple-600 via-purple-800 to-indigo-600 hover:from-purple-700 hover:via-purple-800 hover:to-indigo-700 text-white transition-all duration-300 shadow-lg rounded-lg">
+              { isBookingLoading ?
+              <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "Book Ticket"
+                    }
               </Button>
             </div>
           </div>
+          </form>
         </CardContent>
       </Card>
     </div>

@@ -226,7 +226,7 @@ export default function Component() {
         <CardContent>
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">Title <span className="text-red-500" >*</span></Label>
               <Input id="title" placeholder="Enter event title" {...register("title")} />
             </div>
             <div className="flex flex-col space-y-1.5">
@@ -234,12 +234,12 @@ export default function Component() {
               <Input id="price" type="number" placeholder="0.00" {...register("price", { valueAsNumber: true, min: 0 })} />
             </div>
             <div className="flex flex-col space-y-1.5 sm:col-span-1">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">Description <span className="text-red-500" >*</span></Label>
               <Textarea id="description" placeholder="Describe your event" rows={6} {...register("description")} />
             </div>
             <div className="flex flex-col space-y-1.5 sm:col-span-1">
               <div className="space-y-2">
-                <Label htmlFor="image">Upload Event Banner</Label>
+                <Label htmlFor="image">Upload Event Banner <span className="text-red-500" >*</span></Label>
                 <div className="flex flex-col items-center space-y-4">
                   <div className="relative w-full">
                     <Input
@@ -262,7 +262,7 @@ export default function Component() {
                       ) : (
                         <div className="text-center">
                           <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                          <span className="mt-2 block text-sm font-medium text-gray-700">
+                           <span className="mt-2 block text-sm font-medium text-gray-700">
                             Upload Event Banner
                           </span>
                         </div>
@@ -313,7 +313,7 @@ export default function Component() {
                         ) : (
                           <div className="text-center">
                             <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                            <span className="mt-2 block text-sm font-medium text-gray-700">
+                             <span className="mt-2 block text-sm font-medium text-gray-700">
                               Upload QR Image
                             </span>
                           </div>
@@ -368,7 +368,7 @@ export default function Component() {
             </div>
 
             <div className="flex flex-col space-y-1.5 font-semibold">
-              <Label htmlFor="organizers">Organizing Committe</Label>
+              <Label htmlFor="organizers">Organizing Committe <span className="text-red-500" >*</span></Label>
               <Select onValueChange={(value) => setValue("organizingBranch", value)}>
                 <SelectTrigger id="organizers">
                   <SelectValue placeholder="Select Committe" />
@@ -395,9 +395,9 @@ export default function Component() {
                 </SelectContent>
               </Select>
               <div className="flex flex-col space-y-1.5 pt-5">
-              <Label htmlFor="coordinator">Coordinators</Label>
+              <Label htmlFor="coordinator">Coordinators <span className="text-red-500" >*</span></Label>
               <CoordinatorProvider>
-                <CoordinatorSelector setValue={setValue} />
+                <CoordinatorSelector selector={"coordinator"} setValue={setValue} />
               </CoordinatorProvider>
             </div>
             </div>
@@ -426,7 +426,7 @@ export default function Component() {
             </div>
 
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">Category <span className="text-red-500" >*</span></Label>
               <CategorySelector setValue={setValue} />
               {/* <Input id="category" placeholder="Enter Category" {...register("category")} /> */}
             </div>
@@ -438,11 +438,11 @@ export default function Component() {
             </div> */}
 
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="venue">Venue</Label>
+              <Label htmlFor="venue">Venue <span className="text-red-500" >*</span></Label>
               <Input id="venue" placeholder="Enter event venue" {...register("venue")} />
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="">Start Date</Label>
+              <Label htmlFor="">Start Date <span className="text-red-500" >*</span></Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -453,7 +453,7 @@ export default function Component() {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {startDateTime ? format(startDateTime, "PPP p") : <span>Pick a date and time</span>}
+                    {startDateTime ? format(startDateTime, "PPP p") :  <span>Pick a date and time</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
@@ -479,7 +479,7 @@ export default function Component() {
             </div>
 
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="">End Date</Label>
+              <Label htmlFor="">End Date <span className="text-red-500" >*</span></Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -490,7 +490,7 @@ export default function Component() {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {endDateTime ? format(endDateTime, "PPP p") : <span>Pick a date and time</span>}
+                    {endDateTime ? format(endDateTime, "PPP p") :  <span>Pick a date and time</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">

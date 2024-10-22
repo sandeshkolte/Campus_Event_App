@@ -2,7 +2,9 @@ const express = require('express');
 const {
    getEvent, createEvent, editEvent, deleteEvent, updateEvent,findEventByTitle, findEventByCategory,
    eventDetails,
-   addParticipantandEvent} = require('../controller/eventController');
+   addParticipantandEvent,
+   addGroupParticipants,
+   updateGroupPaymentStatus} = require('../controller/eventController');
 const router = express.Router();
 const upload = require('../config/multer-config');
 const { isUserLoggedIn } = require('../middlewares/isLoggedIn');
@@ -22,7 +24,9 @@ router.delete('/delete/:id', isUserLoggedIn, deleteEvent);
 
 // Edit event
 router.get('/edit/:id', isUserLoggedIn, editEvent);
-router.post('/addEventAndParticipants', addParticipantandEvent);
+router.post('/add-participants', addParticipantandEvent);
+router.post('/add-group-participants', addGroupParticipants);
+router.post('/update-group-payment-status', updateGroupPaymentStatus);
 
 
 module.exports = router;
