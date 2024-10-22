@@ -1,4 +1,5 @@
 const eventModel = require('../models/event');
+const user = require('../models/user');
 const userModel = require('../models/user');
 const Redis = require('ioredis');
 require('dotenv').config();
@@ -334,28 +335,124 @@ const addGroupParticipants = async (req, res) => {
 
 const updateGroupPaymentStatus = async (req, res) => {
   try {
-      const { eventId, groupName } = req.body;
+    const { eventId, groupName, userId, newStatus } = req.body;
 
-      const event = await Event.findById(eventId);
-      if (!event) return res.status(404).json({ message: "Event not found" });
+    console.log(req.body);
 
-      // Get all participants in the group
-      const groupParticipants = event.participants.filter(p => p.groupName === groupName);
+    // Find the event by ID
+    const event = await eventModel.findById(eventId);
+    if (!event) return res.status(404).json({ message: "Event not found" });
 
-      // Update payment status for each participant in the group
-      for (const participant of groupParticipants) {
-          await User.updateOne(
-              { _id: participant.userId, "myevents.eventId": eventId },
-              { $set: { "myevents.$.paymentStatus": "accepted" } }
-          );
-      }
+    // Check authorization (either organiser or coordinator)
+    const isAuthorized = event.organisedBy.equals(userId) || event.coordinator.some(coordinatorId => coordinatorId.equals(userId));
+    if (!isAuthorized) {
+      return res.status(403).json({ message: 'You are not authorized to update payment status for this event.' });
+    }
 
-      res.status(200).json({ message: "Payment status updated for all group members" });
+    // Filter participants based on the group name
+    const groupParticipants = event.participants.filter(p => p.groupName === groupName);
+    if (groupParticipants.length === 0) {
+      return res.status(404).json({ message: 'No participants found for this Group Name.' });
+    }
+
+    // Update payment status for each participant in the group
+    const updatePromises = groupParticipants.map(participant => {
+      return userModel.findOneAndUpdate(
+        { _id: participant._id, "myevents.eventId": eventId },
+        { $set: { "myevents.$.paymentStatus": newStatus } } // Use the $ positional operator to update the correct entry in the array
+      );
+    });
+
+    // Wait for all updates to complete
+    await Promise.all(updatePromises);
+
+    res.status(200).json({ message: "Payment status updated for all group members", group: groupParticipants });
 
   } catch (error) {
-      res.status(500).json({ message: "Error updating payment status", error });
+    console.error(error);
+    res.status(500).json({ message: "Error updating payment status", error });
   }
 };
+
+
+const updateStudentPaymentStatus = async (req, res) => {
+  try {
+    const { eventId, participantId, newStatus, userId } = req.body;
+    
+    // console.log(req.body);
+    // Find the event by ID
+    const event = await eventModel.findById(eventId);
+    
+    if (!event) {
+        return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Check if the user making the request is the event organizer or one of the coordinators
+    const isAuthorized = event.organisedBy.equals(userId) || event.coordinator.some(coordinatorId => coordinatorId.equals(userId));
+    
+    if (!isAuthorized) {
+        return res.status(403).json({ message: 'You are not authorized to update payment status for this event.' });
+    }
+
+    // Find the participant in the event by participantId
+    const participant = event.participants.find(p => p.userId.equals(participantId));
+    
+    if (!participant) {
+        return res.status(404).json({ message: 'Participant not found in this event.' });
+    }
+
+    // Assuming myevents is a field in the User model that stores the events the participant is involved in.
+    // Find the specific event in the participant's myevents
+    const user = await userModel.findById(participantId);
+
+    const participantEvent = user.myevents.find(e => e.eventId.equals(eventId));
+    
+    if (!participantEvent) {
+        return res.status(404).json({ message: 'Event not found in participant\'s myevents.' });
+    }
+
+    // Update the payment status for this specific event
+    participantEvent.paymentStatus = newStatus;
+
+    // Save the user's updated myevents
+    await user.save();
+
+    res.status(200).json({ message: 'Payment status updated successfully' });
+  } catch (error) {
+    console.log(error);
+    
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+const activeEvents = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    // Find all active events
+    const events = await eventModel.find({ isActive: true });
+
+    // Filter events where the user is either the organiser or a coordinator
+    const adminEvents = events.filter(event => 
+      event.organisedBy.equals(userId) || 
+      event.coordinator.some(coordinatorId => coordinatorId.equals(userId))
+    );
+
+    console.log(adminEvents);
+
+    // Check if any admin events were found
+    if (adminEvents.length === 0) {
+      return res.status(404).json({ message: 'The user is not admin of any event.' });
+    }
+
+    res.status(200).json({ adminEvents });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error retrieving events', error });
+  }
+};
+
 
 
 module.exports = {
@@ -369,5 +466,7 @@ module.exports = {
     eventDetails,
     addParticipantandEvent,
     addGroupParticipants,
-    updateGroupPaymentStatus
+    updateGroupPaymentStatus,
+    activeEvents,
+    updateStudentPaymentStatus
 };

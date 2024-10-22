@@ -4,7 +4,9 @@ const {
    eventDetails,
    addParticipantandEvent,
    addGroupParticipants,
-   updateGroupPaymentStatus} = require('../controller/eventController');
+   updateGroupPaymentStatus,
+   activeEvents,
+   updateStudentPaymentStatus} = require('../controller/eventController');
 const router = express.Router();
 const upload = require('../config/multer-config');
 const { isUserLoggedIn } = require('../middlewares/isLoggedIn');
@@ -12,6 +14,7 @@ const { isUserLoggedIn } = require('../middlewares/isLoggedIn');
 // Retrieve events
 router.get('/', getEvent);
 router.get('/details', eventDetails); 
+router.post('/active-events', activeEvents); 
 
 // Find events by title and category 
 router.get('/find/title', findEventByTitle);
@@ -27,6 +30,7 @@ router.get('/edit/:id', isUserLoggedIn, editEvent);
 router.post('/add-participants', addParticipantandEvent);
 router.post('/add-group-participants', addGroupParticipants);
 router.post('/update-group-payment-status', updateGroupPaymentStatus);
+router.post('/update-payment-status', updateStudentPaymentStatus);
 
 
 module.exports = router;

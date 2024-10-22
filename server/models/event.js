@@ -19,7 +19,11 @@ const eventSchema = mongoose.Schema({
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     qrImage: { type: String },
-    venue: { type: String, required: true }
+    venue: { type: String, required: true },
+    isActive: {
+        type:Boolean,
+        default:true
+    }
 }, {
     timestamps: true
 });
