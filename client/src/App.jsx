@@ -21,6 +21,7 @@ import VerifyEmail from './pages/VerificationPage'
 import PhotoGallery from './pages/PhotoGallery'
 import EventsOrganized from './pages/EventsOrganized'
 import CSECommittee from './pages/CommitteePage'
+import VerifyTickets from './pages/VerifyTickets'
 
 const App = () => {
 
@@ -115,6 +116,7 @@ const App = () => {
 <>
 <Route path='/create' element={<CreateEvent />} />
 <Route path='/organized' element={<EventsOrganized />} />
+<Route path="/verifytickets" element={<VerifyTickets/>}/>
 </>
 ) 
 }

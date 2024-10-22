@@ -62,6 +62,28 @@ const Header = () => {
                 </NavLink>
               </li>
 
+              {(role === "superadmin" || role === "admin") && (
+                <li>
+                  <NavLink
+                    to="/verifytickets"
+                    className={({ isActive }) =>
+                      ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
+                    }
+                  >
+                    Verify Tickets
+                  </NavLink>
+                </li>
+              ) || ( <li>
+                <NavLink
+                  to="/mytickets"
+                  className={({ isActive }) =>
+                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
+                  }
+                >
+                  My Tickets
+                </NavLink>
+              </li>) }
+
               {/* userInfo?.role-based links */}
               {(role === "superadmin" || role === "admin") && (
                 <li>
@@ -76,28 +98,6 @@ const Header = () => {
                   </NavLink>
                 </li>
               )}
-
-              {(role === "superadmin" || role === "admin") && (
-                <li>
-                  <NavLink
-                    to="/organized"
-                    className={({ isActive }) =>
-                      ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
-                    }
-                  >
-                    Events Organized
-                  </NavLink>
-                </li>
-              ) || ( <li>
-                <NavLink
-                  to="/mytickets"
-                  className={({ isActive }) =>
-                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
-                  }
-                >
-                  My Tickets
-                </NavLink>
-              </li>) }
 
               <li>
                 <NavLink

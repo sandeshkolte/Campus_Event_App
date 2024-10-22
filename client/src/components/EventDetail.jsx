@@ -5,7 +5,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { MapPin, Calendar, Clock, Plus, ArrowLeft, IndianRupee } from "lucide-react";
+import { MapPin, Calendar, Clock, Plus, ArrowLeft } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Organizer from "./Organizer";
@@ -13,7 +13,6 @@ import Marquee from "react-fast-marquee";
 import { useCallback, useEffect, useState } from "react";
 import TicketBooking from "./OpenTicket";
 import { toast } from "react-toastify";
-import { ChevronDown, ChevronUp } from "lucide-react"
 
 export default function EventDetails() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -26,12 +25,6 @@ export default function EventDetails() {
   const events = useSelector((state) => state.event?.events);
   const eventDetails = events.find((event) => event._id === id);
   const [organizerAndCoordinator, setOrganizerAndCoordinator] = useState([]);
-  const [isExpanded, setIsExpanded] = useState(false)
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded)
-  }
-
 
   const imageUrl = eventDetails?.image;
   // console.log("all events :", events);
@@ -60,14 +53,7 @@ export default function EventDetails() {
           onClick={handleBookNow}
           className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors"
         >
-          Book Now ({String(eventDetails?.price) === '0' || eventDetails?.price === '' ? (
-                <span className="text-green-600">FREE</span>
-              ) : (
-                <span className="flex items-center">
-                  <IndianRupee className="w-3 h-3 mr-1" strokeWidth={3} />
-                  {eventDetails?.price}
-                </span>
-              )})
+          Book Now (Free)
         </Button>
 
         <p className="text-sm text-gray-500 text-center">No Refunds</p>
@@ -161,11 +147,10 @@ export default function EventDetails() {
   }, [eventDetails]);
   useEffect(() => {
     if (eventDetails) {
-      setOrganizerAndCoordinator(
-        eventDetails.coordinator,
-      );
-      console.log("Organizers and Coordinators: ",organizerAndCoordinator);
-      
+      setOrganizerAndCoordinator([
+        ...eventDetails.coordinator,
+        eventDetails.organisedBy,
+      ]);
     }
   }, [eventDetails]);
 
@@ -198,7 +183,6 @@ export default function EventDetails() {
             <Button
               variant="ghost"
               className="self-start text-white hover:bg-white/20 mb-8"
-              onClick={(e)=> navigate('/')}
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>
@@ -226,7 +210,7 @@ export default function EventDetails() {
                 {eventDetails?.title}
               </h2>
               <p className="text-sm sm:text-base text-white/80">
-              Organized By {eventDetails?.organizingBranch}
+                By Saepul Rahman
               </p>
             </div>
           </div>
@@ -246,14 +230,7 @@ export default function EventDetails() {
                 onClick={handleBookNow}
                 className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors"
               >
-                Book Now ({String(eventDetails?.price) === '0' || eventDetails?.price === '' ? (
-                <span className="text-green-600">FREE</span>
-              ) : (
-                <span className="flex items-center">
-                  <IndianRupee className="w-3 h-3 mr-1" strokeWidth={3} />
-                  {eventDetails?.price}
-                </span>
-              )})
+                Book Now (Free)
               </Button>
               <TicketBooking isOpen={isDialogOpen} onClose={closeDialog} eventDetails={eventDetails} />
             </div>
@@ -267,30 +244,9 @@ export default function EventDetails() {
       </Card>
       <main className="max-w-7xl mx-auto py-8 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
-          <section className="relative" >
+          <section>
             <h3 className="text-2xl font-semibold mb-4">Description</h3>
-            <p style={{ whiteSpace: 'pre-line' }} className={`bg-background text-foreground p-6 overflow-hidden transition-all duration-300 ease-in-out ${
-          isExpanded ? 'h-auto' : 'h-96'
-        }`}>{eventDetails?.description}</p>
-         <div className={`absolute bottom-0 left-0 right-0 flex justify-center p-4 bg-gradient-to-t from-gray-50 to-transparent ${isExpanded ? 'relative' : ''}`}>
-        <Button
-          onClick={toggleExpand}
-          variant="outline"
-          className="flex items-center"
-        >
-          {isExpanded ? (
-            <>
-              Show Less
-              <ChevronUp className="ml-2 h-4 w-4" />
-            </>
-          ) : (
-            <>
-              Read More
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </>
-          )}
-        </Button>
-      </div>
+            <p className="text-gray-600">{eventDetails?.description}</p>
           </section>
 
           <section>

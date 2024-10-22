@@ -1,9 +1,8 @@
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, Users } from "lucide-react"
+import { Search } from "lucide-react"
 
 const events = [
   {
@@ -14,6 +13,7 @@ const events = [
     ticketsSold: 350,
     totalTickets: 500,
     image: "https://th.bing.com/th/id/OIP.iRt7bpuacg0Rl9e_doqdGAHaE7?rs=1&pid=ImgDetMain",
+    pendingRequests: 15,
   },
   {
     id: 2,
@@ -23,6 +23,7 @@ const events = [
     ticketsSold: 72,
     totalTickets: 150,
     image: "https://th.bing.com/th/id/OIP.W2giC8TjletygTa_fV67_AHaE8?rs=1&pid=ImgDetMain",
+    pendingRequests: 8,
   },
   {
     id: 3,
@@ -32,6 +33,7 @@ const events = [
     ticketsSold: 275,
     totalTickets: 275,
     image: "https://i.pinimg.com/originals/48/89/38/488938d6eec996de2365b072357aac16.jpg",
+    pendingRequests: 0,
   },
   {
     id: 4,
@@ -41,6 +43,7 @@ const events = [
     ticketsSold: 6,
     totalTickets: 40,
     image: "https://dcmsblog.uk/wp-content/uploads/2014/09/events.jpg",
+    pendingRequests: 3,
   },
   {
     id: 5,
@@ -50,6 +53,7 @@ const events = [
     ticketsSold: 275,
     totalTickets: 275,
     image: "https://i.pinimg.com/originals/48/89/38/488938d6eec996de2365b072357aac16.jpg",
+    pendingRequests: 5,
   },
   {
     id: 6,
@@ -59,13 +63,14 @@ const events = [
     ticketsSold: 6,
     totalTickets: 40,
     image: "https://dcmsblog.uk/wp-content/uploads/2014/09/events.jpg",
+    pendingRequests: 1,
   },
 ]
 
-export default function EventsOrganized() {
+export default function VerifyTickets() {
   return (
     <div className="container max-w-6xl mx-auto p-4 bg-white text-gray-900">
-      <h1 className="text-3xl font-bold mb-6">Events Organized</h1>
+      <h1 className="text-3xl font-bold mb-6">Verify Events Tickets</h1>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
@@ -83,7 +88,7 @@ export default function EventsOrganized() {
           </Select>
         </div>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-2">
         {events.map((event) => (
           <Card key={event.id} className="flex flex-col sm:flex-row items-center">
             <div className="w-full sm:w-24 h-24 relative">
@@ -94,7 +99,7 @@ export default function EventsOrganized() {
                 width={80}
                 height={80}
               />
-              <Badge className="absolute top-1 right-1 bg-red-500 text-white">Closed</Badge>
+              <Badge className="absolute top-1 right-1 bg-green-500 text-white">Active</Badge>
             </div>
             <CardHeader className="flex-1">
               <CardTitle className="text-xl font-semibold">{event.title}</CardTitle>
@@ -103,11 +108,19 @@ export default function EventsOrganized() {
                 {event.ticketsSold}/{event.totalTickets} tickets sold
               </p>
             </CardHeader>
-            <CardContent className="flex items-center">
-              <Button variant="outline" size="sm" className="flex sm:mr-5 border-black border-2 items-center gap-2">
-                <Users className="h-4 w-4" />
-                Show Participant Lists
-              </Button>
+            <CardContent className="flex flex-col items-center">
+            <Badge 
+                variant="secondary" 
+                className={`mb-1 ${
+                  event.pendingRequests > 0 
+                    ? 'bg-red-100 text-red-800 border-red-200' 
+                    : 'bg-green-100 text-green-800 border-green-200'
+                }`}
+              >
+                {event.pendingRequests > 0 
+                  ? `${event.pendingRequests} pending`
+                  : "No Pending Requests"}
+              </Badge>
             </CardContent>
           </Card>
         ))}
