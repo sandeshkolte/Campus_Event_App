@@ -30,7 +30,7 @@ myevents: [{
     paymentStatus: {
         type: String,
         default: 'Pending', // 'pending', 'accepted', 'rejected'
-        enum: ['Pending', 'Accepted', 'Rejected']
+        // enum: ['Pending', 'Accepted', 'Rejected']
     },
     paymentScreenshot: {
         type: String, // URL of the uploaded payment screenshot
