@@ -14,7 +14,7 @@ const { isUserLoggedIn } = require('../middlewares/isLoggedIn');
 // Retrieve events
 router.get('/', getEvent);
 router.get('/details', eventDetails); 
-router.post('/active-events', activeEvents); 
+router.get('/active-events/:userId', activeEvents);
 
 // Find events by title and category 
 router.get('/find/title', findEventByTitle);

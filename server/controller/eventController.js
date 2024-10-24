@@ -33,7 +33,7 @@ const createEvent = async (req, res) => {
         title,
         description,
         image,
-        organisedBy, // Convert to ObjectId
+        organisedBy:req.id, // Convert to ObjectId
         organizingBranch,
         category,
         coordinator, // Convert array to ObjectIds
@@ -355,16 +355,20 @@ const updateGroupPaymentStatus = async (req, res) => {
       return res.status(404).json({ message: 'No participants found for this Group Name.' });
     }
 
+    
+
     // Update payment status for each participant in the group
-    const updatePromises = groupParticipants.map(participant => {
-      return userModel.findOneAndUpdate(
-        { _id: participant._id, "myevents.eventId": eventId },
+     groupParticipants.forEach( async (participant) => {
+      console.log("Paritcipants id:", participant.userId);
+      
+      await userModel.findOneAndUpdate(
+        { _id: participant.userId, "myevents.eventId": eventId },
         { $set: { "myevents.$.paymentStatus": newStatus } } // Use the $ positional operator to update the correct entry in the array
       );
     });
 
     // Wait for all updates to complete
-    await Promise.all(updatePromises);
+    // await Promise.all(updatePromises);
 
     res.status(200).json({ message: "Payment status updated for all group members", group: groupParticipants });
 
@@ -427,15 +431,16 @@ const updateStudentPaymentStatus = async (req, res) => {
 
 const activeEvents = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.params; // Access userId from req.params
+    console.log(req.params);
 
     // Find all active events
     const events = await eventModel.find({ isActive: true });
 
     // Filter events where the user is either the organiser or a coordinator
     const adminEvents = events.filter(event => 
-      event.organisedBy.equals(userId) || 
-      event.coordinator.some(coordinatorId => coordinatorId.equals(userId))
+      String(event.organisedBy) === String(userId) || 
+      event.coordinator.some(coordinatorId => String(coordinatorId) === String(userId))
     );
 
     console.log(adminEvents);
