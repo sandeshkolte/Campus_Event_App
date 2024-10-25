@@ -1,5 +1,4 @@
 const eventModel = require('../models/event');
-const user = require('../models/user');
 const userModel = require('../models/user');
 const Redis = require('ioredis');
 require('dotenv').config();
@@ -12,13 +11,21 @@ const redis = new Redis({
 
 //create event working fine on postman
 const createEvent = async (req, res) => {
+
+// const {userId} = req.query
+
+// console.log("Event Organiser: ",userId);
+
     try {
       let {
         title,
         description,
         image,
-        organisedBy,
         organizingBranch,
+        organisedBy,
+        isAuditCourse,
+        isGroupEvent,
+        participantSize,
         category,
         coordinator,
         price,
@@ -28,27 +35,31 @@ const createEvent = async (req, res) => {
         qrImage,
         venue,
       } = req.body;
-  
      await eventModel.create({
-        title,
-        description,
-        image,
-        organisedBy:req.id, // Convert to ObjectId
-        organizingBranch,
-        category,
-        coordinator, // Convert array to ObjectIds
-        price,
-        participants, // Optional participants field
-        startDate,
-        endDate,
-        qrImage,
-        venue,
+      title,
+      description,
+      image,
+      organizingBranch,
+      isAuditCourse,
+      organisedBy,
+      isGroupEvent,
+      participantSize,
+      category,
+      coordinator,
+      price,
+      participants,
+      startDate,
+      endDate,
+      qrImage,
+      venue,
       });
       res.status(201).json({
         status:"success",
         response:"Event Created Successfully"
       });
     } catch (error) {
+      console.log(error);
+      
       res.status(500).json({ message: "Failed to create event", error: error.message });
     }
   };
@@ -84,8 +95,10 @@ const createEvent = async (req, res) => {
         title,
         description,
         image,
-        organisedBy,
         organizingBranch,
+        isAuditCourse,
+        isGroupEvent,
+        participantSize,
         category,
         coordinator,
         price,
@@ -99,19 +112,21 @@ const createEvent = async (req, res) => {
       const updatedEvent = await eventModel.findByIdAndUpdate(
         req.params.id,
         {
-            title,
-            description,
-            image,
-            organisedBy, // Convert to ObjectId
-            organizingBranch,
-            category,
-            coordinator, // Convert array to ObjectIds
-            price,
-            participants, // Optional participants field
-            startDate,
-            endDate,
-            qrImage,
-            venue,
+          title,
+          description,
+          image,
+          organizingBranch,
+          isAuditCourse,
+          isGroupEvent,
+          participantSize,
+          category,
+          coordinator,
+          price,
+          participants,
+          startDate,
+          endDate,
+          qrImage,
+          venue,
           },
         { new: true }
       );
@@ -146,10 +161,10 @@ const getEvent = async (req, res, next) => {
     try {
         let events = await redis.get("events");
         if (events) {
-            console.log("Get from cache");
+            // console.log("Get from cache");
             return res.json({ response: JSON.parse(events) });
         }
-        console.log("From MONGO");
+        // console.log("From MONGO");
         events = await eventModel.find().populate('organisedBy coordinator participants');
         await redis.setex("events", 60, JSON.stringify(events));
 
@@ -318,7 +333,6 @@ const addGroupParticipants = async (req, res) => {
               $push: {
                   myevents: {
                       eventId: eventId,
-                      paymentStatus: 'pending',
                       paymentScreenshot: paymentImage
                   }
               }
@@ -355,7 +369,6 @@ const updateGroupPaymentStatus = async (req, res) => {
       return res.status(404).json({ message: 'No participants found for this Group Name.' });
     }
 
-    
 
     // Update payment status for each participant in the group
      groupParticipants.forEach( async (participant) => {
