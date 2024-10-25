@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { LogOut, User, Ticket, History, Award, Home, ChevronRight, PenBox, StarIcon } from 'lucide-react'
+import { LogOut, User, Ticket, History, Award, Home, ChevronRight, PenBox, StarIcon, CheckSquare } from 'lucide-react'
 import AlertComponent from './alert-dialog'
 import { FcPhotoReel } from 'react-icons/fc'
 import { TbPhoto } from 'react-icons/tb'
@@ -53,9 +53,10 @@ export default function ProfileSidebar() {
           {(userInfo?.role === "admin" || userInfo?.role==="superadmin") && (
             <>
           <NavItem icon={PenBox} path="/create">Create Event</NavItem>
-          <NavItem icon={TbPhoto} path="/gallery">Photo Gallery</NavItem>
+          <NavItem icon={CheckSquare} path="/verifytickets">Verify Tickets</NavItem>
           <NavItem icon={StarIcon} path="/organized">Events Organised</NavItem>
-            </>
+          <NavItem icon={TbPhoto} path="/gallery">Photo Gallery</NavItem>
+          </>
           ) }
           <NavItem icon={Ticket} path="/mytickets">My Tickets</NavItem>
           <NavItem icon={History} path="/">History</NavItem>

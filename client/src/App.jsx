@@ -12,7 +12,7 @@ import axios from 'axios'
 import { baseUrl } from './common/common'
 import { useDispatch } from 'react-redux'
 import { login } from './store/authSlice'
-import { allEvents } from './store/eventSlice'
+import { activeEvents, allEvents } from './store/eventSlice'
 import { toast } from 'react-toastify'
 import MyTickets from './pages/MyEvents'
 import EventDetailsPage from './pages/EventDetailsPage'
@@ -21,6 +21,8 @@ import VerifyEmail from './pages/VerificationPage'
 import PhotoGallery from './pages/PhotoGallery'
 import EventsOrganized from './pages/EventsOrganized'
 import CSECommittee from './pages/CommitteePage'
+import VerifyTickets from './pages/VerifyTickets'
+import TicketStatusChangingPage from './pages/TicketStatusChangingPage'
 
 const App = () => {
 
@@ -63,7 +65,6 @@ const App = () => {
   const fetchAllEvents = async () => {
     try {
       axios.get(baseUrl + "/api/event/").then(result => {
-        console.log(result.data.response)
         const events = result.data.response
         dispatch(allEvents(events))
       }).catch(err => {
@@ -85,6 +86,27 @@ const App = () => {
     fetchAllEvents()
 
   }, [])
+
+
+  const fetchActiveEvents = async (userID) => {
+    try {
+      const result = await axios.get(
+        baseUrl + `/api/event/active-events/${userID}`
+      );
+      const events = result.data.adminEvents;
+      dispatch(activeEvents(events))
+      console.log(events);
+    } catch (err) {
+      toast.error(err.message || "Error fetching events");
+      console.error("Error fetching events:", err); // Log the error for debugging
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchActiveEvents(userId); // Pass userID as argument
+    }
+  }, [userId]);
 
   return (
     <>
@@ -115,6 +137,8 @@ const App = () => {
 <>
 <Route path='/create' element={<CreateEvent />} />
 <Route path='/organized' element={<EventsOrganized />} />
+<Route path="/verifytickets" element={<VerifyTickets/>}/>
+<Route path="/event/:id" element={<TicketStatusChangingPage />} />
 </>
 ) 
 }

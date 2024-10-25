@@ -58,7 +58,29 @@ const Header = () => {
                 </NavLink>
               </li>
 
-              {/* userInfo?.userInfo?.role-based links */}
+              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
+                <li>
+                  <NavLink
+                    to="/verifytickets"
+                    className={({ isActive }) =>
+                      ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
+                    }
+                  >
+                    Verify Tickets
+                  </NavLink>
+                </li>
+              ) || ( <li>
+                <NavLink
+                  to="/mytickets"
+                  className={({ isActive }) =>
+                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
+                  }
+                >
+                  My Tickets
+                </NavLink>
+              </li>) }
+
+              {/* userInfo?.role-based links */}
               {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
                 <li>
                   <NavLink
@@ -72,28 +94,6 @@ const Header = () => {
                   </NavLink>
                 </li>
               )}
-
-              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
-                <li>
-                  <NavLink
-                    to="/organized"
-                    className={({ isActive }) =>
-                      ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
-                    }
-                  >
-                    Events Organized
-                  </NavLink>
-                </li>
-              ) || ( <li>
-                <NavLink
-                  to="/mytickets"
-                  className={({ isActive }) =>
-                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
-                  }
-                >
-                  My Tickets
-                </NavLink>
-              </li>) }
 
               <li>
                 <NavLink
