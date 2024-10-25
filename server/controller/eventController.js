@@ -427,15 +427,16 @@ const updateStudentPaymentStatus = async (req, res) => {
 
 const activeEvents = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.params; // Access userId from req.params
+    console.log(req.params);
 
     // Find all active events
     const events = await eventModel.find({ isActive: true });
 
     // Filter events where the user is either the organiser or a coordinator
     const adminEvents = events.filter(event => 
-      event.organisedBy.equals(userId) || 
-      event.coordinator.some(coordinatorId => coordinatorId.equals(userId))
+      String(event.organisedBy) === String(userId) || 
+      event.coordinator.some(coordinatorId => String(coordinatorId) === String(userId))
     );
 
     console.log(adminEvents);

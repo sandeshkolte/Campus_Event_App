@@ -18,51 +18,18 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Calendar, Image, MapPin } from "lucide-react";
-
-const initialTickets = [
-  {
-    id: 1,
-    userName: "John Doe",
-    userImage: "https://i.pravatar.cc/150?img=1",
-    price: 99.99,
-    status: "Pending",
-  },
-  {
-    id: 2,
-    userName: "Jane Smith",
-    userImage: "https://i.pravatar.cc/150?img=2",
-    price: 79.99,
-    status: "Pending",
-  },
-  {
-    id: 3,
-    userName: "Bob Johnson",
-    userImage: "https://i.pravatar.cc/150?img=3",
-    price: 89.99,
-    status: "Pending",
-  },
-  {
-    id: 4,
-    userName: "Alice Brown",
-    userImage: "https://i.pravatar.cc/150?img=4",
-    price: 109.99,
-    status: "Pending",
-  },
-  {
-    id: 5,
-    userName: "Charlie Davis",
-    userImage: "https://i.pravatar.cc/150?img=5",
-    price: 69.99,
-    status: "Pending",
-  },
-  {
-    id: 6,
-    userName: "Eva Wilson",
-    userImage: "https://i.pravatar.cc/150?img=6",
-    price: 119.99,
-    status: "Pending",
-  },
-];
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { baseUrl } from "@/common/common";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { motion, AnimatePresence } from "framer-motion";
 
 const EventCard = ({ event }) => (
   <Card className="overflow-hidden bg-white mb-4 transition-shadow duration-300 hover:shadow-lg">
@@ -74,7 +41,7 @@ const EventCard = ({ event }) => (
             "https://th.bing.com/th/id/OIP.GPFEY6kfgxbsja6gmrW6rwAAAA?rs=1&pid=ImgDetMain"
           }
           alt={event.title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-center"
           width={192}
           height={192}
         />
@@ -92,11 +59,15 @@ const EventCard = ({ event }) => (
           <div className="space-y-2">
             <p className="text-sm text-gray-600 flex items-center">
               <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-              {event.date}
+              {new Date(event?.startDate).toLocaleString("en-US", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })}
             </p>
             <p className="text-sm text-gray-600 flex items-center">
               <MapPin className="h-4 w-4 mr-2 text-gray-400" />
-              {event.location}
+              {event.venue}
             </p>
           </div>
           <div>
@@ -124,127 +95,315 @@ const EventCard = ({ event }) => (
   </Card>
 );
 
-const TicketCard = ({ ticket, onStatusChange }) => {
+const ParticipantCard = ({ user, onStatusChange, event }) => {
+  const [isGroupEvent, setIsGroupEvent] = useState(event?.isGroupEvent);
+
+  const [paymentStatus, setPaymentStatus] = useState(
+    user.participant.paymentStatus
+  );
+
+  const handleStatusChange = (value) => {
+    setPaymentStatus(value);
+    if (!isGroupEvent) {
+      onStatusChange(user?.response._id, value);
+    } else {
+      onStatusChange(user?.groupName, value);
+    }
+  };
+
   return (
-    <div className="w-full mx-auto">
-      {/* List view for small screens */}
-      <div className="md:hidden">
-        <div className="bg-white rounded-lg overflow-hidden">
-          <div className="flex items-start p-2 pt-3 border-b">
-            <img
-              src={ticket.userImage}
-              alt={ticket.userName}
-              className="w-20 h-20 object-cover rounded-full mr-4"
-            />
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-800">
-                {ticket.userName}
-              </h3>
-              <div className="flex justify-between items-center mt-1">
-                <p className="text-sm font-medium text-gray-800">
-                  ${ticket.price.toFixed(2)}
-                </p>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+      className="w-full mx-auto"
+    >
+      <div className="w-full mx-auto">
+        {/* List view for small screens */}
+        <div className="md:hidden">
+          <div className="bg-white rounded-lg overflow-hidden">
+            <div className="flex items-center p-2 pt-3 border-b">
+              <img
+                src={
+                  isGroupEvent
+                    ? user?.user?.response.image
+                    : user?.response.image
+                }
+                alt={isGroupEvent ? user.groupName : user?.response.firstname}
+                className="w-20 h-20 object-cover rounded-full mr-4"
+              />
+              <div className="">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {isGroupEvent && user.groupName}{" "}
+                  {!isGroupEvent && user?.response.firstname}{" "}
+                  {!isGroupEvent && user?.response.lastname}
+                </h3>
               </div>
             </div>
-          </div>
-          <div className="p-2 flex gap-2">
-            <Button className="w-full bg-gray-800 text-white hover:bg-gray-700 mb-2">
-              Show Screenshot
-              <Image className="w-4 h-4 ml-2" />
-            </Button>
-            <Select onValueChange={(value) => onStatusChange(ticket.id, value)}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder={ticket.status} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Confirmed">Confirm Ticket</SelectItem>
-                <SelectItem value="Rejected">Reject Ticket</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
-
-      {/* Card view for medium and large screens */}
-      <Card className="hidden md:block bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg overflow-hidden">
-        <div className="flex">
-          {/* User Image */}
-          <div className="w-20 h-20 p-2 relative">
-            <img
-              src={ticket.userImage}
-              alt={ticket.userName}
-              className="w-full h-full object-cover rounded-full"
-            />
-          </div>
-
-          {/* User Details */}
-          <div className="flex flex-1 justify-between items-center gap-5 p-4">
-            {/* Left Section */}
-            <div className="flex flex-col gap-2">
-              <CardHeader className="p-0">
-                <CardTitle className="text-lg font-bold text-gray-800">
-                  {ticket.userName}
-                </CardTitle>
-                <p className="text-sm text-gray-600">
-                  Price:{" "}
-                  <span className="font-medium text-gray-800">
-                    ${ticket.price.toFixed(2)}
-                  </span>
-                </p>
-              </CardHeader>
-            </div>
-
-            {/* Right Section */}
-            <CardContent className="p-0 flex items-center gap-5">
-              <Button className="bg-gray-800 text-white hover:bg-gray-700 text-sm">
-                Show Screenshot
-                <Image className="w-4 h-4 ml-2" />
-              </Button>
-
-              <Select
-                onValueChange={(value) => onStatusChange(ticket.id, value)}
-              >
-                <SelectTrigger className="w-[180px] text-sm">
-                  <SelectValue placeholder={ticket.status} />
+            <div className="p-2 flex gap-2">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="w-full bg-gray-800 text-white hover:bg-gray-700 mb-2">
+                    Show Screenshot
+                    <Image className="w-4 h-4 ml-2" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="w-[80%]">
+                  <DialogHeader>
+                    <DialogTitle>Payment Screenshot</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex items-center justify-center">
+                    <img
+                      src={
+                        user.participant.paymentScreenshot || "/placeholder.svg"
+                      }
+                      alt="Payment Screenshot"
+                      className="max-w-full max-h-[80vh] object-contain"
+                    />
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <Select onValueChange={handleStatusChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={paymentStatus} />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
+                  <SelectItem value="Pending">Pending Ticket</SelectItem>
                   <SelectItem value="Confirmed">Confirm Ticket</SelectItem>
                   <SelectItem value="Rejected">Reject Ticket</SelectItem>
                 </SelectContent>
               </Select>
-            </CardContent>
+            </div>
           </div>
         </div>
-      </Card>
-    </div>
+
+        {/* Card view for medium and large screens */}
+        <Card className="hidden md:block bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg overflow-hidden">
+          <div className="flex">
+            {/* User Image */}
+            <div className="w-20 h-20 p-2 relative">
+              <img
+                src={
+                  isGroupEvent
+                    ? user?.user?.response.image
+                    : user?.response.image
+                }
+                alt={isGroupEvent ? user.groupName : user?.response.firstname}
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+
+            {/* User Details */}
+            <div className="flex flex-1 justify-between items-center gap-5 p-4">
+              {/* Left Section */}
+              <div className="flex flex-col gap-2">
+                <CardHeader className="p-0">
+                  <CardTitle className="text-lg font-bold text-gray-800">
+                    {isGroupEvent && user.groupName}{" "}
+                    {!isGroupEvent && user?.response.firstname}{" "}
+                    {!isGroupEvent && user?.response.lastname}
+                  </CardTitle>
+                  {/* <p className="text-sm text-gray-600">
+                  Price:{" "}
+                  <span className="font-medium text-gray-800">
+                    ${ticket.price.toFixed(2)}
+                  </span>
+                </p> */}
+                </CardHeader>
+              </div>
+
+              {/* Right Section */}
+              <CardContent className="p-0 flex items-center gap-5">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="bg-gray-800 text-white hover:bg-gray-700 mb-2">
+                      Show Screenshot
+                      <Image className="w-4 h-4 ml-2" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Payment Screenshot</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex items-center justify-center p-6">
+                      <img
+                        src={
+                          user.participant.paymentScreenshot ||
+                          "/placeholder.svg"
+                        }
+                        alt="Payment Screenshot"
+                        className="max-w-full max-h-[80vh] object-contain"
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
+
+                <Select onValueChange={handleStatusChange}>
+                  <SelectTrigger className="w-[180px] text-sm">
+                    <SelectValue placeholder={paymentStatus} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectItem value="Pending">Pending Ticket</SelectItem>
+                    <SelectItem value="Confirmed">Confirm Ticket</SelectItem>
+                    <SelectItem value="Rejected">Reject Ticket</SelectItem>
+                  </SelectContent>
+                </Select>
+              </CardContent>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </motion.div>
   );
 };
 
 export default function TicketStatusChangingPage() {
-  const [tickets, setTickets] = useState(initialTickets);
+  const [participants, setParticipants] = useState([]);
   const [statusFilter, setStatusFilter] = useState("Pending");
-  const [displayedTickets, setDisplayedTickets] = useState([]);
-  const [isSliding, setIsSliding] = useState(false);
+  const { id } = useParams();
+  const userId = useSelector((state) => state.auth.userInfo?._id);
+  const activeEvents = useSelector((state) => state.event?.activeEvents);
+  const event = activeEvents?.find((event) => event._id === id) || null;
+  const [participantDetails, setParticipantsDetails] = useState([]);
+  const [change, setChange] = useState(false);
+  const [groupUsoerInfo, setGroupUserInfo] = useState([]);
+  const [isGroupEvent, setIsGroupEvent] = useState(false);
+
+  // Fetch user information for a given userId
+  const fetchUserInfo = async (userId) => {
+    try {
+      const response = await axios.post(
+        `${baseUrl}/api/user/getuser/?userid=${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
-    filterTickets(statusFilter);
-  }, [statusFilter, tickets]);
+    const fetchData = async () => {
+      if (event && !event.isGroupEvent) {
+        // For individual event
+        if (event.participants && event.participants.length > 0) {
+          const userDetailsPromises = event.participants.map(
+            async (participant) => {
+              return await fetchUserInfo(participant.userId);
+            }
+          );
+          const userDetails = await Promise.all(userDetailsPromises);
+          setParticipants(userDetails.filter((user) => user !== null));
+        }
+      } else if (event && event.isGroupEvent) {
+        setIsGroupEvent(true);
+        // For group event
+        if (event.participants && event.participants.length > 0) {
+          const groupParticipants = await Promise.all(
+            event.participants.map(async (participant) => {
+              const user = await fetchUserInfo(participant.userId);
+              return { groupName: participant.groupName, user };
+            })
+          );
 
-  const filterTickets = (status) => {
-    setIsSliding(true);
-    setTimeout(() => {
-      setDisplayedTickets(tickets.filter((ticket) => ticket.status === status));
-      setIsSliding(false);
-    }, 300);
+          const uniqueGroupParticipants = groupParticipants.reduce(
+            (acc, current) => {
+              const existingGroup = acc.find(
+                (entry) => entry.groupName === current.groupName
+              );
+              if (!existingGroup) {
+                acc.push(current);
+              }
+              return acc;
+            },
+            []
+          );
+
+          setGroupUserInfo(uniqueGroupParticipants);
+        }
+      }
+    };
+
+    if (event) {
+      fetchData();
+    }
+  }, [event, change]);
+
+  const handleStatusChange = async (ParticipantIdorGroupName, newStatus) => {
+    try {
+      let response;
+
+      if (!isGroupEvent) {
+        // Payload for individual event
+        const individualPayload = {
+          eventId: event._id,
+          participantId: ParticipantIdorGroupName,
+          newStatus: newStatus,
+          userId: userId,
+        };
+
+        // API call for individual event
+        response = await axios.post(
+          "http://localhost:3000/api/event/update-payment-status",
+          individualPayload
+        );
+      } else {
+        const groupPayload = {
+          eventId: event._id,
+          groupName: ParticipantIdorGroupName,
+          userId: userId,
+          newStatus: newStatus,
+        };
+
+        console.log("is is group groupPayload:", groupPayload);
+
+        // API call for group event
+        response = await axios.post(
+          "http://localhost:3000/api/event/update-group-payment-status",
+          groupPayload
+        );
+      }
+      console.log("this is group consolin after axios call",response)
+      if (response.status === 200) {
+        setChange((prev) => !prev); // Trigger re-filtering
+        console.log("Payment status updated successfully:", response.data);
+      } else {
+        console.error("Failed to update payment status:", response.data);
+      }
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+    }
   };
 
-  const handleStatusChange = (id, newStatus) => {
-    setTickets((prevTickets) =>
-      prevTickets.map((ticket) =>
-        ticket.id === id ? { ...ticket, status: newStatus } : ticket
-      )
-    );
-  };
+  useEffect(() => {
+    if (!participants || !id || !statusFilter) {
+      return;
+    }
+
+    if (!event?.isGroupEvent) {
+      const filteredDetails = participants
+        .map((user) => {
+          const participant = user.response.myevents?.find(
+            (e) => e.eventId === id
+          );
+          return { ...user, participant };
+        })
+        .filter((user) => user.participant?.paymentStatus === statusFilter);
+      setParticipantsDetails(filteredDetails);
+    } else {
+      const filteredDetails = groupUsoerInfo
+        .map((user) => {
+          const participant = user?.user?.response?.myevents?.find(
+            (e) => e.eventId === id
+          );
+          return { ...user, participant };
+        })
+        .filter((user) => user?.participant?.paymentStatus === statusFilter);
+    
+      setParticipantsDetails(filteredDetails);
+    }
+  }, [participants, id, statusFilter, change, groupUsoerInfo]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -254,18 +413,8 @@ export default function TicketStatusChangingPage() {
         </h1>
 
         <Card className="bg-white rounded-lg shadow-md p-2 sm:p-4 md:p-6 mb-4 md:mb-8">
-          <EventCard
-            event={{
-              title: "Summer Music Festival",
-              image:
-                "https://th.bing.com/th/id/OIP.GPFEY6kfgxbsja6gmrW6rwAAAA?rs=1&pid=ImgDetMain",
-              status: "Active",
-              date: "August 15-17, 2024",
-              location: "Central Park, New York",
-              soldTickets: 1500,
-              totalTickets: 2000,
-            }}
-          />
+          {event ? <EventCard event={event} /> : <p>Event not found.</p>}
+
           <div className="flex flex-wrap gap-2 mb-3 md:mb-6">
             {["Pending", "Confirmed", "Rejected"].map((status) => (
               <Button
@@ -284,21 +433,29 @@ export default function TicketStatusChangingPage() {
           </div>
         </Card>
 
-        <div
-          className={`space-y-4 transition-all duration-300 ${
-            isSliding
-              ? "opacity-0 transform translate-y-4"
-              : "opacity-100 transform translate-y-0"
-          }`}
-        >
-          {displayedTickets.map((ticket) => (
-            <TicketCard
-              key={ticket.id}
-              ticket={ticket}
-              onStatusChange={handleStatusChange}
-            />
-          ))}
-        </div>
+        <AnimatePresence>
+          <motion.div
+            className="space-y-4 transition-all duration-300"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {participantDetails.map((user) => {
+              const key = isGroupEvent
+                ? `${user.user.response._id}-${user.groupName}`
+                : `${user.response._id}-${user.response.firstname}`;
+
+              return (
+                <ParticipantCard
+                  key={key}
+                  user={user}
+                  onStatusChange={handleStatusChange}
+                  event={event}
+                />
+              );
+            })}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

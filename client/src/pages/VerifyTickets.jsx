@@ -1,82 +1,44 @@
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Search } from "lucide-react"
-import { useNavigate } from "react-router-dom"
-
-const events = [
-  {
-    id: 1,
-    title: "GCOEC: Live in Concert",
-    date: "May 20, 2024 at 10 PM",
-    location: "Harmony Theater, Winnipeg, MB",
-    ticketsSold: 350,
-    totalTickets: 500,
-    image: "https://th.bing.com/th/id/OIP.iRt7bpuacg0Rl9e_doqdGAHaE7?rs=1&pid=ImgDetMain",
-    pendingRequests: 15,
-  },
-  {
-    id: 2,
-    title: "GCOEC — DJ Night",
-    date: "Jun 2, 2024 at 8 PM",
-    location: "Moonbeam Arena, Uxbridge, ON",
-    ticketsSold: 72,
-    totalTickets: 150,
-    image: "https://th.bing.com/th/id/OIP.W2giC8TjletygTa_fV67_AHaE8?rs=1&pid=ImgDetMain",
-    pendingRequests: 8,
-  },
-  {
-    id: 3,
-    title: "Blind Coding",
-    date: "Aug 5, 2024 at 4 PM",
-    location: "Electric Coliseum, New York, NY",
-    ticketsSold: 275,
-    totalTickets: 275,
-    image: "https://i.pinimg.com/originals/48/89/38/488938d6eec996de2365b072357aac16.jpg",
-    pendingRequests: 0,
-  },
-  {
-    id: 4,
-    title: "GCOEC Party Night",
-    date: "Dec 31, 2024 at 8 PM",
-    location: "Tapestry Hall, Cambridge, ON",
-    ticketsSold: 6,
-    totalTickets: 40,
-    image: "https://dcmsblog.uk/wp-content/uploads/2014/09/events.jpg",
-    pendingRequests: 3,
-  },
-  {
-    id: 5,
-    title: "Blind Coding",
-    date: "Aug 5, 2024 at 4 PM",
-    location: "Electric Coliseum, New York, NY",
-    ticketsSold: 275,
-    totalTickets: 275,
-    image: "https://i.pinimg.com/originals/48/89/38/488938d6eec996de2365b072357aac16.jpg",
-    pendingRequests: 5,
-  },
-  {
-    id: 6,
-    title: "GCOEC Party Night",
-    date: "Dec 31, 2024 at 8 PM",
-    location: "Tapestry Hall, Cambridge, ON",
-    ticketsSold: 6,
-    totalTickets: 40,
-    image: "https://dcmsblog.uk/wp-content/uploads/2014/09/events.jpg",
-    pendingRequests: 1,
-  },
-]
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Search } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function VerifyTickets() {
- 
+  const events = useSelector((state) => state.event.activeEvents);
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [selectedEventId, setSelectedEventId] = useState(null);
+  const navigate = useNavigate();
+   // To hold selected statuses for events
 
-  const navigate=useNavigate();
-
-  const handleCardClick = (eventId) => {
-    navigate(`/event/${eventId}`); 
+  const confirmStatusChange = async () => {
+    // Call your API to change the event status here using selectedEventId
+    // For example:
+    await updateEventStatus(selectedEventId, false); // Assuming 'false' indicates closed
+    setIsDialogOpen(false);
+    // Optionally, you can refresh your events here or show a success message
   };
 
+  const handleSelectChange = (value, eventId) => {
+    if (value === 'closed') {
+      setSelectedEventId(eventId);
+      setIsDialogOpen(true);
+    } else {
+      // Handle other status changes if needed
+    }
+  };
+console.log("fjberjkgberk",events)
   return (
     <div className="container max-w-6xl mx-auto p-4 bg-white text-gray-900">
       <h1 className="text-3xl font-bold mb-6">Verify Events Tickets</h1>
@@ -99,43 +61,85 @@ export default function VerifyTickets() {
       </div>
       <div className="space-y-2">
         {events.map((event) => (
-          <Card key={event.id}
-           className="flex flex-col sm:flex-row items-center"
-           onClick={() => handleCardClick(event.id)}>
-            <div className="w-full sm:w-24 h-24 relative">
-              <img
-                src={event.image}
-                alt={event.title}
-                className="w-full h-full object-cover"
-                width={80}
-                height={80}
-              />
-              <Badge className="absolute top-1 right-1 bg-green-500 text-white">Active</Badge>
-            </div>
-            <CardHeader className="flex-1">
-              <CardTitle className="text-xl font-semibold">{event.title}</CardTitle>
-              <p className="text-sm text-gray-500">{event.date} · {event.location}</p>
-              <p className="text-sm text-gray-500">
-                {event.ticketsSold}/{event.totalTickets} tickets sold
-              </p>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center">
-            <Badge 
-                variant="secondary" 
-                className={`mb-1 ${
-                  event.pendingRequests > 0 
-                    ? 'bg-red-100 text-red-800 border-red-200' 
-                    : 'bg-green-100 text-green-800 border-green-200'
-                }`}
-              >
-                {event.pendingRequests > 0 
-                  ? `${event.pendingRequests} pending`
-                  : "No Pending Requests"}
-              </Badge>
-            </CardContent>
-          </Card>
+            <Card
+              key={event._id}
+              className="flex flex-col sm:flex-row items-center"
+              onClick={() => navigate(`/event/${event._id}`)}
+            >
+              <div className="w-full sm:w-24 h-24 relative">
+                <img
+                  src={event.image}
+                  alt={event.title}
+                  className="w-full h-full object-fit"
+                  width={80}
+                  height={80}
+                />
+                <Badge className="absolute top-1 right-1 bg-green-500 text-white">
+                  Active
+                </Badge>
+              </div>
+              <CardHeader className="flex-1">
+                <CardTitle className="text-xl font-semibold">
+                  {event.title}
+                </CardTitle>
+                <p className="text-sm text-gray-500">
+                  {" "}
+                  {new Date(event?.startDate).toLocaleString("en-US", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })}{" "}
+                  · {event.venue}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {event.ticketsSold}/{event.totalTickets} tickets sold
+                </p>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center gap-2">
+          <Badge
+            variant="secondary"
+            className={`mb-1 ${
+              Array.isArray(event.participants) && event.participants.length > 0
+                ? "bg-red-100 text-red-800 border-red-200"
+                : "bg-green-100 text-green-800 border-green-200"
+            }`}
+          >
+            {Array.isArray(event.participants) && event.participants.length > 0
+              ? `${event.participants.length} pending`
+              : "No Pending Requests"}
+          </Badge>
+          <Select
+           onValueChange={(value) => handleSelectChange(value, event._id)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue  placeholder={event.isActive ? "Active" : "Closed"}/>
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="closed">Closed</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+            </Card>
         ))}
       </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Event Closure</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to close this event? This action will make the event inactive and may affect current participants.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmStatusChange}>
+              Close Event
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
-  )
+  );
 }
