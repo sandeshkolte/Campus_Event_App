@@ -144,7 +144,8 @@ export default function Component() {
   if (token && token.includes(".")) {
     try {
       const decodedToken = jwtDecode(token);
-      userId = decodedToken._id; // Assuming you have userId in the token
+      
+      userId = decodedToken.id; // Assuming you have userId in the token
     } catch (error) {
       console.error("Invalid token:", error);
     }
@@ -187,6 +188,10 @@ export default function Component() {
       data.participantSize = 1; // For individual events, default size is 1
     }
     data.isAuditCourse = isAuditCourse;
+
+    if(userId){
+      data.organisedBy = `${userId}`
+    }
       // Create the event
       console.log("The created data: ",data);
       
