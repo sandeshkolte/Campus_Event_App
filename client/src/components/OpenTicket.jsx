@@ -3,8 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { QrCode, Upload, Plus, Users, DollarSign, GraduationCap, BookOpen, Phone, CrossIcon, X, CircleX, IndianRupee } from 'lucide-react';
-import { FaClosedCaptioning } from 'react-icons/fa';
+import { Upload, GraduationCap, BookOpen, Phone, CircleX, IndianRupee } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { storage } from '@/firebase';
 import { toast } from 'react-toastify';
@@ -12,11 +11,9 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import axios from 'axios';
 import { baseUrl } from '@/common/common';
 import { useNavigate } from 'react-router-dom';
-import { CoordinatorProvider } from '@/hooks/useCoordinator';
-import CoordinatorSelector from './CoordinatorSelector';
 import { useForm } from 'react-hook-form';
 import { VscLoading } from 'react-icons/vsc';
-import { TbSelect } from 'react-icons/tb';
+import SelectorPrac from './SelectorPrac';
 
 export default function TicketBooking({ isOpen, onClose,eventDetails }) {
   const currentUser = useSelector((state)=>state.auth?.userInfo) // Replace with actual username from your state or props
@@ -24,13 +21,12 @@ export default function TicketBooking({ isOpen, onClose,eventDetails }) {
   const [searchMember, setSearchMember] = useState('');
   const [isLoading, setisLoading] = useState(false);
   const [isBookingLoading, setisBookingLoading] = useState(false);
-  const [isPaymentUploaded, setisPaymentUploaded] = useState(false);
   const [paymentScreenshot, setPaymentScreenshot] = React.useState("")
   const [file, setFile] = React.useState(null)
   const navigate = useNavigate()
   const { register, handleSubmit, reset, setValue } = useForm()
 
-console.log(currentUser);
+// console.log(currentUser);
 
   const handleAddMember = () => {
     if (searchMember && !groupMembers.includes(searchMember)) {
@@ -165,9 +161,10 @@ console.log(currentUser);
                </div>
                <div className="flex flex-col space-y-1.5 pt-5">
                <Label htmlFor="member">Members</Label>
-               <CoordinatorProvider>
+               <SelectorPrac selector={"participants"}  setValue={setValue}  />
+               {/* <CoordinatorProvider>
                  <CoordinatorSelector selector={"participants"} setValue={setValue} />
-               </CoordinatorProvider>
+               </CoordinatorProvider> */}
              </div>
              </>
               ) : (

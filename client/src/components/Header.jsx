@@ -28,8 +28,8 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 z-50 w-full h-15 backdrop-blur-lg bg-white bg-opacity-30 pr-5 py-2">
       <div className="flex justify-between items-center">
-        <h1 className="bg-gradient-to-r ml-3 md:ml-6 from-purple-400 to-indigo-600 font-bold text-xl text-transparent bg-clip-text">
-          Eventify
+        <h1 className="flex items-center bg-gradient-to-r ml-3 md:ml-6 from-purple-400 to-indigo-600 font-bold text-xl text-transparent bg-clip-text">
+       <span> <img src="/college-logo.jpeg" alt="logo" className="h-8 w-8" /> </span>   Eventify
         </h1>
 
         <ul className="lg:flex justify-center items-center flex-row gap-5 font-semibold hidden">

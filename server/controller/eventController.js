@@ -287,7 +287,7 @@ const addParticipantandEvent = async (req, res) => {
     // User added as event participant and event added to user event
 
     const {userId, eventId, paymentImage } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     try {
       const userUpdate = await userModel.findByIdAndUpdate(userId, {
         $push: { myevents: { eventId, paymentScreenshot: paymentImage } },
@@ -351,7 +351,7 @@ const updateGroupPaymentStatus = async (req, res) => {
   try {
     const { eventId, groupName, userId, newStatus } = req.body;
 
-    console.log(req.body);
+    // console.log(req.body);
 
     // Find the event by ID
     const event = await eventModel.findById(eventId);
@@ -372,7 +372,7 @@ const updateGroupPaymentStatus = async (req, res) => {
 
     // Update payment status for each participant in the group
      groupParticipants.forEach( async (participant) => {
-      console.log("Paritcipants id:", participant.userId);
+      // console.log("Paritcipants id:", participant.userId);
       
       await userModel.findOneAndUpdate(
         { _id: participant.userId, "myevents.eventId": eventId },
@@ -445,7 +445,7 @@ const updateStudentPaymentStatus = async (req, res) => {
 const activeEvents = async (req, res) => {
   try {
     const { userId } = req.params; // Access userId from req.params
-    console.log(req.params);
+    // console.log(req.params);
 
     // Find all active events
     const events = await eventModel.find({ isActive: true });
@@ -456,7 +456,7 @@ const activeEvents = async (req, res) => {
       event.coordinator.some(coordinatorId => String(coordinatorId) === String(userId))
     );
 
-    console.log(adminEvents);
+    // console.log(adminEvents);
 
     // Check if any admin events were found
     if (adminEvents.length === 0) {

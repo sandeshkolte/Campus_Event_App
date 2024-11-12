@@ -3,7 +3,7 @@ import React from 'react'
 
 const CreateEvent = () => {
   return (
-    <div className='p-5 flex justify-center ' >
+    <div className='p-5 flex justify-center' >
         <CreateEventCard/>
     </div>
   )

@@ -36,10 +36,9 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage"
 import { VscLoading } from "react-icons/vsc"
 import { CalendarIcon, Upload } from "lucide-react"
 import CategorySelector from "./CategorySelector"
-import { CoordinatorProvider } from "@/hooks/useCoordinator"
 import { jwtDecode } from "jwt-decode"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import CoordinatorSelector from "./CoordinatorSelector"
+import SelectorPrac from "./SelectorPrac"
 
 export default function Component() {
   const { register, handleSubmit, reset, setValue } = useForm()
@@ -127,16 +126,15 @@ export default function Component() {
   // Function to update 'eventsorganised' field
   const addtoOrganisedEvent = async (userId, eventId) => {
     try {
-      const response = await axios.put(`${baseUrl}/api/user/addOrganisedEvent`, { userId, eventId });
-      if (response.status === 200) {
+      await axios.put(`${baseUrl}/api/user/addOrganisedEvent`, { userId, eventId });
+      // if (response.status === 200) {
         console.log(`Event added to organised event`);
-      }
+      // }
     } catch (error) {
       console.error("Failed to add event to user:", error);
       toast.error("Failed to add event to user.");
     }
   };
-
 
   const token = localStorage.getItem("userToken");
   let userId = null;
@@ -144,7 +142,7 @@ export default function Component() {
   if (token && token.includes(".")) {
     try {
       const decodedToken = jwtDecode(token);
-      
+
       userId = decodedToken.id; // Assuming you have userId in the token
     } catch (error) {
       console.error("Invalid token:", error);
@@ -160,12 +158,16 @@ export default function Component() {
       return;
     }
 
-     // Check if it's a group event and validate participant size
-  if (isGroupEvent && (!data.participantSize || data.participantSize < 1)) {
-    toast.error("Please enter a valid group size.");
-    setLoading(false);
-    return;
-  }
+    if (data.price === null || data.price === "") {
+      data.price = 0
+    }
+
+    // Check if it's a group event and validate participant size
+    if (isGroupEvent && (!data.participantSize || data.participantSize < 1)) {
+      toast.error("Please enter a valid group size.");
+      setLoading(false);
+      return;
+    }
 
 
     try {
@@ -183,36 +185,38 @@ export default function Component() {
         data.qrImage = qrDownloadURL; // Store the QR code image URL
       }
 
-          data.isGroupEvent = isGroupEvent;
-    if (!isGroupEvent) {
-      data.participantSize = 1; // For individual events, default size is 1
-    }
-    data.isAuditCourse = isAuditCourse;
+      data.isGroupEvent = isGroupEvent;
+      if (!isGroupEvent) {
+        data.participantSize = 1; // For individual events, default size is 1
+      }
+      data.isAuditCourse = isAuditCourse;
 
-    if(userId){
-      data.organisedBy = `${userId}`
-    }
+      if (userId) {
+        data.organisedBy = `${userId}`
+      }
       // Create the event
-      console.log("The created data: ",data);
-      
+
+      console.log("The created data: ", data);
+
       const eventResponse = await axios.post(`${baseUrl}/api/event/create`, data);
       const eventId = eventResponse.data._id; // Get the new event ID
       // if (eventResponse.status === 201) {
-        console.log("Event created successfully", eventResponse.data);
-        toast.success("Event created successfully!");
+      console.log("Event created successfully", eventResponse.data);
+      toast.success("Event created successfully!");
 
-        // Update 'eventsorganised' field for coordinators
-        await Promise.all([
-          addtoOrganisedEvent(`${userId}`, eventId),
-        ]);
+      console.log("Eventid: ",eventId);
+      
+      // Update 'eventsorganised' field for coordinators
+        addtoOrganisedEvent(`${userId}`, eventId),
+   
 
-        reset(); // Reset the form fields
-        setImagePreview(null); // Reset the image preview
-        setUploadedFile(null); // Reset the uploaded file state
-        setQRPreview(null); // Reset QR preview
-        setUploadedQRFile(null); // Reset uploaded QR file state
-        navigate("/"); // Navigate to the home route
-        window.location.reload();
+      reset(); // Reset the form fields
+      setImagePreview(null); // Reset the image preview
+      setUploadedFile(null); // Reset the uploaded file state
+      setQRPreview(null); // Reset QR preview
+      setUploadedQRFile(null); // Reset uploaded QR file state
+      // navigate("/"); // Navigate to the home route
+      // window.location.reload();
       // }
     } catch (err) {
       toast.error("Failed to create event " + err.message);
@@ -222,27 +226,27 @@ export default function Component() {
   };
 
   return (
-    <Card className="w-full max-w-6xl">
+    <Card className="w-full md:max-w-5xl">
       <form onSubmit={handleSubmit(formSubmit)}>
         <CardHeader>
           <CardTitle>Create Event</CardTitle>
           <CardDescription>Fill in the details for your new event.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div className="flex flex-col space-y-1.5">
+          <div className="grid gap-6 md:grid-cols-2 ">
+            <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="title">Title <span className="text-red-500" >*</span></Label>
               <Input id="title" placeholder="Enter event title" {...register("title")} />
             </div>
-            <div className="flex flex-col space-y-1.5">
+            <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="price">Price</Label>
-              <Input id="price" type="number" placeholder="0.00" {...register("price", { valueAsNumber: true, min: 0 })} />
+              <Input id="price" type="number" placeholder="0.00" {...register("price")} />
             </div>
-            <div className="flex flex-col space-y-1.5 sm:col-span-1">
+            <div className="grid w-full max-w-sm items-center gap-1.5 sm:col-span-1">
               <Label htmlFor="description">Description <span className="text-red-500" >*</span></Label>
               <Textarea id="description" placeholder="Describe your event" rows={6} {...register("description")} />
             </div>
-            <div className="flex flex-col space-y-1.5 sm:col-span-1">
+            <div className="grid w-full max-w-sm items-center gap-1.5 sm:col-span-1">
               <div className="space-y-2">
                 <Label htmlFor="image">Upload Event Banner <span className="text-red-500" >*</span></Label>
                 <div className="flex flex-col items-center space-y-4">
@@ -267,7 +271,7 @@ export default function Component() {
                       ) : (
                         <div className="text-center">
                           <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                           <span className="mt-2 block text-sm font-medium text-gray-700">
+                          <span className="mt-2 block text-sm font-medium text-gray-700">
                             Upload Event Banner
                           </span>
                         </div>
@@ -293,7 +297,7 @@ export default function Component() {
 
             <div>
               <hr className="bg-black " />
-              <div className="flex flex-col space-y-1.5 sm:col-span-1 mt-5">
+              <div className="grid w-full max-w-sm items-center gap-1.5 sm:col-span-1 mt-5">
                 <div className="space-y-2">
                   <Label htmlFor="qrImage" className={"text-xl"}>✔️ Add Payment QR</Label>
                   <div className="flex flex-col items-center space-y-4">
@@ -318,7 +322,7 @@ export default function Component() {
                         ) : (
                           <div className="text-center">
                             <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                             <span className="mt-2 block text-sm font-medium text-gray-700">
+                            <span className="mt-2 block text-sm font-medium text-gray-700">
                               Upload QR Image
                             </span>
                           </div>
@@ -343,36 +347,36 @@ export default function Component() {
               </div>
             </div>
 
-{/* Participation type */}
+            {/* Participation type */}
             <div className="p-8 flex flex-col gap-5 " >
               <Label htmlFor="">Participation Type</Label>
               <div className="flex gap-x-10 " >
-              <RadioGroup 
-              defaultValue={false}
-        onValueChange={(value) => {
-          setisGroupEvent(value)
-          setValue("isGroupEvent",value)
-        }
+                <RadioGroup
+                  defaultValue={false}
+                  onValueChange={(value) => {
+                    setisGroupEvent(value)
+                    setValue("isGroupEvent", value)
+                  }
 
-        }
-              >
-                <div className="flex items-center space-x-2 ">
-                  <RadioGroupItem value={false} id="r1" />
-                  <Label htmlFor="r1">Individual</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={true} id="r2" />
-                  <Label htmlFor="r1">Group</Label>
-                </div>
-              </RadioGroup>
-            {  isGroupEvent &&  <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="participantSize">Enter Group Size</Label>
-              <Input id="participantSize" required type="number" className={"w-20"} placeholder="2" min={2} {...register("participantSize", {min: 2 })} />
-            </div>}
+                  }
+                >
+                  <div className="flex items-center space-x-2 ">
+                    <RadioGroupItem value={false} id="r1" />
+                    <Label htmlFor="r1">Individual</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value={true} id="r2" />
+                    <Label htmlFor="r1">Group</Label>
+                  </div>
+                </RadioGroup>
+                {isGroupEvent && <div className="grid w-full max-w-sm items-center gap-1.5">
+                  <Label htmlFor="participantSize">Enter Group Size</Label>
+                  <Input id="participantSize" required type="number" className={"w-20"} placeholder="2" min={2} {...register("participantSize", { min: 2 })} />
+                </div>}
               </div>
             </div>
 
-            <div className="flex flex-col space-y-1.5 font-semibold">
+            <div className="grid w-full max-w-sm items-center gap-1.5 font-semibold">
               <Label htmlFor="organizers">Organizing Committe <span className="text-red-500" >*</span></Label>
               <Select onValueChange={(value) => setValue("organizingBranch", value)}>
                 <SelectTrigger id="organizers">
@@ -399,54 +403,55 @@ export default function Component() {
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <div className="flex flex-col space-y-1.5 pt-5">
-              <Label htmlFor="coordinator">Coordinators <span className="text-red-500" >*</span></Label>
-              <CoordinatorProvider>
-                <CoordinatorSelector selector={"coordinator"} setValue={setValue} />
-              </CoordinatorProvider>
-            </div>
-            </div>
-
-            <div className="p-8 flex flex-col gap-5" >
-              <Label htmlFor="">Audit Course</Label>
-              <div className="flex gap-x-10" >
-              <RadioGroup 
-              defaultValue={false}
-        onValueChange={(value) => {
-          setisAuditCourse(value)
-          setValue("isAuditCourse", value)
-        }}
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={false} id="a1" />
-                  <Label htmlFor="a1">No</Label>
+              <div className="p-8 flex flex-col gap-5" >
+                <Label htmlFor="">Audit Course</Label>
+                <div className="flex gap-x-10" >
+                  <RadioGroup
+                    defaultValue={false}
+                    onValueChange={(value) => {
+                      setisAuditCourse(value)
+                      setValue("isAuditCourse", value)
+                    }}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value={false} id="a1" />
+                      <Label htmlFor="a1">No</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value={true} id="a2" />
+                      <Label htmlFor="a2">Yes</Label>
+                    </div>
+                  </RadioGroup>
+                  {/* {`Selected : ${isAuditCourse}`} */}
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={true} id="a2" />
-                  <Label htmlFor="a2">Yes</Label>
-                </div>
-              </RadioGroup>
-              {/* {`Selected : ${isAuditCourse}`} */}
               </div>
             </div>
+            <div className="flex flex-col space-y-1.5 w-[280px]">
+              <Label htmlFor="coordinator">Coordinators <span className="text-red-500" >*</span></Label>
+              {/* <CoordinatorProvider>
+                <CoordinatorSelector selector={"coordinator"} setValue={setValue} />
+              </CoordinatorProvider> */}
+              <SelectorPrac selector={"coordinator"} setValue={setValue} />
+            </div>
 
-            <div className="flex flex-col space-y-1.5">
+
+            <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="category">Category <span className="text-red-500" >*</span></Label>
               <CategorySelector setValue={setValue} />
               {/* <Input id="category" placeholder="Enter Category" {...register("category")} /> */}
             </div>
-            {/* <div className="flex flex-col space-y-1.5">
+            {/* <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="coordinator">Coordinators</Label>
               <CoordinatorProvider>
                 <CoordinatorSelector setValue={setValue} />
               </CoordinatorProvider>
             </div> */}
 
-            <div className="flex flex-col space-y-1.5">
+            <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="venue">Venue <span className="text-red-500" >*</span></Label>
               <Input id="venue" placeholder="Enter event venue" {...register("venue")} />
             </div>
-            <div className="flex flex-col space-y-1.5">
+            <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="">Start Date <span className="text-red-500" >*</span></Label>
               <Popover>
                 <PopoverTrigger asChild>
@@ -458,7 +463,7 @@ export default function Component() {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {startDateTime ? format(startDateTime, "PPP p") :  <span>Pick a date and time</span>}
+                    {startDateTime ? format(startDateTime, "PPP p") : <span>Pick a date and time</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
@@ -483,7 +488,7 @@ export default function Component() {
               </Popover>
             </div>
 
-            <div className="flex flex-col space-y-1.5">
+            <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="">End Date <span className="text-red-500" >*</span></Label>
               <Popover>
                 <PopoverTrigger asChild>
@@ -495,7 +500,7 @@ export default function Component() {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {endDateTime ? format(endDateTime, "PPP p") :  <span>Pick a date and time</span>}
+                    {endDateTime ? format(endDateTime, "PPP p") : <span>Pick a date and time</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">

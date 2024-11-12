@@ -18,6 +18,14 @@ module.exports = {
   	},
   	extend: {
   		keyframes: {
+			fadeIn: {
+				from: {
+				  opacity: '0'
+				},
+				to: {
+				  opacity: '1'
+				}
+			  },
   			gradient: {
   				'0%': {
   					backgroundPosition: '0% 50%'

@@ -319,7 +319,6 @@ const addOrganisedEvent = async (req, res) => {
     }
 };
 
-
 // const addMyEvent = async (req, res) => {
 //     const {userId, eventId, paymentImage } = req.body;
 //     console.log(req.body);

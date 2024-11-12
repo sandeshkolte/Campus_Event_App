@@ -1,19 +1,19 @@
-import React, { useEffect } from 'react'
-import Home from './pages/Home'
+import React, { useEffect, useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import {jwtDecode} from 'jwt-decode'
+import Home from './pages/Home'
 import Layout from './Layout'
 import Profile from './pages/Profile'
 import SignUpPage from './pages/SignUpPage'
 import SignInPage from './pages/SignInPage'
 import CreateEvent from './pages/CreateEvent'
 import ProtectedRoute from './components/ProtectedRoute'
-import { jwtDecode } from 'jwt-decode'
-import axios from 'axios'
 import { baseUrl } from './common/common'
-import { useDispatch } from 'react-redux'
 import { login } from './store/authSlice'
 import { activeEvents, allEvents } from './store/eventSlice'
-import { toast } from 'react-toastify'
 import MyTickets from './pages/MyEvents'
 import EventDetailsPage from './pages/EventDetailsPage'
 import BookingPage from './pages/BookingPage'
@@ -23,8 +23,29 @@ import EventsOrganized from './pages/EventsOrganized'
 import CSECommittee from './pages/CommitteePage'
 import VerifyTickets from './pages/VerifyTickets'
 import TicketStatusChangingPage from './pages/TicketStatusChangingPage'
+import { VscLoading } from 'react-icons/vsc'
+import OrganizersComponent from './components/OrganizersComponent'
+
+// Loading Screen Component
+const LoadingScreen = () => (
+  <div className="loading-screen flex justify-center items-center h-screen">
+    <div>
+    <div className='flex justify-center items-center text-sm' >
+      <img src="college-logo.jpeg" alt="logo" className='h-10 w-10 md:h-20 md:w-20' />
+      <p className='pl-2 font-bold text-indigo-800' >GCOEC<br />Chandrapur</p>
+      <hr className="border-gray-300 rounded-md border-[1.5px] w-10 md:w-14 rotate-90" />
+    <h1 className="bg-gradient-to-r from-purple-400 to-indigo-600 font-bold md:text-xl text-transparent bg-clip-text">
+          Eventify
+        </h1>
+    </div>
+    <h3 className='flex justify-center text-gray-700 font-bold pt-2' ><span className='pr-2' ><VscLoading className='text-purple-500 text-xl animate-spin-slow' /></span> Loading...</h3>
+    </div>
+  </div>
+)
 
 const App = () => {
+  const [loading, setLoading] = useState(true)
+  const dispatch = useDispatch()
 
   const token = localStorage.getItem("userToken")
   const isAuthenticated = token !== null && token !== ""
@@ -41,111 +62,95 @@ const App = () => {
     }
   }
 
-  const dispatch = useDispatch()
   const fetchUserDetails = async () => {
     try {
       if (userId) {
-        axios.post(baseUrl + `/api/user/getuser/?userid=${userId}`).then((result) => {
-          if (result.status === 200) {
-            const userDetails = result.data.response
-            dispatch(login(userDetails))
-          }
-        })
+        const result = await axios.post(`${baseUrl}/api/user/getuser/?userid=${userId}`)
+        if (result.status === 200) {
+          const userDetails = result.data.response
+          dispatch(login(userDetails))
+        }
       }
-      // const userInfo = localStorage.getItem('userInfo')
-      // if (userInfo) {
-      //   dispatch(login(JSON.parse(userInfo)))  // Rehydrate user info from localStorage
-      // }
-
     } catch (err) {
-      console.log(err)
+      console.error("Error fetching user details:", err)
     }
   }
 
   const fetchAllEvents = async () => {
     try {
-      axios.get(baseUrl + "/api/event/").then(result => {
-        const events = result.data.response
-        dispatch(allEvents(events))
-      }).catch(err => {
-        toast.error(err)
-      })
+      const result = await axios.get(`${baseUrl}/api/event/`)
+      const events = result.data.response
+      dispatch(allEvents(events))
     } catch (err) {
-      toast.error(err)
+      toast.error(err.message || "Error fetching events")
+      console.error("Error fetching all events:", err)
+    }
+  }
+
+  const fetchActiveEvents = async (userID) => {
+    try {
+      const result = await axios.get(`${baseUrl}/api/event/active-events/${userID}`)
+      const events = result.data.adminEvents
+      dispatch(activeEvents(events))
+    } catch (err) {
+      toast.error(err.message || "Error fetching active events")
+      console.error("Error fetching active events:", err)
     }
   }
 
   useEffect(() => {
-    if (token && userId) {
-      // console.log("token called")
-      fetchUserDetails()
+    const fetchData = async () => {
+      if (token && userId) {
+        await fetchUserDetails()
+      }
+      await fetchAllEvents()
+      if (userId) {
+        await fetchActiveEvents(userId)
+      }
+      setLoading(false)
     }
+    fetchData()
   }, [token, userId])
 
-  useEffect(() => {
-    fetchAllEvents()
-
-  }, [])
-
-
-  const fetchActiveEvents = async (userID) => {
-    try {
-      const result = await axios.get(
-        baseUrl + `/api/event/active-events/${userID}`
-      );
-      const events = result.data.adminEvents;
-      dispatch(activeEvents(events))
-      console.log(events);
-    } catch (err) {
-      toast.error(err.message || "Error fetching events");
-      console.error("Error fetching events:", err); // Log the error for debugging
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      fetchActiveEvents(userId); // Pass userID as argument
-    }
-  }, [userId]);
+  if (loading) {
+    return <LoadingScreen /> // Show loading screen while data is loading
+  }
 
   return (
-    <>
-      <Routes>
-        <Route path='/' element={<Layout />} >
-          <Route path='' element={<Home />} />
-          <Route path='/eventdetails/:id' element={<EventDetailsPage />} />
-          <Route path='/verify-email' element={<VerifyEmail />} />
-          <Route path='/gallery' element={<PhotoGallery />} />
-          <Route path='/committeepage' element={<CSECommittee/>}/>
+    <div className='fade-in' >
+    <Routes>
+      <Route path='/' element={<Layout />}>
+        <Route path='' element={<Home />} />
+        <Route path='/eventdetails/:id' element={<EventDetailsPage />} />
+        <Route path='/verify-email' element={<VerifyEmail />} />
+        <Route path='/gallery' element={<PhotoGallery />} />
+        <Route path='/committeepage' element={<CSECommittee />} />
 
-          {/* Unauthorized Routes */}
-          {!isAuthenticated && (
+        {!isAuthenticated && (
+          <>
+            <Route path='/register' element={<SignUpPage />} />
+            <Route path='/login' element={<SignInPage />} />
+          </>
+        )}
+
+        <Route element={<ProtectedRoute />}>
+          <Route path='/register' element={<Navigate to="/" />} />
+          <Route path='/login' element={<Navigate to="/" />} />
+          <Route path='/profile' element={<Profile />} />
+          <Route path='/mytickets' element={<MyTickets />} />
+          <Route path='/buyticket/:id' element={<BookingPage />} />
+          {(role === "admin" || role === "superadmin") && (
             <>
-              <Route path='/register' element={<SignUpPage />} />
-              <Route path='/login' element={<SignInPage />} />
+              <Route path='/create' element={<CreateEvent />} />
+              <Route path='/organized' element={<EventsOrganized />} />
+              <Route path="/verifytickets" element={<VerifyTickets />} />
+              <Route path="/event/:id" element={<TicketStatusChangingPage />} />
             </>
           )}
-
-          {/* Protected Routes  */}
-          <Route element={<ProtectedRoute />}>
-            <Route path='/register' element={<Navigate to="/" />} />
-            <Route path='/login' element={<Navigate to="/" />} />
-            <Route path='/profile' element={<Profile />} />
-            <Route path='/mytickets' element={<MyTickets />} />
-            <Route path='/buyticket/:id' element={<BookingPage />} />
-{(role==="admin"||"superadmin") && (
-<>
-<Route path='/create' element={<CreateEvent />} />
-<Route path='/organized' element={<EventsOrganized />} />
-<Route path="/verifytickets" element={<VerifyTickets/>}/>
-<Route path="/event/:id" element={<TicketStatusChangingPage />} />
-</>
-) 
-}
-          </Route>
         </Route>
-      </Routes>
-    </>
+      </Route>
+    </Routes>
+    </div>
   )
 }
 

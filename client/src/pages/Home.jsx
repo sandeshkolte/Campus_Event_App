@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -12,22 +12,24 @@ import AllEvents from "@/components/AllEvents";
 import BranchCard from "@/components/event-card";
 import Marquee from "react-fast-marquee";
 import { useSelector } from "react-redux";
+import RevealAnimation from "@/components/utils/RevealAnimation";
+import OrganizersComponent from "@/components/OrganizersComponent";
 // const AllEvents = React.lazy(() => import('../components/AllEvents'))
 
 const Home = () => {
   const events = useSelector((state) => state.event?.events)
 
-
-
   const token = localStorage.getItem("userToken");
   const isAuthenticated = token !== null && token !== "";
   return (
-    <div className="min-h-screen relative px-6 md:px-10">
-      <div className="absolute top-44 right-[20%] translate-y-[-50%] translate-x-[-50%]">
-        <div className="w-28 h-28 blur-3xl max-sm:bg-transparent bg-purple-400 rounded-3xl"></div>
+    <div className="min-h-screen relative ">
+      
+      <RevealAnimation>
+      <div className="absolute -z-50 bottom-10 right-[0%] translate-y-[-50%] translate-x-[-50%]">
+        <div className="w-56 h-56 blur-[200px] max-sm:bg-transparent bg-blue-500 rounded-3xl"></div>
       </div>
-      <div className="absolute top-56 left-[20%] translate-y-[-50%] translate-x-[-50%]">
-        <div className="w-20 h-20 blur-3xl max-sm:bg-transparent bg-violet-500 rounded-3xl"></div>
+      <div className="absolute -z-50 bottom-10 left-[10%] translate-y-[-50%] translate-x-[-50%]">
+        <div className="w-56 h-56 blur-[200px] max-sm:bg-transparent bg-blue-500 rounded-3xl"></div>
       </div>
 
       <div className="bg-transparent w-full mb-52 ">
@@ -40,7 +42,7 @@ const Home = () => {
             className="h-20 w-20 md:h-32 md:w-32"
           />
         </div>
-        <h1 className="font-bold text-7xl text-center p-5 pt-10">
+        <h1 className="font-bold z-50  text-7xl text-center p-5 pt-10">
           GCOEC
           <br />
           Where Campus Life
@@ -50,6 +52,7 @@ const Home = () => {
             Alive
           </span>
         </h1>
+        
         <p className="font-semibold text-md text-center text-slate-800">
           Discover, Register, and Participate in Events Around Campus
         </p>
@@ -66,8 +69,9 @@ const Home = () => {
           </Button>
         </div>
       </div>
+      </RevealAnimation>
 
-      <div className="flex flex-wrap justify-center mt-28 gap-5 max-sm:flex-col">
+      {/* <div className="flex flex-wrap justify-center mt-28 gap-5 max-sm:flex-col">
         <div className="bg-violet-100 px-2 py-1 rounded-xl w-96 max-sm:w-full flex items-center">
           <i className="ri-search-line text-gray-400"></i>
           <input
@@ -89,12 +93,14 @@ const Home = () => {
             </SelectContent>
           </Select>
         </div>
-      </div>
+      </div> */}
       <div className="my-10 ">
         <h3 className="text-center font-bold text-2xl py-5">
-          Organising Comittees
+          Organizing Committee
         </h3>
-        <div className="relative overflow-hidden">
+        <RevealAnimation>
+          {/* <OrganizersComponent/> */}
+        <div className="relative overflow-hidden mx-6 md:mx-10 ">
           {/* Left blur */}
           <div className="absolute inset-y-0 left-0 w-6 md:w-16 bg-gradient-to-r from-white to-transparent pointer-events-none z-10" />
           {/* Right blur */}
@@ -121,19 +127,22 @@ const Home = () => {
             </div>
           </Marquee>
         </div>
+        </RevealAnimation>
         <div className="flex gap-10 justify-center"></div>
       </div>
       {/* <div className='flex flex-wrap gap-16 p-10 w-full justify-center'> */}
       {/* <Suspense fallback={<div>Loading...</div>} > */}
-      <h3 className="mt-5 text-2xl font-bold ">Upcoming Events</h3>
+      <h3 className="mt-5 text-2xl font-bold mx-6 md:mx-10">Upcoming Events</h3>
+      <RevealAnimation>
       { events.length !=0 ?      <AllEvents /> :
-       <div  className="my-5 flex justify-center items-center h-52 border border-gray-300 rounded-xl">
+       <div  className="my-5 mx-6 md:mx-10 flex justify-center items-center h-52 border border-gray-300 rounded-xl">
         <div>
         <h3 className="font-semibold text-center text-3xl text-gray-800" >No events yet</h3>
         <h3 className="text-center text-lg text-gray-800 ">come back later!</h3>
         </div>
       </div>
       }
+      </RevealAnimation>
       {/* </Suspense> */}
 
       {/* </div> */}

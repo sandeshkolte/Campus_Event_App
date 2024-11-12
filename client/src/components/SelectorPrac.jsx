@@ -1,0 +1,161 @@
+import { baseUrl } from "@/common/common";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
+import debounce from "debounce";
+import { ChevronsUpDown, Search } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { RiCloseFill } from "react-icons/ri";
+import { VscLoading } from "react-icons/vsc";
+
+// Custom hook to handle user search
+function useSearchUsers(searchTerm) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchUsers = debounce(async (term) => {
+      if (term) {
+        setLoading(true);
+        try {
+          const response = await axios.post(`${baseUrl}/api/user/getallusers`, {
+            search: term,
+          });
+          setData(response.data.response);
+          console.log(response.data.response);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setData([]);
+      }
+    }, 1000);
+
+    fetchUsers(searchTerm);
+
+    return () => {
+      fetchUsers.clear();
+    };
+  }, [searchTerm]);
+
+  return { data, loading };
+}
+
+const SelectorPrac = ({ setValue,selector }) => {
+  const [selected, setSelected] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const { data, loading } = useSearchUsers(searchTerm);
+
+  const inputRef = useRef(null);
+
+  const filteredTags = data.filter(
+    (item) =>
+      item.firstname?.toLowerCase().includes(searchTerm.toLowerCase().trim()) &&
+      !selected.includes(item.firstname)
+  )
+
+  const isDisable =
+    !searchTerm.trim() ||
+    selected.some(
+      (item) => item.firstname.toLowerCase().trim() === searchTerm.toLowerCase().trim()
+    );
+
+    useEffect(() => {
+      setValue(selector, selected);
+    }, [selected, setValue]);
+
+  return (
+    <div className="max-w-[250px] grid place-items-center">
+      <div className="relative text-sm">
+        {selected?.length ?  (
+          <div className="w-full relative text-xs flex flex-wrap gap-1 p-2 mb-2">
+            {selected.map((tag) => (
+              <div
+                key={tag._id }
+                className="rounded-full w-fit py-1.5 px-3 bg-gray-700 text-white shadow-md font-semibold flex items-center gap-2"
+              >
+                {tag.firstname}
+                <div
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() =>
+                    setSelected(selected.filter((i) => i._id !== tag._id))
+                  }
+                >
+                  <RiCloseFill />
+                </div>
+              </div>
+            ))}
+            <div className="w-full text-right">
+              <span
+                className="text-gray-400 cursor-pointer"
+                onClick={() => {
+                  setSelected([]);
+                  inputRef.current?.focus();
+                }}
+              >
+                Clear all
+              </span>
+            </div>
+          </div>
+        ) : null}
+        <div className="flex h-10 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
+          {/* <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" /> */}
+          <input
+            ref={inputRef}
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Select Coordinators"
+            className="flex h-11 w-[280px] max-w-[330px] rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            onFocus={() => setMenuOpen(true)}
+            onBlur={() => setMenuOpen(false)}
+          />
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </div>
+
+        {/* Menu */}
+        {menuOpen && loading ? 
+        <div className="flex justify-center items-center" >
+            <VscLoading className="text-gray-500 animate-spin-slow text-2xl text-bold" />
+        </div > :  (
+          <div className="card absolute w-full max-h-40 mt-2 p-1 flex overflow-y-auto scrollbar-thin scrollbar-track-slate-50 scrollbar-thumb-slate-200 bg-white rounded-lg">
+            <ul className="w-full">
+              {filteredTags.length ? (
+                filteredTags.map((tag) => (
+                  <li
+                    key={tag._id}
+                    className="p-2 cursor-pointer hover:bg-purple-50 hover:text-purple-700  rounded-md w-full"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      setSelected((prev) => [...prev, tag]);
+                      setSearchTerm("");
+                    }}
+                  >
+                    <div className="flex justify-between" >
+                        <p>
+                    {tag.firstname} {tag.lastname}
+                        </p>
+                        <h3 className="text-xs text-white flex gap-2" >
+                            <div className="bg-purple-600 p-1 rounded-3xl" >{tag.yearOfStudy??"N/A"}</div>
+                            <div className="bg-indigo-600 p-1 rounded-3xl"  >{tag.branch??"N/A"}</div>
+                             
+                             </h3>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <div>
+                  { searchTerm.length!=0 &&  <li className="p-2 text-rose-500">No options available</li>}
+                </div>
+              )}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default SelectorPrac;
