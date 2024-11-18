@@ -15,6 +15,7 @@ import TicketBooking from "./OpenTicket";
 import { toast } from "react-toastify";
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { CoordinatorProvider } from "@/hooks/useCoordinator";
+import OrganizerCard from "./utils/OrganizerCard";
 
 export default function EventDetails() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -303,18 +304,18 @@ export default function EventDetails() {
             <p>
               <span className="font-semibold">Start Date & Time:</span>{" "}
               {new Date(eventDetails?.startDate).toLocaleString("en-US", {
-                day: "numeric",
+                // day: "numeric",
                 weekday: "long",
                 hour: "numeric",
                 minute: "numeric",
                 hour12: true,
               })}
-              To{" "}
+              {/* To{" "}
               {new Date(eventDetails?.endDate).toLocaleString("en-US", {
                 hour: "numeric",
                 minute: "numeric",
                 hour12: true,
-              })}
+              })} */}
             </p>
 
             {/* Conditionally render the end date if the day number is different */}
@@ -323,18 +324,18 @@ export default function EventDetails() {
               <p>
                 <span className="font-semibold">End Date & Time:</span>{" "}
                 {new Date(eventDetails?.endDate).toLocaleString("en-US", {
-                  day: "numeric",
+                  // day: "numeric",
                   weekday: "long",
                   hour: "numeric",
                   minute: "numeric",
                   hour12: true,
                 })}
-                To{" "}
+                {/* To{" "}
                 {new Date(eventDetails?.endDate).toLocaleString("en-US", {
                   hour: "numeric",
                   minute: "numeric",
                   hour12: true,
-                })}
+                })} */}
               </p>
             )}
           </section>
@@ -350,20 +351,21 @@ export default function EventDetails() {
             <h3 className="text-2xl font-semibold mb-4">
               Organizer & Coordinator Contact Information :
             </h3>
-            <div className="relative overflow-hidden">
+            <div className="flex gap-2 w-full overflow-x-auto">
               {/* Left blur */}
-              <div className="absolute inset-y-0 left-0 w-6 md:w-10 bg-gradient-to-r from-white to-transparent pointer-events-none z-10" />
+              {/* <div className="absolute inset-y-0 left-0 w-6 md:w-10 bg-gradient-to-r from-white to-transparent pointer-events-none z-10" /> */}
               {/* Right blur */}
-              <div className="absolute inset-y-0 right-0 w-6 md:w-10  bg-gradient-to-l from-white to-transparent pointer-events-none z-10" />
+              {/* <div className="absolute inset-y-0 right-0 w-6 md:w-10  bg-gradient-to-l from-white to-transparent pointer-events-none z-10" /> */}
 
-              <Marquee speed={30} gradient={false} pauseOnHover={true}>
+              {/* <Marquee speed={30} gradient={false} pauseOnHover={true}> */}
                 {organizerAndCoordinator.map((organizer, index) => (
-                  <div className="mx-2" key={index}>
+                  <div className="" key={index}>
                     {/* Pass the entire organizer object instead of testOrganizer */}
-                    <Organizer organizer={organizer} />
+                    {/* <Organizer organizer={organizer} /> */}
+                    <OrganizerCard organizer={organizer} />
                   </div>
                 ))}
-              </Marquee>
+              {/* </Marquee> */}
             </div>
           </section>
         </div>

@@ -12,10 +12,6 @@ const redis = new Redis({
 //create event working fine on postman
 const createEvent = async (req, res) => {
 
-// const {userId} = req.query
-
-// console.log("Event Organiser: ",userId);
-
     try {
       let {
         title,
@@ -100,6 +96,7 @@ const createEvent = async (req, res) => {
         isGroupEvent,
         participantSize,
         category,
+        isActive,
         coordinator,
         price,
         participants,
@@ -109,12 +106,15 @@ const createEvent = async (req, res) => {
         venue,
       } = req.body;
 
+      const { id } = req.params;
+
       const updatedEvent = await eventModel.findByIdAndUpdate(
-        req.params.id,
+        id,
         {
           title,
           description,
           image,
+          isActive,
           organizingBranch,
           isAuditCourse,
           isGroupEvent,
@@ -472,6 +472,36 @@ const activeEvents = async (req, res) => {
 };
 
 
+const adminAllEvents = async (req, res) => {
+  try {
+    const { userId } = req.params; // Access userId from req.params
+    // console.log(req.params);
+
+    // Find all active events
+    const events = await eventModel.find();
+
+    // Filter events where the user is either the organiser or a coordinator
+    const adminEvents = events.filter(event => 
+      String(event.organisedBy) === String(userId) || 
+      event.coordinator.some(coordinatorId => String(coordinatorId) === String(userId))
+    );
+
+    // console.log(adminEvents);
+
+    // Check if any admin events were found
+    if (adminEvents.length === 0) {
+      return res.status(404).json({ message: 'The user is not admin of any event.' });
+    }
+
+    res.status(200).json({ adminEvents });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error retrieving events', error });
+  }
+};
+
+
 
 module.exports = {
     getEvent,
@@ -486,5 +516,6 @@ module.exports = {
     addGroupParticipants,
     updateGroupPaymentStatus,
     activeEvents,
+    adminAllEvents,
     updateStudentPaymentStatus
 };

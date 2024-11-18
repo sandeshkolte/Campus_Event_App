@@ -14,6 +14,10 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { allEvents } from "@/store/eventSlice";
+import axios from "axios";
+import { baseUrl } from "@/common/common";
+import { toast } from "react-toastify";
 
 export default function VerifyTickets() {
   const events = useSelector((state) => state.event.activeEvents);
@@ -23,10 +27,17 @@ export default function VerifyTickets() {
    // To hold selected statuses for events
 
   const confirmStatusChange = async () => {
-    // Call your API to change the event status here using selectedEventId
-    // For example:
-    await updateEventStatus(selectedEventId, false); // Assuming 'false' indicates closed
-    setIsDialogOpen(false);
+    try {
+      const result = await axios.post(`${baseUrl}/api/event/update/${selectedEventId}`,{
+        isActive: false
+      })
+      toast.success("Event closed successfully")
+      setIsDialogOpen(false);
+      window.location.reload();
+    } catch (err) {
+      toast.error(err.message || "Error fetching events")
+      setIsDialogOpen(false);
+    }
     // Optionally, you can refresh your events here or show a success message
   };
 
@@ -38,10 +49,14 @@ export default function VerifyTickets() {
       // Handle other status changes if needed
     }
   };
-console.log("fjberjkgberk",events)
+// console.log("fjberjkgberk",events)
   return (
-    <div className="container max-w-6xl mx-auto p-4 bg-white text-gray-900">
-      <h1 className="text-3xl font-bold mb-6">Verify Events Tickets</h1>
+    <div className="container max-w-6xl mx-auto p-4 bg-white text-gray-900 cursor-pointer">
+            <div className="flex justify-center mb-10" >
+      <div className="bg-zinc-950 w-fit text-gray-300 p-3 rounded-2xl text-center mt-5" >
+      <h3 className=" font-light text-2xl md:mx-10">Verify Payment</h3>
+      </div>
+      </div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
@@ -84,11 +99,7 @@ console.log("fjberjkgberk",events)
                 </CardTitle>
                 <p className="text-sm text-gray-500">
                   {" "}
-                  {new Date(event?.startDate).toLocaleString("en-US", {
-                    hour: "numeric",
-                    minute: "numeric",
-                    hour12: true,
-                  })}{" "}
+                  {new Date(event.startDate).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: 'numeric' })}{" "}
                   · {event.venue}
                 </p>
                 <p className="text-sm text-gray-500">

@@ -13,7 +13,7 @@ import CreateEvent from './pages/CreateEvent'
 import ProtectedRoute from './components/ProtectedRoute'
 import { baseUrl } from './common/common'
 import { login } from './store/authSlice'
-import { activeEvents, allEvents } from './store/eventSlice'
+import { activeEvents, allEvents, myOrganizedEvents } from './store/eventSlice'
 import MyTickets from './pages/MyEvents'
 import EventDetailsPage from './pages/EventDetailsPage'
 import BookingPage from './pages/BookingPage'
@@ -98,6 +98,17 @@ const App = () => {
     }
   }
 
+  const fetchMyOrganizedEvents = async (userID) => {
+    try {
+      const result = await axios.get(`${baseUrl}/api/event/myallevents/${userID}`)
+      const events = result.data.adminEvents
+      dispatch(myOrganizedEvents(events))
+    } catch (err) {
+      toast.error(err.message || "Error fetching active events")
+      console.error("Error fetching active events:", err)
+    }
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       if (token && userId) {
@@ -106,6 +117,7 @@ const App = () => {
       await fetchAllEvents()
       if (userId) {
         await fetchActiveEvents(userId)
+        await fetchMyOrganizedEvents(userId)
       }
       setLoading(false)
     }

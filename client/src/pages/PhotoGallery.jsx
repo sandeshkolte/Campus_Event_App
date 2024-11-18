@@ -134,7 +134,7 @@ userInfo?.role === "admin" &&
         }
       </div>
 
-      <div className='gallery mt-5 grid grid-cols-2 md:grid-cols-5 gap-2'>
+      <div className='gallery mt-5 grid grid-cols-2 md:grid-cols-7 gap-2'>
         {/* Display the uploaded photos */}
         {photos.length > 0 ? (
           photos.map((photo) => (
@@ -142,7 +142,7 @@ userInfo?.role === "admin" &&
               <img 
                 src={photo.imageUrl.replace('/upload/', '/upload/w_300/')} 
                 alt={photo.imageName} 
-                className='cursor-pointer'
+                className='cursor-pointer md:h-32'
                 onClick={() => setSelectedImage(photo.imageUrl)} // Open modal with original image
               />
               {

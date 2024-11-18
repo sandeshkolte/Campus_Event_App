@@ -14,6 +14,7 @@ import Marquee from "react-fast-marquee";
 import { useSelector } from "react-redux";
 import RevealAnimation from "@/components/utils/RevealAnimation";
 import OrganizersComponent from "@/components/OrganizersComponent";
+import OrganizingCommitteCard from "@/components/utils/OrganizingCommitteCard";
 // const AllEvents = React.lazy(() => import('../components/AllEvents'))
 
 const Home = () => {
@@ -24,6 +25,7 @@ const Home = () => {
   return (
     <div className="min-h-screen relative ">
       
+      <section >
       <RevealAnimation>
       <div className="absolute -z-50 bottom-10 right-[0%] translate-y-[-50%] translate-x-[-50%]">
         <div className="w-56 h-56 blur-[200px] max-sm:bg-transparent bg-blue-500 rounded-3xl"></div>
@@ -70,6 +72,7 @@ const Home = () => {
         </div>
       </div>
       </RevealAnimation>
+      </section>
 
       {/* <div className="flex flex-wrap justify-center mt-28 gap-5 max-sm:flex-col">
         <div className="bg-violet-100 px-2 py-1 rounded-xl w-96 max-sm:w-full flex items-center">
@@ -94,19 +97,34 @@ const Home = () => {
           </Select>
         </div>
       </div> */}
-      <div className="my-10 ">
-        <h3 className="text-center font-bold text-2xl py-5">
-          Organizing Committee
-        </h3>
+      <div className="py-10 h-screen bg-[#f3eee8]">
+      <div className="flex justify-center mb-5 md:mb-10 md:mt-20" >
+      <div className="bg-zinc-950 w-fit text-gray-300 p-3 rounded-2xl text-center mt-5" >
         <RevealAnimation>
-          {/* <OrganizersComponent/> */}
-        <div className="relative overflow-hidden mx-6 md:mx-10 ">
-          {/* Left blur */}
-          <div className="absolute inset-y-0 left-0 w-6 md:w-16 bg-gradient-to-r from-white to-transparent pointer-events-none z-10" />
-          {/* Right blur */}
-          <div className="absolute inset-y-0 right-0 w-6 md:w-16  bg-gradient-to-l from-white to-transparent pointer-events-none z-10" />
 
-          <Marquee speed={30} gradient={false} pauseOnHover={true} className="flex whitespace-nowrap">
+      <h3 className=" font-light text-2xl md:mx-10">Organizing Committe</h3>
+        </RevealAnimation>
+      </div>
+      </div>
+        <RevealAnimation>
+          <section className="flex justify-center" >
+            <div className=" md:flex md:justify-center md:flex-wrap md:gap-16  md:w-full md:p-10" >
+            <OrganizingCommitteCard title={'CSE'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
+            <OrganizingCommitteCard title={'ENTC'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
+            <OrganizingCommitteCard title={'INSTRU'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
+            <OrganizingCommitteCard title={'MECH'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
+            <OrganizingCommitteCard title={'CIVIL'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
+            <OrganizingCommitteCard title={'ELECT'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
+            </div>
+          </section>
+          {/* <OrganizersComponent/> */}
+        {/* <div className="relative overflow-hidden mx-6 md:mx-10 "> */}
+          {/* Left blur */}
+          {/* <div className="absolute inset-y-0 left-0 w-6 md:w-16 bg-gradient-to-r from-white to-transparent pointer-events-none z-10" /> */}
+          {/* Right blur */}
+          {/* <div className="absolute inset-y-0 right-0 w-6 md:w-16  bg-gradient-to-l from-white to-transparent pointer-events-none z-10" /> */}
+
+          {/* <Marquee speed={30} gradient={false} pauseOnHover={true} className="flex whitespace-nowrap">
             <div className="mx-1 md:mx-5">
               <BranchCard title={"CSE"} />
             </div>
@@ -125,14 +143,16 @@ const Home = () => {
             <div className="mx-1 md:mx-5">
               <BranchCard title={"Instru"} />
             </div>
-          </Marquee>
-        </div>
+          </Marquee> */}
+        {/* </div> */}
         </RevealAnimation>
         <div className="flex gap-10 justify-center"></div>
       </div>
-      {/* <div className='flex flex-wrap gap-16 p-10 w-full justify-center'> */}
-      {/* <Suspense fallback={<div>Loading...</div>} > */}
-      <h3 className="mt-5 text-2xl font-bold mx-6 md:mx-10">Upcoming Events</h3>
+      <div className="flex justify-center" >
+      <div className="bg-zinc-950 w-fit text-gray-300 p-3 rounded-2xl text-center mt-5" >
+      <h3 className=" font-light text-2xl md:mx-10">Upcoming Events</h3>
+      </div>
+      </div>
       <RevealAnimation>
       { events.length !=0 ?      <AllEvents /> :
        <div  className="my-5 mx-6 md:mx-10 flex justify-center items-center h-52 border border-gray-300 rounded-xl">

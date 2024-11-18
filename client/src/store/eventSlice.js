@@ -20,10 +20,13 @@ const eventSlice = createSlice({
           },
           activeEvents:(state,action)=>{
             state.activeEvents=action.payload
+          },
+          myOrganizedEvents:(state,action)=>{
+            state.myOrganizedEvents=action.payload
           }
     }
 })
 
-export const {allEvents,addEvent,deleteEvent,activeEvents} = eventSlice.actions
+export const {allEvents,addEvent,deleteEvent,activeEvents,myOrganizedEvents} = eventSlice.actions
 
 export default eventSlice.reducer
