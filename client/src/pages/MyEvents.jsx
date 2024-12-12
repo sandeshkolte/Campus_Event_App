@@ -10,80 +10,41 @@ import {
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import EventTickets from "@/components/eventTicket";
+import { useSelector } from "react-redux";
 
-const events = [
-  {
-    id: 1,
-    title: "GCOEC: Live in Concert",
-    date: "May 20, 2024 at 10 PM",
-    location: "Harmony Theater, Winnipeg, MB",
-    ticketsSold: 350,
-    totalTickets: 500,
-    status: "Pending",
-    image:
-      "https://th.bing.com/th/id/OIP.iRt7bpuacg0Rl9e_doqdGAHaE7?rs=1&pid=ImgDetMain",
-  },
-  {
-    id: 2,
-    title: "GCOEC — DJ Night",
-    date: "Jun 2, 2024 at 8 PM",
-    location: "Moonbeam Arena, Uxbridge, ON",
-    ticketsSold: 72,
-    totalTickets: 150,
-    status: "Pending",
-    image:
-      "https://th.bing.com/th/id/OIP.W2giC8TjletygTa_fV67_AHaE8?rs=1&pid=ImgDetMain",
-  },
-  {
-    id: 3,
-    title: "Blind Coding",
-    date: "Aug 5, 2024 at 4 PM",
-    location: "Electric Coliseum, New York, NY",
-    ticketsSold: 275,
-    totalTickets: 275,
-    status: "Confirmed",
-    image:
-      "https://i.pinimg.com/originals/48/89/38/488938d6eec996de2365b072357aac16.jpg",
-  },
-  {
-    id: 4,
-    title: "GCOEC Party Night",
-    date: "Dec 31, 2024 at 8 PM",
-    location: "Tapestry Hall, Cambridge, ON",
-    ticketsSold: 6,
-    totalTickets: 40,
-    status: "Confirmed",
-    image: "https://dcmsblog.uk/wp-content/uploads/2014/09/events.jpg",
-  },
-  {
-    id: 5,
-    title: "Blind Coding",
-    date: "Aug 5, 2024 at 4 PM",
-    location: "Electric Coliseum, New York, NY",
-    ticketsSold: 275,
-    totalTickets: 275,
-    status: "Rejected",
-    image:
-      "https://i.pinimg.com/originals/48/89/38/488938d6eec996de2365b072357aac16.jpg",
-  },
-  {
-    id: 6,
-    title: "GCOEC Party Night",
-    date: "Dec 31, 2024 at 8 PM",
-    location: "Tapestry Hall, Cambridge, ON",
-    ticketsSold: 6,
-    totalTickets: 40,
-    status: "Rejected",
-    image: "https://dcmsblog.uk/wp-content/uploads/2014/09/events.jpg",
-  },
-];
+
+
 
 export default function Component() {
+  const user=useSelector((state)=>state.auth?.userInfo?.myevents);
+  
+  const myActiveTickets=useSelector((state)=>state.event?.events)
+   // Combine event details with payment status
+   const combinedDetails = user.map(paymentEvent => {
+    // Find the matching active event using the eventId
+    const matchedEvent = myActiveTickets.find(activeEvent => activeEvent._id === paymentEvent.eventId);
+  
+    // If a match is found, combine the details
+    if (matchedEvent) {
+      return {
+        ...matchedEvent,
+        paymentStatus: paymentEvent.paymentStatus,
+        paymentScreenshot: paymentEvent.paymentScreenshot
+      };
+    }
+    return null; // Or handle cases where there's no match
+  }).filter(event => event !== null); // Remove null entries (if no matches found)
+  
+
+
   const [statusFilter, setStatusFilter] = useState("Confirmed"); // Default to "Confirmed"
   const [previousFilter, setPreviousFilter] = useState(statusFilter); // Track the previous filter
   const [slideDirection, setSlideDirection] = useState(""); // Track the direction of the slide
   const [isSliding, setIsSliding] = useState(false); // Track whether sliding is happening
-  const [displayedEvents, setDisplayedEvents] = useState(events.filter((event) => event.status === "Confirmed")); // Displayed events
+  const [displayedEvents, setDisplayedEvents] = useState(combinedDetails.filter((event) => event.paymentStatus === "Confirmed")); // Displayed events
+
+
+ 
 
   useEffect(() => {
     if (previousFilter !== statusFilter) {
@@ -101,7 +62,7 @@ export default function Component() {
       setIsSliding(true);
   
       setTimeout(() => {
-        setDisplayedEvents(events.filter((event) => event.status === statusFilter));
+        setDisplayedEvents(combinedDetails.filter((event) => event.paymentStatus === statusFilter));
         setIsSliding(false); 
         setPreviousFilter(statusFilter); 
       }, 100); 
@@ -166,7 +127,7 @@ export default function Component() {
           }`}
         >
           {displayedEvents.map((event) => (
-            <EventTickets key={event.id} event={event} />
+            <EventTickets key={event._id} event={event} />
           ))}
         </div>
       </div>
