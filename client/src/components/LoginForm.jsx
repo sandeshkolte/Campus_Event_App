@@ -71,6 +71,8 @@ export default function LoginForm() {
   };
 
   return (
+    <>
+    <div className="flex justify-center align-middle mt-5" >
     <Card className="w-[400px]">
       <form onSubmit={handleSubmit(formSubmit)}>
         <CardHeader className="relative">
@@ -130,5 +132,8 @@ export default function LoginForm() {
         </CardFooter>
       </form>
     </Card>
+    </div>
+    </>
+  
   );
 }

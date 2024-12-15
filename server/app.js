@@ -12,7 +12,10 @@ const errorMidddleware = require('./middlewares/errorMiddleware');
 const app = express();
 const PORT = process.env.PORT || 9000;
 
-app.use(cors());
+app.use(cors({
+  credentials: true,
+}
+));
 
 require('dotenv').config();
 app.use(appLogger);
@@ -25,7 +28,7 @@ app.use(expressSession({
   resave:false,
   saveUninitialized:false,
   secret:process.env.EXPRESS_SESSION_SECRET,
-  cookie: { secure: true }
+  cookie: { secure: true,httpOnly:true }
 }))
 
 db.on('connected', () => {

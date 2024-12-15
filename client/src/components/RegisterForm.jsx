@@ -53,7 +53,9 @@ export default function RegisterForm() {
   }
 
   return (
-    <Card className="w-[400px]">
+    <>
+     <div className='flex justify-center align-middle mt-5' >
+     <Card className="w-[400px]">
       <form onSubmit={handleSubmit(formSubmit)} >
         <CardHeader>
           <CardTitle>Create Account</CardTitle>
@@ -97,5 +99,8 @@ export default function RegisterForm() {
         </CardFooter>
       </form>
     </Card>
+     </div>
+    </>
+  
   )
 }

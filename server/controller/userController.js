@@ -6,7 +6,7 @@ const { sendVerificationEmail } = require('../config/email-verification');
 
 const generateVerificationToken = () => {
     return crypto.randomBytes(32).toString('hex');
-  };
+};
 
 const getUserDetails = async (req, res, next) => {
     try {
@@ -80,7 +80,7 @@ const registerUser = async (req, res, next) => {
 
         // Check if user exists
         let user = await userModel.findOne({ email });
-        
+
         // If the user exists and is not verified
         if (user && !user.isVerified) {
             // Check if the verification token has expired
@@ -89,7 +89,7 @@ const registerUser = async (req, res, next) => {
                 user.verificationToken = generateVerificationToken();
                 user.tokenExpiry = Date.now() + 3600000; // 1 hour expiry
                 await user.save();
-                
+
                 // Resend the verification email
                 sendVerificationEmail(user, user.verificationToken);
                 return res.status(200).json({ status: "Success", response: "A new verification email has been sent" });
@@ -105,6 +105,8 @@ const registerUser = async (req, res, next) => {
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
+        console.log("Plain text password:", password);
+        console.log("Hashed password:", hashedPassword);
 
         // Create new user
         let createdUser = await userModel.create({
@@ -126,7 +128,7 @@ const registerUser = async (req, res, next) => {
 
         // Send verification email
         sendVerificationEmail(createdUser, createdUser.verificationToken);
-    
+
         res.status(200).json({ status: "Success", response: 'User registered. Please verify your email.' });
     } catch (err) {
         console.error(err);
@@ -145,6 +147,8 @@ const loginUser = async (req, res, next) => {
             return res.status(403).json({ status: "Error", response: "Email or Password Incorrect" });
         }
 
+        console.log("Stored password:", user.password);
+
         if (!user.isVerified) {
             // Check if the verification token has expired
             if (Date.now() > user.tokenExpiry) {
@@ -152,7 +156,7 @@ const loginUser = async (req, res, next) => {
                 user.verificationToken = generateVerificationToken();
                 user.tokenExpiry = Date.now() + 3600000; // 1 hour expiry
                 await user.save();
-                
+
                 sendVerificationEmail(user, user.verificationToken);
                 return res.status(400).json({ status: "Error", response: "Verification token expired. A new verification email has been sent" });
             }
@@ -205,7 +209,7 @@ const resendVerificationEmail = async (req, res, next) => {
 const googleLogin = async (req, res, next) => {
     try {
         const { email, firstname, lastname, image } = req.body;
-// console.log("google server data: ",req.body);
+        // console.log("google server data: ",req.body);
 
         // Find user by email in the database
         const user = await userModel.findOne({ email });
@@ -217,7 +221,8 @@ const googleLogin = async (req, res, next) => {
             const { password, ...userData } = user._doc; // Exclude password when sending user data
             res.status(200).json({
                 status: "Success",
-                response: { user:userData, token }})
+                response: { user: userData, token }
+            })
         } else {
             // If the user doesn't exist, create a new one
             const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
@@ -319,17 +324,18 @@ const addOrganisedEvent = async (req, res) => {
     }
 };
 
-// const addMyEvent = async (req, res) => {
-//     const {userId, eventId, paymentImage } = req.body;
-//     console.log(req.body);
 
-//     try {
-//       await userModel.findByIdAndUpdate(userId, { $push: { myevents: {eventId:eventId, paymentScreenshot:paymentImage} } });
-//       res.status(200).json({ message: "Event added to user's events" });
-//     } catch (err) {
-//       res.status(500).json({ message: "Failed to update user's events", error: err });
-//     }
-// };
+const addMyEvent = async (req, res) => {
+    const { userId, eventId, paymentImage } = req.body;
+    console.log(req.body);
+
+    try {
+        await userModel.findByIdAndUpdate(userId, { $push: { myevents: { eventId: eventId, paymentScreenshot: paymentImage } } });
+        res.status(200).json({ message: "Event added to user's events" });
+    } catch (err) {
+        res.status(500).json({ message: "Failed to update user's events", error: err });
+    }
+};
 
 
 const deleteUser = async (req, res) => {
@@ -345,4 +351,4 @@ const deleteUser = async (req, res) => {
 };
 
 
-module.exports = {getUsersByName,getUserDetails,registerUser,loginUser,googleLogin,updateUserRole,userUpdate,addOrganisedEvent,deleteUser,resendVerificationEmail}
+module.exports = { getUsersByName, getUserDetails, registerUser, loginUser, googleLogin, updateUserRole, userUpdate, addOrganisedEvent, deleteUser, resendVerificationEmail, addMyEvent }

@@ -25,6 +25,8 @@ import VerifyTickets from './pages/VerifyTickets'
 import TicketStatusChangingPage from './pages/TicketStatusChangingPage'
 import { VscLoading } from 'react-icons/vsc'
 import OrganizersComponent from './components/OrganizersComponent'
+import LoginForm from './components/LoginForm'
+import RegisterForm from './components/RegisterForm'
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -115,7 +117,7 @@ const App = () => {
         await fetchUserDetails()
       }
       await fetchAllEvents()
-      if (userId) {
+      if (role === "admin") {
         await fetchActiveEvents(userId)
         await fetchMyOrganizedEvents(userId)
       }
@@ -140,8 +142,8 @@ const App = () => {
 
         {!isAuthenticated && (
           <>
-            <Route path='/register' element={<SignUpPage />} />
-            <Route path='/login' element={<SignInPage />} />
+            <Route path='/register' element={<RegisterForm />} />
+            <Route path='/login' element={<LoginForm />} />
           </>
         )}
 
