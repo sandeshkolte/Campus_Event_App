@@ -39,6 +39,8 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 // Send Email Function
 
 const sendVerificationEmail =async (user, token) => {
+  console.log("SendVErificationEmail function called");
+  
   const verificationLink = process.env.CLIENT_URL+`/verify-email?token=${token}`;
 
     const msg = {
@@ -54,7 +56,7 @@ const sendVerificationEmail =async (user, token) => {
         `,
     };
 
-    sgMail
+  await sgMail
         .send(msg)
         .then(() => console.log('Verification email sent'))
         .catch((error) => console.error('Error sending email:', error.response.body));
