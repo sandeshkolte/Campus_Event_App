@@ -6,10 +6,13 @@ const galleryRouter = require('./routes/galleryRouter');
 const appLogger = require('./middlewares/appLogger');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const expressSession = require('express-session')
+// const expressSession = require('express-session')
 const db = require('./config/mongoose-config');
 const errorMidddleware = require('./middlewares/errorMiddleware');
 const app = express();
+const session = require('express-session');
+const {RedisStore} = require("connect-redis")
+const redis = require('redis');
 const PORT = process.env.PORT || 9000;
 
 app.use(cors({
@@ -24,12 +27,34 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(errorMidddleware)
 
-app.use(expressSession({
-  resave:false,
-  saveUninitialized:false,
-  secret:process.env.EXPRESS_SESSION_SECRET,
-  cookie: { secure: true,httpOnly:true }
-}))
+// app.use(expressSession({
+//   resave:false,
+//   saveUninitialized:false,
+//   secret:process.env.EXPRESS_SESSION_SECRET,
+//   cookie: { secure: true,httpOnly:true }
+// }))
+
+const redisClient = redis.createClient({
+  url: process.env.REDIS_URL, 
+  legacyMode: true,
+});
+
+redisClient.connect().catch(console.error);
+
+app.use(
+  session({
+      store: new RedisStore({ client: redisClient }),
+      secret: process.env.EXPRESS_SESSION_SECRET, 
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+          secure: process.env.NODE_ENV === 'production', // Ensure cookies are secure in production
+          httpOnly: true,
+          maxAge: 1000 * 60 * 60, // 1 hour
+      },
+  })
+);
+
 
 db.on('connected', () => {
   console.log('Mongoose connected to MongoDB Atlas');
