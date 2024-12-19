@@ -12,7 +12,7 @@ const checkTokenExpiry = require('../middlewares/check-token-expiry')
 const router = express.Router()
 
 router.post('/register',checkTokenExpiry,registerUser)
-router.post('/login', loginUser)
+router.post('/login',checkTokenExpiry, loginUser)
 router.post('/google', googleLogin)
 router.post('/getuser', getUserDetails)
 router.post('/getallusers', getUsersByName)
