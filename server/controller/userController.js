@@ -91,7 +91,7 @@ const registerUser = async (req, res, next) => {
                 await user.save();
 
                 // Resend the verification email
-                sendVerificationEmail(user, user.verificationToken);
+               await sendVerificationEmail(user, user.verificationToken);
                 return res.status(200).json({ status: "Success", response: "A new verification email has been sent" });
             } else {
                 return res.status(400).json({ status: "Error", response: "Please check your email for the verification link" });
@@ -127,7 +127,7 @@ const registerUser = async (req, res, next) => {
         await createdUser.save();
 
         // Send verification email
-        sendVerificationEmail(createdUser, createdUser.verificationToken);
+      await  sendVerificationEmail(createdUser, createdUser.verificationToken);
 
         res.status(200).json({ status: "Success", response: 'User registered. Please verify your email.' });
     } catch (err) {
@@ -157,7 +157,7 @@ const loginUser = async (req, res, next) => {
                 user.tokenExpiry = Date.now() + 3600000; // 1 hour expiry
                 await user.save();
 
-                sendVerificationEmail(user, user.verificationToken);
+             await  sendVerificationEmail(user, user.verificationToken);
                 return res.status(400).json({ status: "Error", response: "Verification token expired. A new verification email has been sent" });
             }
 
@@ -199,7 +199,7 @@ const resendVerificationEmail = async (req, res, next) => {
         user.tokenExpiry = Date.now() + 3600000; // 1 hour expiry
         await user.save();
 
-        sendVerificationEmail(user, user.verificationToken);
+       await sendVerificationEmail(user, user.verificationToken);
         res.status(200).json({ status: "Success", response: "Verification email resent" });
     } catch (err) {
         next(err);
