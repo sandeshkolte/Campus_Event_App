@@ -27,6 +27,7 @@ import { VscLoading } from 'react-icons/vsc'
 import OrganizersComponent from './components/OrganizersComponent'
 import LoginForm from './components/LoginForm'
 import RegisterForm from './components/RegisterForm'
+import PageNotFound from './components/utils/PageNotFound'
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -137,8 +138,12 @@ const App = () => {
         <Route path='' element={<Home />} />
         <Route path='/eventdetails/:id' element={<EventDetailsPage />} />
         <Route path='/verify-email' element={<VerifyEmail />} />
-        <Route path='/gallery' element={<PhotoGallery />} />
+        <Route path='/gallery' element={<PageNotFound />} />
         <Route path='/committeepage' element={<CSECommittee />} />
+        <Route
+                    path="*"
+                    element={<PageNotFound />}
+                />
 
         {!isAuthenticated && (
           <>

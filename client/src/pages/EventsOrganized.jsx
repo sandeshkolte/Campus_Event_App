@@ -3,8 +3,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, Users } from "lucide-react"
+import { Search, Trophy, Users } from "lucide-react"
 import { useSelector } from "react-redux"
+import { WinnerDeclarationPopup } from "@/components/WinnerDeclarationPopup"
+import WinnersPopover from "@/components/WinnersPopover"
+import { useState } from "react"
 
 
 export default function EventsOrganized() {
@@ -33,7 +36,10 @@ export default function EventsOrganized() {
       </div>
       <div className="space-y-4">
         {events.map((event) => (
-          <Card key={event._id} className="flex flex-col sm:flex-row items-center">
+          <Card key={event._id} className="flex flex-col sm:flex-row items-center relative">
+                       { event.winners.length>0 &&  <div className="absolute top-1 right-1">
+                <WinnersPopover  organisedEvent={event} />
+              </div>}
             <div className="w-full sm:w-24 h-24 relative">
               <img
                 src={event.image}
@@ -55,11 +61,13 @@ export default function EventsOrganized() {
               </p>
             </CardHeader>
             <CardContent className="flex items-center">
-              <Button variant="outline" size="sm" className="flex sm:mr-5 border-black border-2 items-center gap-2">
+              <Button variant="outline" size="sm" className="flex sm:mr-5 border-gray-100 border-2 items-center gap-2">
                 <Users className="h-4 w-4" />
                 Show Participants List
               </Button>
+              <WinnerDeclarationPopup event={event} />
             </CardContent>
+            
           </Card>
         ))}
       </div>

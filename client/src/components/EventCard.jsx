@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import React, { useRef } from 'react'
-import { motion, useAnimation, useInView } from 'framer-motion'
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { IndianRupee, Calendar, MapPin, Users } from "lucide-react"
+import React, { useRef } from "react";
+import { motion, useAnimation, useInView } from "framer-motion";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { IndianRupee, Calendar, MapPin, Users } from "lucide-react";
 
 function EventCard({ event }) {
   const ref = useRef(null);
@@ -27,7 +27,7 @@ function EventCard({ event }) {
       animate={controls}
       className="mb-6" // Optional margin for spacing between cards
     >
-      <Card className="w-[300px] h-[300px] md:w-96 md:h-96 group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out">
+      <Card className="w-[300px] h-[300px] md:w-96 md:h-96 group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out bg-white/30 backdrop-blur-lg border border-white/20">
         <CardHeader className="p-0">
           <div className="relative overflow-hidden rounded-t-xl">
             <motion.img
@@ -38,7 +38,7 @@ function EventCard({ event }) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-0 opacity-100 transition-opacity duration-300" />
             <div className="absolute top-4 left-4 bg-white rounded-full px-4 py-2 text-sm font-bold shadow-md">
-              {String(event.price) === '0' || event.price === '' ? (
+              {String(event.price) === "0" || event.price === "" ? (
                 <span className="text-green-600">FREE</span>
               ) : (
                 <span className="flex items-center">
@@ -61,24 +61,38 @@ function EventCard({ event }) {
             <div className="flex-shrink-0 w-12 h-12 md:w-16 md:h-16 bg-purple-100 rounded-full flex items-center justify-center">
               <div className="text-center">
                 <div className="text-sm font-semibold text-purple-600">
-                  {new Date(event.startDate).toLocaleString('en-US', { month: 'short' })}
+                  {new Date(event.startDate).toLocaleString("en-US", {
+                    month: "short",
+                  })}
                 </div>
                 <div className="md:text-2xl font-bold text-purple-800">
-                  {new Date(event.startDate).toLocaleString('en-US', { day: 'numeric' })}
+                  {new Date(event.startDate).toLocaleString("en-US", {
+                    day: "numeric",
+                  })}
                 </div>
               </div>
             </div>
             <div className="flex-grow">
-              <h3 className=" text-lg md:text-xl font-bold text-gray-800 leading-tight mb-2">{event.title}</h3>
-              <p className="text-sm text-gray-600 line-clamp-2 leading-snug mb-3">{event.description}</p>
+              <h3 className=" text-lg md:text-xl font-bold text-gray-800 leading-tight mb-2">
+                {event.title}
+              </h3>
+              <p className="text-sm text-gray-600 line-clamp-2 leading-snug mb-3">
+                {event.description}
+              </p>
               <div className="flex items-center text-sm text-gray-500 space-x-4">
                 <div className="flex items-center">
                   <Calendar className="w-4 h-4 mr-1 text-orange-500" />
-                  <span className=' line-clamp-1' >{new Date(event.startDate).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: 'numeric' })}</span>
+                  <span className="line-clamp-1">
+                    {new Date(event.startDate).toLocaleString("en-US", {
+                      weekday: "short",
+                      hour: "numeric",
+                      minute: "numeric",
+                    })}
+                  </span>
                 </div>
                 <div className="flex items-center">
                   <MapPin className="w-4 h-4 mr-1 text-sky-500" />
-                  <span className=' line-clamp-1' >{event.venue || 'TBA'}</span>
+                  <span className="line-clamp-1">{event.venue || "TBA"}</span>
                 </div>
               </div>
             </div>
@@ -86,7 +100,7 @@ function EventCard({ event }) {
         </CardContent>
       </Card>
     </motion.div>
-  )
+  );
 }
 
 export default EventCard;

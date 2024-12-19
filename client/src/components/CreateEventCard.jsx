@@ -196,18 +196,18 @@ export default function Component() {
       }
       // Create the event
 
-      console.log("The created data: ", data);
+      // console.log("The created data: ", data);
 
       const eventResponse = await axios.post(`${baseUrl}/api/event/create`, data);
       const eventId = eventResponse.data._id; // Get the new event ID
       // if (eventResponse.status === 201) {
-      console.log("Event created successfully", eventResponse.data);
+      // console.log("Event created successfully", eventResponse.data);
       toast.success("Event created successfully!");
 
-      console.log("Eventid: ",eventId);
+      // console.log("Eventid: ",eventId);
       
       // Update 'eventsorganised' field for coordinators
-        addtoOrganisedEvent(`${userId}`, eventId),
+      addtoOrganisedEvent(`${userId}`, eventId),
    
 
       reset(); // Reset the form fields
@@ -422,31 +422,17 @@ export default function Component() {
                       <Label htmlFor="a2">Yes</Label>
                     </div>
                   </RadioGroup>
-                  {/* {`Selected : ${isAuditCourse}`} */}
                 </div>
               </div>
             </div>
             <div className="flex flex-col space-y-1.5 w-[280px]">
               <Label htmlFor="coordinator">Coordinators <span className="text-red-500" >*</span></Label>
-              {/* <CoordinatorProvider>
-                <CoordinatorSelector selector={"coordinator"} setValue={setValue} />
-              </CoordinatorProvider> */}
               <SelectorPrac selector={"coordinator"} setValue={setValue} />
             </div>
-
-
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="category">Category <span className="text-red-500" >*</span></Label>
               <CategorySelector setValue={setValue} />
-              {/* <Input id="category" placeholder="Enter Category" {...register("category")} /> */}
             </div>
-            {/* <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="coordinator">Coordinators</Label>
-              <CoordinatorProvider>
-                <CoordinatorSelector setValue={setValue} />
-              </CoordinatorProvider>
-            </div> */}
-
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="venue">Venue <span className="text-red-500" >*</span></Label>
               <Input id="venue" placeholder="Enter event venue" {...register("venue")} />

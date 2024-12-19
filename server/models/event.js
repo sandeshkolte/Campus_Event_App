@@ -23,7 +23,14 @@ const eventSchema = mongoose.Schema({
     isActive: {
         type:Boolean,
         default:true
-    }
+    },
+    winners: [
+        {
+          user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+          position: { type: String }, // e.g., 1 for first place, 2 for second, etc.
+        },
+      ],
+      showWinners: { type: Boolean, default: false },
 }, {
     timestamps: true
 });

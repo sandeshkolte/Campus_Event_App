@@ -61,7 +61,7 @@ export default function TicketBooking({ isOpen, onClose,eventDetails }) {
             resolve(downloadURL);
             setisLoading(false)
             setPaymentScreenshot(downloadURL)
-            console.log("payment ss Url: ",downloadURL);
+            // console.log("payment ss Url: ",downloadURL);
             
           });
         }
@@ -91,21 +91,23 @@ export default function TicketBooking({ isOpen, onClose,eventDetails }) {
         return;
       }
   
-      if (paymentScreenshot === "") {
-        toast.error("Upload Payment Screenshot!");
-        setisBookingLoading(false);
-        return;
+      if(String(eventDetails?.price) != '0' || eventDetails?.price != ''){
+        if (paymentScreenshot === "") {
+          toast.error("Upload Payment Screenshot!");
+          setisBookingLoading(false);
+          return;
+        }
       }
   
       data = { ...data, userId: currentUser?._id, eventId: eventDetails._id, paymentImage: paymentScreenshot };
 
-      console.log(`The data to upload: ${data.userId} ${data.eventId} ${data.paymentImage}`);
+      // console.log(`The data to upload: ${data.userId} ${data.eventId} ${data.paymentImage}`);
   
       if (!eventDetails?.isGroupEvent) {
         // Solo event booking
         await axios.post(baseUrl + '/api/event/add-participants', data).then((response) => {
           if (response.status === 200) {
-            console.log("result: ", response);
+            // console.log("result: ", response);
             toast.success("Event Booked Successfully");
             navigate('/mytickets');
           }
@@ -115,7 +117,7 @@ export default function TicketBooking({ isOpen, onClose,eventDetails }) {
         if (data.participants.length === eventDetails?.participantSize) {
           await axios.post(baseUrl + '/api/event/add-group-participants', data).then((response) => {
             if (response.status === 200) {
-              console.log("result: ", response);
+              // console.log("result: ", response);
               toast.success("Event Booked Successfully");
               navigate('/mytickets');
             }

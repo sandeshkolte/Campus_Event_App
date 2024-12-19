@@ -21,7 +21,7 @@ function useSearchUsers(searchTerm) {
             search: term,
           });
           setData(response.data.response);
-          console.log(response.data.response);
+          // console.log(response.data.response);
         } catch (err) {
           console.error(err);
         } finally {
@@ -120,7 +120,7 @@ const SelectorPrac = ({ setValue,selector }) => {
         <div className="flex justify-center items-center" >
             <VscLoading className="text-gray-500 animate-spin-slow text-2xl text-bold" />
         </div > :  (
-          <div className="card absolute w-full max-h-40 mt-2 p-1 flex overflow-y-auto scrollbar-thin scrollbar-track-slate-50 scrollbar-thumb-slate-200 bg-white rounded-lg">
+          <div className="card absolute z-50 w-full max-h-40 mt-2 p-1 flex overflow-y-auto scrollbar-thin scrollbar-track-slate-50 scrollbar-thumb-slate-200 bg-white rounded-lg">
             <ul className="w-full">
               {filteredTags.length ? (
                 filteredTags.map((tag) => (

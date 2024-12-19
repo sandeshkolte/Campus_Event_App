@@ -6,7 +6,6 @@ const EventDetailsPage = () => {
   return (
     <div>
         <EventDetail/>
-        <RelatedEvents/>
     </div>
   )
 }

@@ -88,7 +88,7 @@ export default function LoginForm() {
           <CardDescription>Enter your details to sign in to your account.</CardDescription>
         </CardHeader>
         <CardContent>
-          <SignInWithGoogle />
+          {/* <SignInWithGoogle /> */}
           <div className="flex items-center my-2">
             <hr className="flex-grow border-gray-300 rounded-md border-[1.5px]" />
             <p className="mx-2 text-xs text-gray-400 uppercase">or continue with</p>

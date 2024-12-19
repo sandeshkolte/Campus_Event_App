@@ -171,7 +171,7 @@ export default function Profile() {
             toast.success("Profile updated successfully.");
         }
     } catch (err) {
-        console.log("Failed to update profile. Please try again.");
+        // console.log("Failed to update profile. Please try again.");
         toast.error("Failed to update profile. Please try again.");
     } finally {
         fetchUserDetails();
