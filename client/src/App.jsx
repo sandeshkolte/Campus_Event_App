@@ -28,6 +28,7 @@ import OrganizersComponent from './components/OrganizersComponent'
 import LoginForm from './components/LoginForm'
 import RegisterForm from './components/RegisterForm'
 import PageNotFound from './components/utils/PageNotFound'
+import NotificationComponent from './components/utils/NotificationComponent'
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -68,7 +69,7 @@ const App = () => {
   const fetchUserDetails = async () => {
     try {
       if (userId) {
-        const result = await axios.post(`${baseUrl}/api/user/getuser/?userid=${userId}`)
+        const result = await axios.get(`${baseUrl}/api/user/getuser/${userId}`)
         if (result.status === 200) {
           const userDetails = result.data.response
           dispatch(login(userDetails))
@@ -138,7 +139,7 @@ const App = () => {
         <Route path='' element={<Home />} />
         <Route path='/eventdetails/:id' element={<EventDetailsPage />} />
         <Route path='/verify-email' element={<VerifyEmail />} />
-        <Route path='/gallery' element={<PageNotFound />} />
+        <Route path='/gallery' element={<NotificationComponent />} />
         <Route path='/committeepage' element={<CSECommittee />} />
         <Route
                     path="*"

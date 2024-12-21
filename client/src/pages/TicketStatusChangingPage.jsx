@@ -271,8 +271,8 @@ export default function TicketStatusChangingPage() {
   // Fetch user information for a given userId
   const fetchUserInfo = async (userId) => {
     try {
-      const response = await axios.post(
-        `${baseUrl}/api/user/getuser/?userid=${userId}`
+      const response = await axios.get(
+        `${baseUrl}/api/user/getuser/${userId}`
       );
       return response.data;
     } catch (error) {

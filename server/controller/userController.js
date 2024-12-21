@@ -3,6 +3,9 @@ const userModel = require('../models/user');
 const { generateToken } = require('../utils/generateToken');
 const crypto = require('crypto');
 const { sendVerificationEmail } = require('../config/email-verification');
+const { Knock }  = require("@knocklabs/node")
+const knock = new Knock(process.env.KNOCK_API_KEY);
+
 
 const generateVerificationToken = () => {
     return crypto.randomBytes(32).toString('hex');
@@ -10,7 +13,7 @@ const generateVerificationToken = () => {
 
 const getUserDetails = async (req, res, next) => {
     try {
-        const { userid } = req.query;
+        const { userid } = req.params;
         let user = await userModel.findById(userid);
         if (!user) {
             return res.status(404).json({ status: "Error", response: "User not found" });
@@ -122,6 +125,12 @@ const registerUser = async (req, res, next) => {
             isVerified: false, // Mark as unverified initially
             verificationToken: generateVerificationToken(),
             tokenExpiry: Date.now() + 3600000, // 1 hour expiry
+        });
+
+        await knock.users.identify(
+            createdUser._id.toString(), {
+            name: firstname + ' ' + lastname,
+            email,
         });
 
         await createdUser.save();
