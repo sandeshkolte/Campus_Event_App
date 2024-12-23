@@ -3,16 +3,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, Trophy, Users } from "lucide-react"
+import { EditIcon, Search, Trophy, Users } from "lucide-react"
 import { useSelector } from "react-redux"
 import { WinnerDeclarationPopup } from "@/components/WinnerDeclarationPopup"
 import WinnersPopover from "@/components/WinnersPopover"
 import { useState } from "react"
-
+import { Link, useNavigate } from "react-router-dom"
 
 export default function EventsOrganized() {
 
   const events = useSelector((state) => state.event.myOrganizedEvents);
+  const navigate = useNavigate();
 
   return (
     <div className="container max-w-6xl mx-auto p-4 bg-white text-gray-900">
@@ -61,9 +62,11 @@ export default function EventsOrganized() {
               </p>
             </CardHeader>
             <CardContent className="flex items-center">
+              <Link  to={`/update/${event._id}`} className="flex sm:mr-5 border-gray-100 border-2 items-center gap-2 p-2 rounded-md">
+                <EditIcon className="h-4 w-4" />
+              </Link>
               <Button variant="outline" size="sm" className="flex sm:mr-5 border-gray-100 border-2 items-center gap-2">
                 <Users className="h-4 w-4" />
-                Show Participants List
               </Button>
               <WinnerDeclarationPopup event={event} />
             </CardContent>

@@ -21,7 +21,6 @@ export function WinnerDeclarationPopup({event}) {
     const { handleSubmit, watch, setValue,reset } = useForm()
       const [loading, setLoading] = useState(false)
 
-
   // Watch the selected winners
   const winner1 = watch("winner1");
   const winner2 = watch("winner2");
@@ -56,9 +55,9 @@ export function WinnerDeclarationPopup({event}) {
   return (
     <Dialog >
       <DialogTrigger asChild>
-      <Button variant="outline" size="sm" className="flex sm:mr-5 border-purple-400 border-2 items-center gap-2">
-                <Trophy className="h-4 w-4" />
-                Declare Winners
+      <Button variant="outline" size="sm" className="flex sm:mr-5 border-gray-100 border-2 items-center gap-2">
+         <Trophy className="h-4 w-4" />
+         {event.winners.length > 0 ? "Update Winners" : "Declare Winners" }
               </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

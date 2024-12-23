@@ -27,7 +27,7 @@ router.get('/related', findRelatedEvents);
 
 // Create, update, and delete events
 router.post('/create',  createEvent);
-router.post('/update/:id', updateEvent);
+router.put('/update/:id', updateEvent);
 router.post('/winners/:eventId', updateWinners);
 router.delete('/delete/:id',  deleteEvent);
 

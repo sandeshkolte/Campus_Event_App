@@ -19,7 +19,8 @@ const SignInWithGoogle = () => {
 
   const { reset } = useForm()
 
-const googleLogin = () =>{
+const googleLogin = (e) =>{
+  e.stopPropagation();
 const provider = new GoogleAuthProvider();
 signInWithPopup(auth,provider).then( async (result) =>{
 // console.log(result);

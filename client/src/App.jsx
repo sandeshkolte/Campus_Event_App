@@ -29,6 +29,8 @@ import LoginForm from './components/LoginForm'
 import RegisterForm from './components/RegisterForm'
 import PageNotFound from './components/utils/PageNotFound'
 import NotificationComponent from './components/utils/NotificationComponent'
+import UpdateEvent from './pages/UpdateEventCard'
+import WinnersPage from './pages/WinnersPage'
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -139,13 +141,13 @@ const App = () => {
         <Route path='' element={<Home />} />
         <Route path='/eventdetails/:id' element={<EventDetailsPage />} />
         <Route path='/verify-email' element={<VerifyEmail />} />
-        <Route path='/gallery' element={<NotificationComponent />} />
+        <Route path='/gallery' element={<PhotoGallery />} />
+        <Route path='/winners' element={<WinnersPage />} />
         <Route path='/committeepage' element={<CSECommittee />} />
         <Route
                     path="*"
                     element={<PageNotFound />}
                 />
-
         {!isAuthenticated && (
           <>
             <Route path='/register' element={<RegisterForm />} />
@@ -163,6 +165,7 @@ const App = () => {
             <>
               <Route path='/create' element={<CreateEvent />} />
               <Route path='/organized' element={<EventsOrganized />} />
+              <Route path='/update/:id' element={<UpdateEvent />} />
               <Route path="/verifytickets" element={<VerifyTickets />} />
               <Route path="/event/:id" element={<TicketStatusChangingPage />} />
             </>

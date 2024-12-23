@@ -108,6 +108,9 @@ const createEvent = async (req, res) => {
 
       const { id } = req.params;
 
+      console.log(req.body); // Debugging req.body
+      console.log(req.params); // Debugging req.params      
+
       const updatedEvent = await eventModel.findByIdAndUpdate(
         id,
         {

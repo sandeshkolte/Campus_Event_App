@@ -43,8 +43,9 @@ export default function WinnersPopover({ organisedEvent }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="" className="">
-          <Medal className="h-4 w-4" />
+        <Button variant="" className="text-blue-400">
+          {/* <Medal className="h-4 w-4" />  */}
+          see winners
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 bg-white">
