@@ -251,6 +251,13 @@ const googleLogin = async (req, res, next) => {
             });
 
             await newUser.save();
+
+            await knock.users.identify(
+                newUser._id.toString(), {
+                name: firstname + ' ' + lastname,
+                email,
+            });
+
             const token = generateToken(newUser);
             res.cookie("token", token);
             const { password, ...userData } = newUser._doc; // Exclude password when sending user data

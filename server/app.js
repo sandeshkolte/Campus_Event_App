@@ -3,6 +3,7 @@ const userModel = require('./models/user')
 const userRouter = require('./routes/userRouter');
 const eventRouter = require('./routes/eventRouter');
 const galleryRouter = require('./routes/galleryRouter');
+const winnerRouter = require('./routes/winnerRouter');
 const appLogger = require('./middlewares/appLogger');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -13,6 +14,7 @@ const app = express();
 const session = require('express-session');
 const {RedisStore} = require("connect-redis")
 const redis = require('redis');
+const winner = require('./models/winner');
 
 const PORT = process.env.PORT || 9000;
 
@@ -101,6 +103,7 @@ app.use('/api/user', userRouter);
 // app.use('/api/admin', adminRouter);
 app.use('/api/event', eventRouter);
 app.use('/api/gallery', galleryRouter);
+app.use('/api/winners', winnerRouter);
 
 app.listen(PORT,"0.0.0.0", () => {
   console.log(`Server started on port ${PORT}`);

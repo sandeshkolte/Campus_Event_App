@@ -170,7 +170,7 @@ const getEvent = async (req, res, next) => {
         // console.log("From MONGO");
 
         // the populate used here makes the id as na object os that i get all info just from the id
-        events = await eventModel.find().populate('organisedBy coordinator participants winners.user');
+        events = await eventModel.find().populate('organisedBy coordinator participants winner.user');
         await redis.setex("events", 60, JSON.stringify(events));
 
         res.status(200).json({ status: "success", response: events });
@@ -220,7 +220,7 @@ const findRelatedEvents = async (req, res) => {
 const updateWinners = async (req, res) => {
   try {
     const { eventId } = req.params;
-    const { winners, showWinners } = req.body; // winners is an array of { user, position }
+    const { showWinners } = req.body; // winners is an array of { user, position }
 
     // Find the event by ID
     const event = await eventModel.findById(eventId);
@@ -228,18 +228,11 @@ const updateWinners = async (req, res) => {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    // Update winners and toggle visibility
-    event.winners = winners || event.winners;
     if (showWinners !== undefined) {
       event.showWinners = showWinners;
     }
 
     await event.save();
-
-    // Populate user details in winners
-    const updatedEvent = await eventModel
-      .findById(eventId)
-      .populate("winners.user", "fullname email branch yearOfStudy");
 
     res.status(200).json({ message: "Winners updated successfully", event: updatedEvent });
   } catch (error) {

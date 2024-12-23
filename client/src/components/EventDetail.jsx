@@ -159,26 +159,6 @@ export default function EventDetails() {
     "Jakarta Seminar",
   ];
 
-  const WinnerItem = ({ winner, position }) => {
-    const medals = ['🥇', '🥈', '🥉'];
-    const colors = ['text-yellow-500', 'text-gray-400', 'text-amber-600'];
-  
-    if (!winner?.user) return null; // Handle cases where the user field is not populated
-  
-    return (
-      <div className="flex items-center space-x-3 p-2">
-        <span className={`text-2xl ${colors[position - 1]}`}>{medals[position - 1]}</span>
-        <div>
-          <p className="font-semibold">{`${winner.user.firstname} ${winner.user.lastname}`}</p>
-          <p className="text-sm text-gray-600">
-            {winner.user.branch}, {winner.user.yearOfStudy}
-          </p>
-        </div>
-      </div>
-    );
-  };
-
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [eventDetails]);
@@ -418,31 +398,6 @@ export default function EventDetails() {
                 </div>
               ))}
             </div>
-          </section>
-          <section className="w-full bg-purple-100 rounded-xl" >
-          <div className="p-2" >
-          <h2 className="text-2xl font-semibold mb-4" >Winners</h2>
-          {
-                    <div className="space-y-2">
-                    <h3 className="font-semibold text-center pb-2 border-b text-purple-700">Winners 
-                      <br />
-                      <span className='text-gray-600' >
-                        *
-                      {eventDetails?.title}
-                      *
-                      </span>
-                      </h3>
-                    {eventDetails?.winners.length > 0 ? (
-                      
-                      eventDetails?.winners.map((winner, index) => (
-                        <WinnerItem key={index} winner={winner} position={winner.position} />
-                      ))
-                    ) : (
-                      <div>No Winners Declared</div>
-                    )}
-                  </div>
-          }
-        </div>
           </section>
         </div>
       </main>

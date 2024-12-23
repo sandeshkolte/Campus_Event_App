@@ -24,13 +24,8 @@ const eventSchema = mongoose.Schema({
         type:Boolean,
         default:true
     },
-    winners: [
-        {
-          user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
-          position: { type: String }, // e.g., 1 for first place, 2 for second, etc.
-        },
-      ],
-      showWinners: { type: Boolean, default: false },
+    winner: { type: mongoose.Schema.Types.ObjectId, ref: 'winner' }, // Single reference to the winner document
+    showWinners: { type: Boolean, default: true },
 }, {
     timestamps: true
 });

@@ -9,6 +9,7 @@ import { WinnerDeclarationPopup } from "@/components/WinnerDeclarationPopup"
 import WinnersPopover from "@/components/WinnersPopover"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { ShowWinnersSwitch } from "@/components/utils/ShowWinnerSwitch"
 
 export default function EventsOrganized() {
 
@@ -38,9 +39,7 @@ export default function EventsOrganized() {
       <div className="space-y-4">
         {events.map((event) => (
           <Card key={event._id} className="flex flex-col sm:flex-row items-center relative">
-                       { event.winners.length>0 &&  <div className="absolute top-1 right-1">
-                <WinnersPopover  organisedEvent={event} />
-              </div>}
+
             <div className="w-full sm:w-24 h-24 relative">
               <img
                 src={event.image}
@@ -69,8 +68,14 @@ export default function EventsOrganized() {
                 <Users className="h-4 w-4" />
               </Button>
               <WinnerDeclarationPopup event={event} />
+              
             </CardContent>
-            
+            { (event.winner && event.winner.length>0) &&  <div className="md:absolute top-1 right-1">
+                <WinnersPopover  organisedEvent={event} />
+              </div>}
+                       { (event.winner && event.winner.length>0) &&  <div className="md:absolute bottom-1 right-1">
+                <ShowWinnersSwitch  event={event} />
+              </div>}
           </Card>
         ))}
       </div>
