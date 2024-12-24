@@ -2,6 +2,8 @@ const eventModel = require('../models/event');
 const userModel = require('../models/user');
 const Redis = require('ioredis');
 require('dotenv').config();
+const { Knock }  = require("@knocklabs/node")
+const knock = new Knock(process.env.KNOCK_API_KEY);
 
 const redis = new Redis({
     host: process.env.REDISHOST,
@@ -49,6 +51,17 @@ const createEvent = async (req, res) => {
       qrImage,
       venue,
       });
+
+      // await knock.workflows.trigger("event-created", {
+      //   recipients: ["all"], // Assuming "all" is a valid recipient group in your Knock setup
+      //   data: {
+      //     eventName: newEvent.name,
+      //     eventDate: newEvent.date,
+      //     eventVenue: newEvent.venue,
+      //     eventDescription: newEvent.description,
+      //   },
+      // });
+
       res.status(201).json({
         status:"success",
         response:"Event Created Successfully"
@@ -138,6 +151,16 @@ const createEvent = async (req, res) => {
         return res.status(404).json({ message: "Event not found" });
       }
   
+      // await knock.workflows.trigger("event-updated", {
+      //   recipients: ["all"], // Assuming "all" is a valid recipient group in your Knock setup
+      //   data: {
+      //     eventName: updatedEvent.name,
+      //     eventDate: updatedEvent.date,
+      //     eventVenue: updatedEvent.venue,
+      //     eventDescription: updatedEvent.description,
+      //   },
+      // });
+
       res.status(200).json(updatedEvent);
     } catch (error) {
       res.status(500).json({ message: "Failed to update event", error: error.message });

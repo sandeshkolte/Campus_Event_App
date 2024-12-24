@@ -3,6 +3,7 @@ import Header from './components/Header'
 import { Outlet, useLocation } from 'react-router-dom'
 import ProfileSidebar from './components/ProfileSidebar'
 import Footer from './components/Footer'
+import NotificationComponent from './components/utils/NotificationComponent'
 // import NavBar from './components/NavBar'
 
 const Layout = () => {
@@ -15,6 +16,7 @@ const Layout = () => {
         <Header/>
         {!isProfilePage && (
         <div className="block lg:hidden"> {/* Hide on large screens */}
+          <NotificationComponent/>
           <ProfileSidebar />
         </div>
       )}

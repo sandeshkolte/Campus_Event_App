@@ -126,13 +126,13 @@ export default function Component() {
   // Function to update 'eventsorganised' field
   const addtoOrganisedEvent = async (userId, eventId) => {
     try {
-      await axios.put(`${baseUrl}/api/user/addOrganisedEvent`, { userId, eventId });
+      await axios.post(`${baseUrl}/api/user/addOrganisedEvent`, { userId, eventId });
       // if (response.status === 200) {
         console.log(`Event added to organised event`);
       // }
     } catch (error) {
       console.error("Failed to add event to user:", error);
-      toast.error("Failed to add event to user.");
+      // toast.error("Failed to add event to user.");
     }
   };
 
@@ -400,6 +400,12 @@ export default function Component() {
                   </SelectItem>
                   <SelectItem value={"CESA"}>
                     CESA
+                  </SelectItem>
+                  <SelectItem value={"ETESA"}>
+                    ETESA
+                  </SelectItem>
+                  <SelectItem value={"INSA"}>
+                    INSA
                   </SelectItem>
                 </SelectContent>
               </Select>
