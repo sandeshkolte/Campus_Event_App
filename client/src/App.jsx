@@ -25,6 +25,11 @@ import VerifyTickets from './pages/VerifyTickets'
 import TicketStatusChangingPage from './pages/TicketStatusChangingPage'
 import { VscLoading } from 'react-icons/vsc'
 import OrganizersComponent from './components/OrganizersComponent'
+import CivilCommittee from './components/CivilCommittePage'
+import EntcCommittee from './components/EntcCommittee'
+import MECommittee from './components/MechCommittee'
+import ElectricalCommittee from './components/ElecCommittee'
+import InstrumentationCommittee from './components/InstruCommittee'
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -137,7 +142,11 @@ const App = () => {
         <Route path='/verify-email' element={<VerifyEmail />} />
         <Route path='/gallery' element={<PhotoGallery />} />
         <Route path='/committeepage' element={<CSECommittee />} />
-
+        <Route path='/civilcommitteepage' element={<CivilCommittee />} />
+        <Route path='/entccommitteepage' element={<EntcCommittee />} />
+        <Route path='/meommitteepage' element={<MECommittee />} />
+        <Route path='/eleccommitteepage' element={<ElectricalCommittee />} />
+        <Route path='/instrucommitteepage' element={<InstrumentationCommittee />} />
         {!isAuthenticated && (
           <>
             <Route path='/register' element={<SignUpPage />} />

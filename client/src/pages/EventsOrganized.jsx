@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, Users } from "lucide-react"
+import { Award, Search, Users } from "lucide-react"
 import { useSelector } from "react-redux"
 
 
@@ -54,10 +54,18 @@ export default function EventsOrganized() {
                 {event.ticketsSold}/{event.totalTickets} tickets sold
               </p>
             </CardHeader>
-            <CardContent className="flex items-center">
+            <CardContent className="flex gap-1 items-center">
               <Button variant="outline" size="sm" className="flex sm:mr-5 border-black border-2 items-center gap-2">
                 <Users className="h-4 w-4" />
                 Show Participants List
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-2 border-black border-2 w-full sm:w-auto"
+              >
+                <Award className="h-4 w-4" />
+                Issue Certificate
               </Button>
             </CardContent>
           </Card>
