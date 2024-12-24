@@ -171,7 +171,7 @@ export default function Profile() {
             toast.success("Profile updated successfully.");
         }
     } catch (err) {
-        console.log("Failed to update profile. Please try again.");
+        // console.log("Failed to update profile. Please try again.");
         toast.error("Failed to update profile. Please try again.");
     } finally {
         fetchUserDetails();
@@ -181,7 +181,7 @@ export default function Profile() {
 const fetchUserDetails = async () => {
   try {
     if (user._id) {
-      axios.post(baseUrl + `/api/user/getuser/?userid=${user._id}`).then((result) => {
+      axios.get(baseUrl + `/api/user/getuser/${user._id}`).then((result) => {
         if (result.status === 200) {
           const userDetails = result.data.response
           dispatch(login(userDetails))

@@ -19,12 +19,13 @@ const SignInWithGoogle = () => {
 
   const { reset } = useForm()
 
-const googleLogin = () =>{
+const googleLogin = (e) =>{
+  e.stopPropagation();
 const provider = new GoogleAuthProvider();
 signInWithPopup(auth,provider).then( async (result) =>{
-console.log(result);
+// console.log(result);
 if(result.user){
-    console.log(result.user.displayName);
+    // console.log(result.user.displayName);
     try {
       await axios.post(baseUrl + '/api/user/google', { 
         "email" : result.user.email,
@@ -34,7 +35,7 @@ if(result.user){
     }).then((response) => {
         // if(response.status === 201) {
         toast.success("User Login Successfully!")
-        console.log(JSON.stringify(response.data.response))
+        // console.log(JSON.stringify(response.data.response))
         const { token } = response.data.response
         // const {fullname, email } = response.data.response.createdUser;
         localStorage.setItem('userToken', token)
@@ -47,7 +48,7 @@ if(result.user){
       })
     } catch (err) {
       if (axios.isCancel(err)) {
-        console.log("Fetch aborted");
+        // console.log("Fetch aborted");
       } else {
         console.error("Registration failed:", err);
         toast.error("User Already Exist !")

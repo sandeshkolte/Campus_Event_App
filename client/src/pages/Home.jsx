@@ -99,7 +99,7 @@ const Home = () => {
           </Select>
         </div>
       </div> */}
-      <div className="py-10 h-screen bg-[#f3eee8]">
+      <div className="py-10 h-screen bg-gray-100">
       <div className="flex justify-center mb-5 md:mb-10 md:mt-20" >
       <div className="bg-zinc-950 w-fit text-gray-300 p-3 rounded-2xl text-center mt-5" >
         <RevealAnimation>

@@ -23,7 +23,9 @@ const eventSchema = mongoose.Schema({
     isActive: {
         type:Boolean,
         default:true
-    }
+    },
+    winner: { type: mongoose.Schema.Types.ObjectId, ref: 'winner' }, // Single reference to the winner document
+    showWinners: { type: Boolean, default: true },
 }, {
     timestamps: true
 });

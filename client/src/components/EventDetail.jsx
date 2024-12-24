@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { CoordinatorProvider } from "@/hooks/useCoordinator";
 import OrganizerCard from "./utils/OrganizerCard";
+import RelatedEvents from "./RelatedEvents";
 
 export default function EventDetails() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -166,7 +167,8 @@ export default function EventDetails() {
       setOrganizerAndCoordinator(
         eventDetails.coordinator,
       );
-      console.log("Organizers and Coordinators: ",organizerAndCoordinator);
+      // console.log("Organizers and Coordinators: ",eventDetails.coordinator);
+      // console.log("Event : ",eventDetails);
       
     }
   }, [eventDetails]);
@@ -182,6 +184,7 @@ export default function EventDetails() {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-white border-1 px-4 md:px-10 lg:px-20 py-8 shadow-lg">
       <header className=""></header>
       <CoordinatorProvider>
@@ -399,5 +402,8 @@ export default function EventDetails() {
         </div>
       </main>
     </div>
+    
+    <RelatedEvents eventDetails ={eventDetails}/>
+    </>
   );
 }

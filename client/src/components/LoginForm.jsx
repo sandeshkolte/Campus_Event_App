@@ -71,8 +71,9 @@ export default function LoginForm() {
   };
 
   return (
+    <>
+    <div className="flex justify-center align-middle mt-5" >
     <Card className="w-[400px]">
-      <form onSubmit={handleSubmit(formSubmit)}>
         <CardHeader className="relative">
           <div className="absolute right-7 top-8 " >
             <PopoverComponent trigger={ <InfoIcon className="text-rose-400 h-5" />} content={
@@ -85,8 +86,10 @@ export default function LoginForm() {
           <CardTitle>Login</CardTitle>
           <CardDescription>Enter your details to sign in to your account.</CardDescription>
         </CardHeader>
+      <form onSubmit={handleSubmit(formSubmit)}>
         <CardContent>
           <SignInWithGoogle />
+          
           <div className="flex items-center my-2">
             <hr className="flex-grow border-gray-300 rounded-md border-[1.5px]" />
             <p className="mx-2 text-xs text-gray-400 uppercase">or continue with</p>
@@ -130,5 +133,8 @@ export default function LoginForm() {
         </CardFooter>
       </form>
     </Card>
+    </div>
+    </>
+  
   );
 }

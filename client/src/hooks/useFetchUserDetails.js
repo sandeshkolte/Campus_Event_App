@@ -11,7 +11,7 @@ const useFetchUserDetails = (userId) => {
     const fetchUserDetails = async () => {
       try {
         if (userId) {
-          const result = await axios.post(baseUrl + `/api/user/getuser/?userid=${userId}`);
+          const result = await axios.get(baseUrl + `/api/user/getuser/${userId}`);
           if (result.status === 200) {
             const userDetails = result.data.response;
             dispatch(login(userDetails));

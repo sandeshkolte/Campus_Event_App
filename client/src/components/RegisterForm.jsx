@@ -27,11 +27,11 @@ export default function RegisterForm() {
   const [loading, setLoading] = React.useState(false)
 
   const formSubmit = async (data) => {
-    console.log(data);
+    // console.log(data);
     setLoading(true)
     try {
       await axios.post(baseUrl + '/api/user/register', data).then((response) => {
-        console.log(JSON.stringify(data))
+        // console.log(JSON.stringify(data))
 
         toast.success("User Registered Successfully! Please verify your email.");
         reset();
@@ -53,7 +53,9 @@ export default function RegisterForm() {
   }
 
   return (
-    <Card className="w-[400px]">
+    <>
+     <div className='flex justify-center align-middle mt-5' >
+     <Card className="w-[400px]">
       <form onSubmit={handleSubmit(formSubmit)} >
         <CardHeader>
           <CardTitle>Create Account</CardTitle>
@@ -61,7 +63,7 @@ export default function RegisterForm() {
         </CardHeader>
         <CardContent>
           <div className="pb-2">
-            <SignInWithGoogle/>
+            {/* <SignInWithGoogle/> */}
           </div>
           <div className="flex items-center my-2">
             <hr className="flex-grow border-gray-300 rounded-md border-[1.5px]" />
@@ -97,5 +99,8 @@ export default function RegisterForm() {
         </CardFooter>
       </form>
     </Card>
+     </div>
+    </>
+  
   )
 }

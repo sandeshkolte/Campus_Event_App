@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Menu } from "lucide-react";
 import { toggleSidebar } from "@/store/navSlice";
+import NotificationComponent from "./utils/NotificationComponent";
 const Header = () => {
   const token = localStorage.getItem("userToken");
   const userInfo = useSelector((state) => state.auth?.userInfo);
@@ -58,6 +59,17 @@ const Header = () => {
                 </NavLink>
               </li>
 
+              <li>
+                <NavLink
+                  to="/winners"
+                  className={({ isActive }) =>
+                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
+                  }
+                >
+                  Winners
+                </NavLink>
+              </li>
+
               {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
                 <li>
                   <NavLink
@@ -94,6 +106,10 @@ const Header = () => {
                   </NavLink>
                 </li>
               )}
+
+<li>
+  <NotificationComponent/>
+</li>
 
               <li>
                 <NavLink

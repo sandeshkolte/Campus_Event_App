@@ -13,8 +13,6 @@ import EventTickets from "@/components/eventTicket";
 import { useSelector } from "react-redux";
 
 
-
-
 export default function Component() {
   const user=useSelector((state)=>state.auth?.userInfo?.myevents);
   

@@ -76,7 +76,7 @@ const EventTickets = ({ event }) => {
   };
 
 
-  console.log("this the event", event);
+  // console.log("this the event", event);
   // qrCode deatils information
 
   const qrData = {

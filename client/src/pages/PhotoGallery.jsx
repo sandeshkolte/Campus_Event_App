@@ -73,7 +73,7 @@ const PhotoGallery = () => {
       });
 
       const uploadImageURL = await response.json();
-      console.log(uploadImageURL);
+      // console.log(uploadImageURL);
 
       // Pass the image URL and name to fileUploadMongo
       fileUploadMongo(uploadImageURL.url, uploadImageURL.original_filename);
@@ -89,7 +89,7 @@ const PhotoGallery = () => {
     try {
       axios.get(baseUrl + "/api/gallery/")
         .then(result => {
-          console.log(result.data);
+          // console.log(result.data);
           setPhotos(result.data); // Store fetched photos
         })
         .catch(err => {

@@ -108,6 +108,9 @@ const createEvent = async (req, res) => {
 
       const { id } = req.params;
 
+      console.log(req.body); // Debugging req.body
+      console.log(req.params); // Debugging req.params      
+
       const updatedEvent = await eventModel.findByIdAndUpdate(
         id,
         {
@@ -165,7 +168,9 @@ const getEvent = async (req, res, next) => {
             return res.json({ response: JSON.parse(events) });
         }
         // console.log("From MONGO");
-        events = await eventModel.find().populate('organisedBy coordinator participants');
+
+        // the populate used here makes the id as na object os that i get all info just from the id
+        events = await eventModel.find().populate('organisedBy coordinator participants winner.user');
         await redis.setex("events", 60, JSON.stringify(events));
 
         res.status(200).json({ status: "success", response: events });
@@ -193,6 +198,49 @@ const findEventByTitle = async (req, res) => {
         res.status(403).json({ status: "Error", response: err.message });
     }
 };
+
+const findRelatedEvents = async (req, res) => {
+  try {
+      const { branch, organiserId } = req.query; // Accept branch and organiserId as query parameters
+
+      // Build a dynamic query object
+      const query = {};
+      if (branch) query.organizingBranch = branch;
+      if (organiserId) query.organisedBy = organiserId;
+
+      // Fetch events based on the query
+      const events = await eventModel.find(query);
+
+      res.status(200).json({ status: "success", response: events });
+  } catch (err) {
+      res.status(403).json({ status: "Error", response: err.message });
+  }
+};
+
+const updateWinners = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { showWinners } = req.body; // winners is an array of { user, position }
+
+    // Find the event by ID
+    const event = await eventModel.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    if (showWinners !== undefined) {
+      event.showWinners = showWinners;
+    }
+
+    await event.save();
+
+    res.status(200).json({ message: "Winners updated successfully", event: updatedEvent });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+
 
 // const createEvent = async (req, res) => {
 //     try {
@@ -517,5 +565,7 @@ module.exports = {
     updateGroupPaymentStatus,
     activeEvents,
     adminAllEvents,
-    updateStudentPaymentStatus
+    updateStudentPaymentStatus,
+    findRelatedEvents,
+    updateWinners
 };

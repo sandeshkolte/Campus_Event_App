@@ -28,21 +28,23 @@ import { format } from "date-fns";
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "react-toastify"
 import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import axios from "axios"
 import { baseUrl } from "@/common/common"
 import { storage } from "../firebase"
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage"
 import { VscLoading } from "react-icons/vsc"
 import { CalendarIcon, Upload } from "lucide-react"
-import CategorySelector from "./CategorySelector"
+import CategorySelector from "../components/CategorySelector"
 import { jwtDecode } from "jwt-decode"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import SelectorPrac from "./SelectorPrac"
+import SelectorPrac from "../components/SelectorPrac"
+import { useSelector } from "react-redux"
 
-export default function Component() {
+export default function UpdateEvent() {
   const { register, handleSubmit, reset, setValue } = useForm()
   const navigate = useNavigate()
+  const { id } = useParams()
   const [loading, setLoading] = React.useState(false)
   const [imagePreview, setImagePreview] = React.useState(null)
   const [uploadedFile, setUploadedFile] = React.useState(null)
@@ -53,19 +55,28 @@ export default function Component() {
   const [isGroupEvent, setisGroupEvent] = React.useState(false)
   const [isAuditCourse, setisAuditCourse] = React.useState(false)
 
-  // const [query, setQuery] = useState("");
-  const [userLoading, setUserLoading] = React.useState(false);
+  const events = useSelector((state) => state.event?.events);
+  const eventData = events.find((event) => event._id === id);
 
-  // const fetchSearchResults = debounce(async (searchQuery) => {
-  //   setUserLoading(true);
-  //   try {
-  //     const response = await axios.get( baseUrl+ "/api/user/userrole/?role=user,admin", searchQuery);
-  //     setResults(response.data.events);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  //   setUserLoading(false);
-  // }, 300);
+  React.useEffect(() => {
+    if (eventData) {
+      setValue("title", eventData.title)
+      setValue("price", eventData.price)
+      setValue("description", eventData.description)
+      setValue("venue", eventData.venue)
+      setValue("organizingBranch", eventData.organizingBranch)
+      setValue("category", eventData.category)
+      setValue("coordinator", eventData.coordinator)
+      setValue("isGroupEvent", eventData.isGroupEvent)
+      setValue("isAuditCourse", eventData.isAuditCourse)
+      setStartDateTime(new Date(eventData.startDate))
+      setEndDateTime(new Date(eventData.endDate))
+      setImagePreview(eventData.image)
+      setQRPreview(eventData.qrImage)
+      setisGroupEvent(eventData.isGroupEvent)
+      setisAuditCourse(eventData.isAuditCourse)
+    }
+  }, [eventData, setValue])
 
   const handleImageUpload = (file, folderName) => {
     return new Promise((resolve, reject) => {
@@ -110,26 +121,11 @@ export default function Component() {
       }
     }
   };
-  // const updateUserRoleToAdmin = async (userId) => {
-  //   try {
-  //     const response = await axios.put( baseUrl + `/api/user/updateRole`, { userId, role: "admin" });
-  //     if (response.status === 200) {
-  //       console.log(`User role updated to admin for userId: ${userId}`);
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to update user role:", error);
-  //     toast.error("Failed to update user role.");
-  //   }
-  // };
 
-
-  // Function to update 'eventsorganised' field
-  const addtoOrganisedEvent = async (userId, eventId) => {
+  const addtoOrganisedEvent = async (userId, id) => {
     try {
-      await axios.put(`${baseUrl}/api/user/addOrganisedEvent`, { userId, eventId });
-      // if (response.status === 200) {
-        console.log(`Event added to organised event`);
-      // }
+      await axios.put(`${baseUrl}/api/user/addOrganisedEvent`, { userId, id });
+      console.log(`Event added to organised event`);
     } catch (error) {
       console.error("Failed to add event to user:", error);
       toast.error("Failed to add event to user.");
@@ -169,7 +165,6 @@ export default function Component() {
       return;
     }
 
-
     try {
       const eventFolderName = `events/${new Date().toISOString()}`; // Create a unique folder name for each event
       const file = uploadedFile;
@@ -194,48 +189,40 @@ export default function Component() {
       if (userId) {
         data.organisedBy = `${userId}`
       }
-      // Create the event
 
-      // console.log("The created data: ", data);
-
-      const eventResponse = await axios.post(`${baseUrl}/api/event/create`, data);
-      const eventId = eventResponse.data._id; // Get the new event ID
-      // if (eventResponse.status === 201) {
-      // console.log("Event created successfully", eventResponse.data);
-      toast.success("Event created successfully!");
-
-      // console.log("Eventid: ",eventId);
-      
-      // Update 'eventsorganised' field for coordinators
-      addtoOrganisedEvent(`${userId}`, eventId),
-   
-
-      reset(); // Reset the form fields
-      setImagePreview(null); // Reset the image preview
-      setUploadedFile(null); // Reset the uploaded file state
-      setQRPreview(null); // Reset QR preview
-      setUploadedQRFile(null); // Reset uploaded QR file state
-      // navigate("/"); // Navigate to the home route
-      // window.location.reload();
-      // }
+      console.log(id, data);
+      await axios.put(`${baseUrl}/api/event/update/${id}`, data).then((response) => {
+        console.log("Update response: ",response);
+        
+      toast.success("Event updated successfully!")
+      }
+      ).catch((error) => {console.error("Failed to update event:", error); toast.error("Failed to update event.")});
+      reset()
+      setImagePreview(null)
+      setUploadedFile(null)
+      setQRPreview(null)
+      setUploadedQRFile(null)
+navigate('/organized')
+window.location.reload();
     } catch (err) {
-      toast.error("Failed to create event " + err.message);
+      toast.error("Failed to update event " + err.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   };
 
   return (
+    <div className='p-5 flex justify-center' >
     <Card className="w-full md:max-w-5xl">
       <form onSubmit={handleSubmit(formSubmit)}>
         <CardHeader>
-          <CardTitle>Create Event</CardTitle>
-          <CardDescription>Fill in the details for your new event.</CardDescription>
+          <CardTitle>Update Event</CardTitle>
+          <CardDescription>Update the details for your event.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-6 md:grid-cols-2 ">
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="title">Title <span className="text-red-500" >*</span></Label>
+              <Label htmlFor="title">Title <span className="text-red-500">*</span></Label>
               <Input id="title" placeholder="Enter event title" {...register("title")} />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -243,12 +230,12 @@ export default function Component() {
               <Input id="price" type="number" placeholder="0.00" {...register("price")} />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5 sm:col-span-1">
-              <Label htmlFor="description">Description <span className="text-red-500" >*</span></Label>
+              <Label htmlFor="description">Description <span className="text-red-500">*</span></Label>
               <Textarea id="description" placeholder="Describe your event" rows={6} {...register("description")} />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5 sm:col-span-1">
               <div className="space-y-2">
-                <Label htmlFor="image">Upload Event Banner <span className="text-red-500" >*</span></Label>
+                <Label htmlFor="image">Upload Event Banner <span className="text-red-500">*</span></Label>
                 <div className="flex flex-col items-center space-y-4">
                   <div className="relative w-full">
                     <Input
@@ -283,8 +270,8 @@ export default function Component() {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        setImagePreview(null);
-                        setUploadedFile(null);
+                        setImagePreview(null)
+                        setUploadedFile(null)
                       }}
                       className="w-full"
                     >
@@ -294,7 +281,6 @@ export default function Component() {
                 </div>
               </div>
             </div>
-
             <div>
               <hr className="bg-black " />
               <div className="grid w-full max-w-sm items-center gap-1.5 sm:col-span-1 mt-5">
@@ -334,8 +320,8 @@ export default function Component() {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          setQRPreview(null);
-                          setUploadedQRFile(null);
+                          setQRPreview(null)
+                          setUploadedQRFile(null)
                         }}
                         className="w-full"
                       >
@@ -346,21 +332,17 @@ export default function Component() {
                 </div>
               </div>
             </div>
-
-            {/* Participation type */}
-            <div className="p-8 flex flex-col gap-5 " >
+            <div className="p-8 flex flex-col gap-5">
               <Label htmlFor="">Participation Type</Label>
-              <div className="flex gap-x-10 " >
+              <div className="flex gap-x-10">
                 <RadioGroup
-                  defaultValue={false}
+                  defaultValue={isGroupEvent}
                   onValueChange={(value) => {
                     setisGroupEvent(value)
                     setValue("isGroupEvent", value)
-                  }
-
-                  }
+                  }}
                 >
-                  <div className="flex items-center space-x-2 ">
+                  <div className="flex items-center space-x-2">
                     <RadioGroupItem value={false} id="r1" />
                     <Label htmlFor="r1">Individual</Label>
                   </div>
@@ -369,45 +351,34 @@ export default function Component() {
                     <Label htmlFor="r1">Group</Label>
                   </div>
                 </RadioGroup>
-                {isGroupEvent && <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="participantSize">Enter Group Size</Label>
-                  <Input id="participantSize" required type="number" className={"w-20"} placeholder="2" min={2} {...register("participantSize", { min: 2 })} />
-                </div>}
+                {isGroupEvent && (
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="participantSize">Enter Group Size</Label>
+                    <Input id="participantSize" required type="number" className={"w-20"} placeholder="2" min={2} {...register("participantSize", { min: 2 })} />
+                  </div>
+                )}
               </div>
             </div>
-
             <div className="grid w-full max-w-sm items-center gap-1.5 font-semibold">
-              <Label htmlFor="organizers">Organizing Committe <span className="text-red-500" >*</span></Label>
+              <Label htmlFor="organizers">Organizing Committe <span className="text-red-500">*</span></Label>
               <Select onValueChange={(value) => setValue("organizingBranch", value)}>
                 <SelectTrigger id="organizers">
                   <SelectValue placeholder="Select Committe" />
                 </SelectTrigger>
-                <SelectContent className="bg-white  font-semibold">
-                  <SelectItem value={"Abhirang"}>
-                    Abhirang
-                  </SelectItem>
-                  <SelectItem value={"Technotsav"}>
-                    Technotsav
-                  </SelectItem>
-                  <SelectItem value={"ACSES"}>
-                    ACSES
-                  </SelectItem>
-                  <SelectItem value={"EESA"}>
-                    EESA
-                  </SelectItem>
-                  <SelectItem value={"MESA"}>
-                    MESA
-                  </SelectItem>
-                  <SelectItem value={"CESA"}>
-                    CESA
-                  </SelectItem>
+                <SelectContent className="bg-white font-semibold">
+                  <SelectItem value={"Abhirang"}>Abhirang</SelectItem>
+                  <SelectItem value={"Technotsav"}>Technotsav</SelectItem>
+                  <SelectItem value={"ACSES"}>ACSES</SelectItem>
+                  <SelectItem value={"EESA"}>EESA</SelectItem>
+                  <SelectItem value={"MESA"}>MESA</SelectItem>
+                  <SelectItem value={"CESA"}>CESA</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="p-8 flex flex-col gap-5" >
+              <div className="p-8 flex flex-col gap-5">
                 <Label htmlFor="">Audit Course</Label>
-                <div className="flex gap-x-10" >
+                <div className="flex gap-x-10">
                   <RadioGroup
-                    defaultValue={false}
+                    defaultValue={isAuditCourse}
                     onValueChange={(value) => {
                       setisAuditCourse(value)
                       setValue("isAuditCourse", value)
@@ -426,19 +397,19 @@ export default function Component() {
               </div>
             </div>
             <div className="flex flex-col space-y-1.5 w-[280px]">
-              <Label htmlFor="coordinator">Coordinators <span className="text-red-500" >*</span></Label>
+              <Label htmlFor="coordinator">Coordinators <span className="text-red-500">*</span></Label>
               <SelectorPrac selector={"coordinator"} setValue={setValue} />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="category">Category <span className="text-red-500" >*</span></Label>
+              <Label htmlFor="category">Category <span className="text-red-500">*</span></Label>
               <CategorySelector setValue={setValue} />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="venue">Venue <span className="text-red-500" >*</span></Label>
+              <Label htmlFor="venue">Venue <span className="text-red-500">*</span></Label>
               <Input id="venue" placeholder="Enter event venue" {...register("venue")} />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="">Start Date <span className="text-red-500" >*</span></Label>
+              <Label htmlFor="">Start Date <span className="text-red-500">*</span></Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -456,26 +427,24 @@ export default function Component() {
                   <DatePicker
                     selected={startDateTime}
                     onChange={(date) => {
-                      setStartDateTime(date);
-                      setValue("startDate", date); // Update form value
-                      // Reset end date if it's before or the same as the new start date
+                      setStartDateTime(date)
+                      setValue("startDate", date)
                       if (endDateTime && date >= endDateTime) {
-                        setEndDateTime(null);
+                        setEndDateTime(null)
                       }
                     }}
                     showTimeSelect
                     timeFormat="HH:mm"
                     timeIntervals={15}
                     dateFormat="MMMM d, yyyy h:mm aa"
-                    minDate={new Date()} // Start time cannot be in the past
+                    minDate={new Date()}
                     inline
                   />
                 </PopoverContent>
               </Popover>
             </div>
-
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="">End Date <span className="text-red-500" >*</span></Label>
+              <Label htmlFor="">End Date <span className="text-red-500">*</span></Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -493,24 +462,21 @@ export default function Component() {
                   <DatePicker
                     selected={endDateTime}
                     onChange={(date) => {
-                      setEndDateTime(date);
-                      setValue("endDate", date); // Update form value
+                      setEndDateTime(date)
+                      setValue("endDate", date)
                     }}
                     showTimeSelect
                     timeFormat="HH:mm"
                     timeIntervals={15}
                     dateFormat="MMMM d, yyyy h:mm aa"
-                    minDate={startDateTime || new Date()} // End date cannot be before start date
-                    minTime={startDateTime && endDateTime && startDateTime.toDateString() === endDateTime.toDateString() ? startDateTime : new Date(0, 0, 0, 0, 0, 0, 0)} // Ensure end time is after start time
-                    maxTime={new Date(0, 0, 0, 23, 59, 59, 999)} // Maximum time set to the end of the day
+                    minDate={startDateTime || new Date()}
+                    minTime={startDateTime && endDateTime && startDateTime.toDateString() === endDateTime.toDateString() ? startDateTime : new Date(0, 0, 0, 0, 0, 0, 0)}
+                    maxTime={new Date(0, 0, 0, 23, 59, 59, 999)}
                     inline
                   />
                 </PopoverContent>
               </Popover>
             </div>
-
-
-
           </div>
         </CardContent>
         <CardFooter className="flex justify-end space-x-2">
@@ -523,10 +489,11 @@ export default function Component() {
             navigate("/")
           }}>Cancel</Button>
           <Button type="submit" className="bg-gray-950 text-white">
-            {loading ? <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "Create Event"}
+            {loading ? <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "Update Event"}
           </Button>
         </CardFooter>
       </form>
     </Card>
+</div>
   )
 }
