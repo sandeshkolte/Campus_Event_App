@@ -31,6 +31,11 @@ import PageNotFound from './components/utils/PageNotFound'
 import NotificationComponent from './components/utils/NotificationComponent'
 import UpdateEvent from './pages/UpdateEventCard'
 import WinnersPage from './pages/WinnersPage'
+import CivilCommittee from './components/CivilCommittePage'
+import EntcCommittee from './components/EntcCommittee'
+import MECommittee from './components/MechCommittee'
+import ElectricalCommittee from './components/ElecCommittee'
+import InstrumentationCommittee from './components/InstruCommittee'
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -144,10 +149,7 @@ const App = () => {
         <Route path='/gallery' element={<PhotoGallery />} />
         <Route path='/winners' element={<WinnersPage />} />
         <Route path='/committeepage' element={<CSECommittee />} />
-        <Route
-                    path="*"
-                    element={<PageNotFound />}
-                />
+
         {!isAuthenticated && (
           <>
             <Route path='/register' element={<RegisterForm />} />

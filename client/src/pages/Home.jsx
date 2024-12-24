@@ -15,9 +15,11 @@ import { useSelector } from "react-redux";
 import RevealAnimation from "@/components/utils/RevealAnimation";
 import OrganizersComponent from "@/components/OrganizersComponent";
 import OrganizingCommitteCard from "@/components/utils/OrganizingCommitteCard";
+import { Link, useNavigate } from "react-router-dom";
 // const AllEvents = React.lazy(() => import('../components/AllEvents'))
 
 const Home = () => {
+  const navigate=useNavigate()
   const events = useSelector((state) => state.event?.events)
 
   const token = localStorage.getItem("userToken");
@@ -109,12 +111,13 @@ const Home = () => {
         <RevealAnimation>
           <section className="flex justify-center" >
             <div className=" md:flex md:justify-center md:flex-wrap md:gap-16  md:w-full md:p-10" >
-            <OrganizingCommitteCard title={'CSE'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
-            <OrganizingCommitteCard title={'ENTC'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
-            <OrganizingCommitteCard title={'INSTRU'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
-            <OrganizingCommitteCard title={'MECH'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
-            <OrganizingCommitteCard title={'CIVIL'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
-            <OrganizingCommitteCard title={'ELECT'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} />
+              <Link to='/committeepage'>
+            <OrganizingCommitteCard title={'CSE'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/entccommitteepage'> <OrganizingCommitteCard title={'ENTC'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/instrucommitteepage'>  <OrganizingCommitteCard title={'INSTRU'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/meommitteepage'>  <OrganizingCommitteCard title={'MECH'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/civilcommitteepage'>  <OrganizingCommitteCard title={'CIVIL'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/eleccommitteepage'>   <OrganizingCommitteCard title={'ELECT'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
             </div>
           </section>
           {/* <OrganizersComponent/> */}
