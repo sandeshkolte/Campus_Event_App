@@ -21,9 +21,9 @@ export default function CertificateGeneratorDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [template, setTemplate] = useState(null);
   const [participants, setParticipants] = useState([
-    { name: "John Doe", email: "john@example.com" },
-    { name: "Jane Smith", email: "jane@example.com" },
-    { name: "Bob Johnson", email: "bob@example.com" },
+    { name: "Sandesh Kolte", email: "sandeshkolte11@gmail.com" },
+    { name: "Ritesh Doijad", email: "riteshdoijad218@gmail.com" },
+    { name: "Bhupendra Chandanmalagar", email: "bhupendra@gmail.com" },
   ]);
   const [generatedCertificates, setGeneratedCertificates] = useState([]);
   const [textElements, setTextElements] = useState([
