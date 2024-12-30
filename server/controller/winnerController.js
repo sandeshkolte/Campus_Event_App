@@ -1,13 +1,16 @@
 const Winner = require('../models/winner');
-const eventId = require('../models/event'); // Assuming eventId is the eventId model
+
+const { Knock } = require("@knocklabs/node")
+const knock = new Knock(process.env.KNOCK_API_KEY);
+
 
 // Add a new winner
 exports.addWinner = async (req, res) => {
   try {
     const { eventId } = req.params;
     const { winners, showWinners } = req.body; // `winners` is an array of { user, position }
-console.log("winners:",winners);
-console.log("eventId:",eventId);
+    console.log("winners:", winners);
+    console.log("eventId:", eventId);
 
     // Check if the eventId exists
     const existingEvent = await eventId.findById(eventId);
@@ -39,6 +42,20 @@ console.log("eventId:",eventId);
     existingEvent.winner = winnerEntry._id;
     await existingEvent.save();
 
+    // Notify participants of the event
+    const participants = existingEvent.participants; // Assume participants is an array of user IDs
+    if (participants && participants.length > 0) {
+      const notificationData = {
+        title: `🎉 Winners Announced for ${existingEvent.title}!`,
+        message: `The winners for the event "${existingEvent.title}" have been announced. Check out the winners now!`,
+      };
+
+      await knock.workflows.trigger('winners-announcement', {
+        recipients: participants,
+        data: notificationData,
+      });
+    }
+
     // Populate user details in winners
     const updatedWinnerEntry = await Winner.findOne({ eventId })
       .populate('winners.user', 'fullname email branch yearOfStudy')
@@ -46,8 +63,8 @@ console.log("eventId:",eventId);
 
     res.status(200).json({ message: 'Winners updated successfully', winner: updatedWinnerEntry });
   } catch (error) {
-    console.log("Error: ",error);
-    
+    console.log("Error: ", error);
+
     res.status(500).json({ message: 'Internal server error', error });
   }
 };
@@ -55,22 +72,22 @@ console.log("eventId:",eventId);
 // Get all winners
 exports.getWinners = async (req, res) => {
   try {
-let winners  = await Winner.find() 
-if (winners.length === 0  || !winners) {
-    return res.status(404).json({ message: 'No winners found' });
-  }
+    let winners = await Winner.find()
+    if (winners.length === 0 || !winners) {
+      return res.status(404).json({ message: 'No winners found' });
+    }
 
-else if(winners){
-    winners = await Winner.find({ showWinners: true }) // Filter by showWinners
-     .populate('winners.user', 'firstname lastname email branch yearOfStudy') // Populate user details
-     .populate('eventId', 'title description'); // Populate eventId details
-     res.status(200).json(winners);
-}
+    else if (winners) {
+      winners = await Winner.find({ showWinners: true }) // Filter by showWinners
+        .populate('winners.user', 'firstname lastname email branch yearOfStudy') // Populate user details
+        .populate('eventId', 'title description'); // Populate eventId details
+      res.status(200).json(winners);
+    }
 
   } catch (error) {
     res.status(500).json({ message: 'Error fetching winners', error });
-    console.log("Error: ",error);
-    
+    console.log("Error: ", error);
+
   }
 };
 
@@ -80,24 +97,24 @@ exports.winnerShowToggle = async (req, res) => {
     const { eventId } = req.params;
     const { showWinners } = req.body;
 
-// console.log("showWinners:",showWinners);
-// console.log("event:",eventId);
+    // console.log("showWinners:",showWinners);
+    // console.log("event:",eventId);
 
     // Find the event by ID
-    const winner = await Winner.findOne({eventId});
+    const winner = await Winner.findOne({ eventId });
     if (!winner) {
       return res.status(404).json({ message: "Event not found" });
     }
 
     if (showWinners !== undefined) {
-        winner.showWinners = showWinners;
-        await winner.save();
+      winner.showWinners = showWinners;
+      await winner.save();
     }
 
     res.status(200).json({ message: `Winners show ${showWinners}` });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
-    console.log("Error: ",error);
+    console.log("Error: ", error);
   }
 };
 

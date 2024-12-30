@@ -17,6 +17,8 @@ import { ChevronDown, ChevronUp } from "lucide-react"
 import { CoordinatorProvider } from "@/hooks/useCoordinator";
 import OrganizerCard from "./utils/OrganizerCard";
 import RelatedEvents from "./RelatedEvents";
+import { motion } from "framer-motion";
+import BreadCrumb from "./utils/BreadCrumb";
 
 export default function EventDetails() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -184,9 +186,14 @@ export default function EventDetails() {
   };
 
   return (
-    <>
+    <motion.div 
+    initial={{ height: 0 }}
+    animate={{ height: "100%" }}
+    exit={{ y: window.innerHeight, transition: { duration: 0.5 } }}
+    >
     <div className="min-h-screen bg-white border-1 px-4 md:px-10 lg:px-20 py-8 shadow-lg">
       <header className=""></header>
+      <BreadCrumb name={eventDetails?.title} />
       <CoordinatorProvider>
       <TicketBooking isOpen={isDialogOpen} onClose={closeDialog} eventDetails={eventDetails}/>
       </CoordinatorProvider>
@@ -404,6 +411,6 @@ export default function EventDetails() {
     </div>
     
     <RelatedEvents eventDetails ={eventDetails}/>
-    </>
+    </motion.div>
   );
 }

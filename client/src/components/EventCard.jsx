@@ -27,9 +27,9 @@ function EventCard({ event }) {
       animate={controls}
       className="mb-6" // Optional margin for spacing between cards
     >
-      <Card className="w-[300px] h-[300px] md:w-96 md:h-96 group overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out bg-white/30 backdrop-blur-lg border border-white/20">
+      <Card className="w-full h-[300px] md:w-96 md:h-96 group overflow-hidden md:rounded-xl md:shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out bg-white border border-white/20">
         <CardHeader className="p-0">
-          <div className="relative overflow-hidden rounded-t-xl">
+          <div className="relative overflow-hidden md:rounded-t-xl">
             <motion.img
               src={event.image}
               alt={event.title}

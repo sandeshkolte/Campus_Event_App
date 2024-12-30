@@ -15,6 +15,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { baseUrl } from '@/common/common';
+import ParticipantsSelector from './ParticipantsSelector';
 
 export function WinnerDeclarationPopup({ event }) {
   const { handleSubmit, watch, setValue, reset } = useForm();
@@ -76,15 +77,15 @@ export function WinnerDeclarationPopup({ event }) {
           <div className="grid gap-4 py-4">
             <div>
               <Label>First</Label>
-              <SelectorPrac selector={"winner1"} setValue={setValue} />
+              <ParticipantsSelector selector={"winner1"} setValue={setValue} eventId={event._id} />
             </div>
             <div>
               <Label>Second</Label>
-              <SelectorPrac selector={"winner2"} setValue={setValue} />
+              <ParticipantsSelector selector={"winner2"} setValue={setValue} eventId={event._id}  />
             </div>
             <div>
               <Label>Third</Label>
-              <SelectorPrac selector={"winner3"} setValue={setValue} />
+              <ParticipantsSelector selector={"winner3"} setValue={setValue} eventId={event._id}  />
             </div>
           </div>
           <div className="flex justify-end">

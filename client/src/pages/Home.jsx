@@ -19,7 +19,6 @@ import { Link, useNavigate } from "react-router-dom";
 // const AllEvents = React.lazy(() => import('../components/AllEvents'))
 
 const Home = () => {
-  const navigate=useNavigate()
   const events = useSelector((state) => state.event?.events)
 
   const token = localStorage.getItem("userToken");
@@ -27,26 +26,26 @@ const Home = () => {
   return (
     <div className="min-h-screen relative ">
       
-      <section >
+      <section className="bg-gradient-to-tr from-[#dee8fb] via-[#b0c7f4] to-[#bce4ce] " >
       <RevealAnimation>
-      <div className="absolute -z-50 bottom-10 right-[0%] translate-y-[-50%] translate-x-[-50%]">
+      {/* <div className="absolute -z-50 bottom-10 right-[0%] translate-y-[-50%] translate-x-[-50%]">
         <div className="w-56 h-56 blur-[200px] max-sm:bg-transparent bg-blue-500 rounded-3xl"></div>
       </div>
       <div className="absolute -z-50 bottom-10 left-[10%] translate-y-[-50%] translate-x-[-50%]">
         <div className="w-56 h-56 blur-[200px] max-sm:bg-transparent bg-blue-500 rounded-3xl"></div>
-      </div>
+      </div> */}
 
-      <div className="bg-transparent w-full mb-52 ">
-        <div className=" mt-5 flex justify-center">
+      <div className=" w-full  mb-10 md:mb-52 ">
+        <div className="mt-5 flex justify-center">
           <img
             src="https://th.bing.com/th/id/OIP.U_AL86l48sLEcu0k2UhMzgHaHa?rs=1&pid=ImgDetMain"
             height={130}
             width={130}
             alt="logo"
-            className="h-20 w-20 md:h-32 md:w-32"
+            className="h-20 w-20 md:h-32 md:w-32 rounded-full "
           />
         </div>
-        <h1 className="font-bold z-50  text-7xl text-center p-5 pt-10">
+        <h1 className="font-light z-50  text-8xl text-center p-5 pt-10">
           GCOEC
           <br />
           Where Campus Life
@@ -57,7 +56,7 @@ const Home = () => {
           </span>
         </h1>
         
-        <p className="font-semibold text-md text-center text-slate-800">
+        <p className="font-normal text-md text-center text-black">
           Discover, Register, and Participate in Events Around Campus
         </p>
 
@@ -99,7 +98,7 @@ const Home = () => {
           </Select>
         </div>
       </div> */}
-      <div className="py-10 h-screen bg-gray-100">
+      <div className="py-10 h-screen bg-gradient-to-br from-[#fefdcd] via-[#cbf0e9] to-[#a3e6ff]">
       <div className="flex justify-center mb-5 md:mb-10 md:mt-20" >
       <div className="bg-zinc-950 w-fit text-gray-300 p-3 rounded-2xl text-center mt-5" >
         <RevealAnimation>
@@ -111,13 +110,13 @@ const Home = () => {
         <RevealAnimation>
           <section className="flex justify-center" >
             <div className=" md:flex md:justify-center md:flex-wrap md:gap-16  md:w-full md:p-10" >
-              <Link to='/committeepage'>
+              <Link to='/cse-committee'>
             <OrganizingCommitteCard title={'CSE'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
-            <Link to='/entccommitteepage'> <OrganizingCommitteCard title={'ENTC'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
-            <Link to='/instrucommitteepage'>  <OrganizingCommitteCard title={'INSTRU'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
-            <Link to='/meommitteepage'>  <OrganizingCommitteCard title={'MECH'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
-            <Link to='/civilcommitteepage'>  <OrganizingCommitteCard title={'CIVIL'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
-            <Link to='/eleccommitteepage'>   <OrganizingCommitteCard title={'ELECT'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/entc-committee'> <OrganizingCommitteCard title={'ENTC'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/instru-committee'>  <OrganizingCommitteCard title={'INSTRU'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/mech-committee'>  <OrganizingCommitteCard title={'MECH'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/civil-committee'>  <OrganizingCommitteCard title={'CIVIL'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/elec-committee'>   <OrganizingCommitteCard title={'ELECT'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
             </div>
           </section>
           {/* <OrganizersComponent/> */}
@@ -151,9 +150,10 @@ const Home = () => {
         </RevealAnimation>
         <div className="flex gap-10 justify-center"></div>
       </div>
+      <section className="bg-gradient-to-br from-sky-200 via-blue-200 to-sky-200 md:flex md:justify-center md:flex-wrap md:gap-16 md:w-full md:p-10" >
       <div className="flex justify-center" >
-      <div className="bg-zinc-950 w-fit text-gray-300 p-3 rounded-2xl text-center mt-5" >
-      <h3 className=" font-light text-2xl md:mx-10">Upcoming Events</h3>
+      <div className="bg-zinc-950 w-fit text-gray-300 p-3 rounded-2xl text-center my-5" >
+      <h3 className="font-light text-2xl md:mx-10 ">Upcoming Events</h3>
       </div>
       </div>
       <RevealAnimation>
@@ -166,6 +166,7 @@ const Home = () => {
       </div>
       }
       </RevealAnimation>
+      </section>
       {/* </Suspense> */}
 
       {/* </div> */}

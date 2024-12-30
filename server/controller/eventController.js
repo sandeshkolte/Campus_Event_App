@@ -4,6 +4,7 @@ const Redis = require('ioredis');
 require('dotenv').config();
 const { Knock }  = require("@knocklabs/node")
 const knock = new Knock(process.env.KNOCK_API_KEY);
+const { format } =  require('date-fns');
 
 const redis = new Redis({
     host: process.env.REDISHOST,
@@ -33,7 +34,8 @@ const createEvent = async (req, res) => {
         qrImage,
         venue,
       } = req.body;
-     await eventModel.create({
+
+   const newEvent = await eventModel.create({
       title,
       description,
       image,
@@ -50,6 +52,17 @@ const createEvent = async (req, res) => {
       endDate,
       qrImage,
       venue,
+      });
+
+      const users = await userModel.find(); 
+      const userIds = users.map((user) => user._id.toString()); 
+
+      await knock.workflows.trigger('new-event-notification', {
+        recipients: userIds,
+        data: {
+          eventTitle: newEvent.title,
+          eventDate: format(newEvent.startDate, 'dd MMMM yyyy'),
+        },
       });
 
       // await knock.workflows.trigger("event-created", {

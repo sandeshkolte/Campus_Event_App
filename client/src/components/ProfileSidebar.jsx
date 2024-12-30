@@ -7,10 +7,11 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { LogOut, User, Ticket, History, Award, Home, ChevronRight, PenBox, StarIcon, CheckSquare } from 'lucide-react'
+import { LogOut, User, Ticket, History, Award, Home, ChevronRight, PenBox, StarIcon, CheckSquare, Trophy } from 'lucide-react'
 import AlertComponent from './alert-dialog'
 import { FcPhotoReel } from 'react-icons/fc'
 import { TbPhoto } from 'react-icons/tb'
+
 
 export default function ProfileSidebar() {
   const dispatch = useDispatch()
@@ -30,18 +31,21 @@ export default function ProfileSidebar() {
   // Define navigation items for the sidebar
   const NavItem = ({ icon: Icon, children, path }) => (
     <NavLink
-      // variant="ghost"
-       className={({ isActive }) =>` ${isActive ? "text-blue-500 bg-blue-50":"" }  w-full justify-start text-gray-700 hover:text-blue-500 hover:bg-blue-50 transition-colors duration-200`}
+      className={({ isActive }) =>
+        `w-full  justify-start text-gray-700 hover:text-blue-500 hover:bg-blue-50 transition-colors duration-200 ${
+          isActive ? "text-blue-500 bg-blue-50 font-bold" : ""
+        }`
+      }
       onClick={() => handleLinkClick()}
       to={path}
     >
-      <div className='flex py-2' >
-      <Icon className="mr-2 h-5 w-5" />
-      <span className="flex-grow text-left">{children}</span>
-      <ChevronRight className="ml-auto h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+      <div className='flex py-2'>
+        <Icon className="mr-2 h-5 w-5" />
+        <span className="flex-grow text-left">{children}</span>
+        <ChevronRight className="ml-auto h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
       </div>
     </NavLink>
-  )
+  );
 
   // Sidebar content that appears both in the sheet and as a static sidebar
   const SidebarContent = () => (
@@ -49,18 +53,30 @@ export default function ProfileSidebar() {
       <Separator />
       <ScrollArea className="flex-1">
         <div className="space-y-1 p-4">
-          <NavItem icon={User} path="/profile">User Profile</NavItem>
+          <NavLink  
+          className={({ isActive }) =>
+        ` flex w-full justify-start text-gray-700 hover:text-blue-500 hover:bg-blue-50 transition-colors duration-200 ${
+          isActive ? "text-blue-500 bg-blue-50 font-bold" : ""
+        }`
+      } 
+      to={'/profile'}
+      >
+        <img src={`${userInfo.image}`} alt="" className='w-10 pr-2 rounded-full' />
+          User Profile
+          </NavLink>
+          {/* <NavItem icon={User} path="/profile">User Profile</NavItem> */}
           {(userInfo?.role === "admin" || userInfo?.role==="superadmin") && (
             <>
           <NavItem icon={PenBox} path="/create">Create Event</NavItem>
           <NavItem icon={CheckSquare} path="/verifytickets">Verify Tickets</NavItem>
           <NavItem icon={StarIcon} path="/organized">Events Organised</NavItem>
-          <NavItem icon={TbPhoto} path="/gallery">Photo Gallery</NavItem>
           </>
           ) }
+          <NavItem icon={TbPhoto} path="/gallery">Photo Gallery</NavItem>
           <NavItem icon={Ticket} path="/mytickets">My Tickets</NavItem>
-          <NavItem icon={History} path="/">History</NavItem>
-          <NavItem icon={Award} path="/">Certificate</NavItem>
+          <NavItem icon={Trophy} path="/winners">Winners</NavItem>
+          {/* <NavItem icon={History} path="/">History</NavItem>
+          <NavItem icon={Award} path="/">Certificate</NavItem> */}
           <NavItem icon={Home} path="/" className="lg:hidden">Home</NavItem>
         </div>
       </ScrollArea>
@@ -88,6 +104,7 @@ export default function ProfileSidebar() {
             <SheetTitle></SheetTitle>
             <SheetDescription></SheetDescription>
           </SheetHeader>
+          {/* content */}
           <SidebarContent />
         </SheetContent>
       </Sheet>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -36,6 +36,7 @@ import EntcCommittee from './components/EntcCommittee'
 import MECommittee from './components/MechCommittee'
 import ElectricalCommittee from './components/ElecCommittee'
 import InstrumentationCommittee from './components/InstruCommittee'
+import { AnimatePresence } from 'framer-motion'
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -139,8 +140,12 @@ const App = () => {
     return <LoadingScreen /> // Show loading screen while data is loading
   }
 
+const location = useLocation();
+
   return (
     <div className='fade-in' >
+      <AnimatePresence location={location} key={location.pathname}  >
+ 
     <Routes>
       <Route path='/' element={<Layout />}>
         <Route path='' element={<Home />} />
@@ -148,7 +153,12 @@ const App = () => {
         <Route path='/verify-email' element={<VerifyEmail />} />
         <Route path='/gallery' element={<PhotoGallery />} />
         <Route path='/winners' element={<WinnersPage />} />
-        <Route path='/committeepage' element={<CSECommittee />} />
+        <Route path='/cse-committee' element={<CSECommittee />} />
+        <Route path='/civil-committe' element={<CivilCommittee />} />
+        <Route path='/elec-committee' element={<ElectricalCommittee />} />
+        <Route path='/entc-committee' element={<EntcCommittee />} />
+        <Route path='/instru-committee' element={<InstrumentationCommittee />} />
+        <Route path='/mech-committee' element={<MECommittee />} />
 
         {!isAuthenticated && (
           <>
@@ -175,6 +185,7 @@ const App = () => {
         </Route>
       </Route>
     </Routes>
+    </AnimatePresence>
     </div>
   )
 }

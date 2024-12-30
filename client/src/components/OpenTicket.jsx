@@ -224,6 +224,9 @@ isLoading ?
 
             {/* QR code, ticket price, and book ticket button */}
             <div className="md:w-72 space-y-2 md:space-y-4 mt-3 md:mt-0">
+              
+              
+            {  (String(eventDetails?.price) != '0' || eventDetails?.price != '') && (
               <div className="flex flex-col items-center space-y-3 md:p-4 bg-gradient-to-b from-purple-50 to-indigo-50 rounded-lg shadow-md">
                 <Label className="text-md md:text-lg font-semibold text-gray-800">Scan QR Code for Payment</Label>
                 <div className="w-28 h-28 sm:w-32 sm:h-32 bg-white shadow-inner flex items-center justify-center rounded-lg">
@@ -234,8 +237,10 @@ isLoading ?
                   {eventDetails?.price}
                 </div>
               </div>
+            )}
 
               {/* Payment screenshot upload - for small screens */}
+             {  (String(eventDetails?.price) != '0' || eventDetails?.price != '') && (
               <div className="md:hidden space-y-3">
                 <Label htmlFor="payment-screenshot-mobile" className="text-md font-semibold flex items-center space-x-2 text-gray-700">
                   <Upload className="w-5 h-5" />
@@ -263,7 +268,7 @@ isLoading ?
                   
                 </div>
               </div>
-
+)}
               <Button onClick={handleBookEvent} className="w-full text-md md:text-lg py-4 md:py-6 bg-gradient-to-r from-purple-600 via-purple-800 to-indigo-600 hover:from-purple-700 hover:via-purple-800 hover:to-indigo-700 text-white transition-all duration-300 shadow-lg rounded-lg">
               { isBookingLoading ?
               <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "Book Ticket"

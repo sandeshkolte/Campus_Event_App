@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../models/user');
+const eventModel = require('../models/event');
 const { generateToken } = require('../utils/generateToken');
 const crypto = require('crypto');
 const { sendVerificationEmail } = require('../config/email-verification');
@@ -46,7 +47,7 @@ const getUsersByName = async (req, res, next) => {
         }
 
         // Find users based on the constructed query
-        const users = await userModel.find(query);
+        const users = await userModel.find(query, 'firstname lastname email branch yearOfStudy');
 
         if (users.length === 0) {
             return res.status(404).json({ status: "Error", response: "No users found" });
@@ -60,7 +61,42 @@ const getUsersByName = async (req, res, next) => {
         next(err);
     }
 };
+const getParticipants = async (req, res, next) => {
+    try {
+        const { search } = req.body;
+        const { eventId } = req.params;
 
+        // Find the event by its ID and populate the participants
+        const event = await eventModel.findById(eventId).populate('participants', 'firstname lastname email branch yearOfStudy');
+
+        if (!event) {
+            return res.status(404).json({ status: "Error", response: "Event not found" });
+        }
+
+        // Create a query object to filter participants by name
+        let query = {
+            _id: { $in: event.participants.map(participant => participant.userId) }  // Only fetch users who are participants in the event
+        };
+
+        // If search parameter is present, look for participants by first name or last name
+        if (search) {
+            query.$or = [
+                { firstname: { $regex: search, $options: 'i' } },  // Case-insensitive search by first name
+                { lastname: { $regex: search, $options: 'i' } }   // Case-insensitive search by last name
+            ];
+        }
+
+        // Find the participants based on the query
+        const participants = await userModel.find(query, 'firstname lastname email branch yearOfStudy');
+
+        return res.status(200).json({
+            status: "success",
+            response: participants
+        });
+    } catch (err) {
+        next(err);
+    }
+};
 
 const registerUser = async (req, res, next) => {
     try {
@@ -181,6 +217,18 @@ const loginUser = async (req, res, next) => {
         const token = generateToken(user);
         res.cookie("token", token);
 
+        await knock.users.identify(user._id.toString(), {
+            name: user.firstname + ' ' + user.lastname,
+            email: user.email,
+        });
+
+        await knock.objects.addSubscriptions("all-event-notification", "alleventnotification1234", {
+            recipients: [user._id.toString()],
+            properties: {
+              // Optionally set other properties on the subscription for each recipient
+            },
+          });
+
         return res.status(200).json({
             status: "Success",
             response: { user, token }
@@ -252,11 +300,17 @@ const googleLogin = async (req, res, next) => {
 
             await newUser.save();
 
-            await knock.users.identify(
-                newUser._id.toString(), {
+            await knock.users.identify(newUser._id.toString(), {
                 name: firstname + ' ' + lastname,
                 email,
             });
+
+            await knock.objects.addSubscriptions("all-event-notification", "alleventnotification1234", {
+                recipients: [newUser._id.toString()],
+                properties: {
+                  // Optionally set other properties on the subscription for each recipient
+                },
+              });
 
             const token = generateToken(newUser);
             res.cookie("token", token);
@@ -367,4 +421,4 @@ const deleteUser = async (req, res) => {
 };
 
 
-module.exports = { getUsersByName, getUserDetails, registerUser, loginUser, googleLogin, updateUserRole, userUpdate, addOrganisedEvent, deleteUser, resendVerificationEmail, addMyEvent }
+module.exports = { getParticipants,getUsersByName, getUserDetails, registerUser, loginUser, googleLogin, updateUserRole, userUpdate, addOrganisedEvent, deleteUser, resendVerificationEmail, addMyEvent }
