@@ -11,6 +11,7 @@ import { LogOut, User, Ticket, History, Award, Home, ChevronRight, PenBox, StarI
 import AlertComponent from './alert-dialog'
 import { FcPhotoReel } from 'react-icons/fc'
 import { TbPhoto } from 'react-icons/tb'
+import NotificationComponent from './utils/NotificationComponent'
 
 
 export default function ProfileSidebar() {
@@ -53,17 +54,10 @@ export default function ProfileSidebar() {
       <Separator />
       <ScrollArea className="flex-1">
         <div className="space-y-1 p-4">
-          <NavLink  
-          className={({ isActive }) =>
-        ` flex w-full justify-start text-gray-700 hover:text-blue-500 hover:bg-blue-50 transition-colors duration-200 ${
-          isActive ? "text-blue-500 bg-blue-50 font-bold" : ""
-        }`
-      } 
-      to={'/profile'}
-      >
-        <img src={`${userInfo.image}`} alt="" className='w-10 pr-2 rounded-full' />
-          User Profile
-          </NavLink>
+        <div className='flex group py-2' >
+                 <NotificationComponent/>
+                 </div>
+          <NavItem icon={User} path="/profile">User Profile</NavItem>
           {/* <NavItem icon={User} path="/profile">User Profile</NavItem> */}
           {(userInfo?.role === "admin" || userInfo?.role==="superadmin") && (
             <>

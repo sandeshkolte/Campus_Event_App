@@ -5,12 +5,14 @@ import { VscLoading } from 'react-icons/vsc';
 import { toast } from 'react-toastify';
 import { AiFillDelete, AiOutlineClose } from 'react-icons/ai'; // Cross icon for modal close
 import { useSelector } from 'react-redux';
+import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton from shadcn
 
 const PhotoGallery = () => {
   const [selectedFile, setSelectedFile] = useState(null); // To store selected file
   const [photos, setPhotos] = useState([]); // To store fetched photos
   const [loading, setLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null); // To handle clicked image for modal
+  const [isFetching, setIsFetching] = useState(true); // For skeleton loading
   const userInfo = useSelector((state) => state.auth?.userInfo);
 
   // Function to handle photo metadata upload to MongoDB
@@ -52,7 +54,6 @@ const PhotoGallery = () => {
     }
   };
 
-
   // Function to handle file upload to Cloudinary
   const handleFileUpload = async () => {
     setLoading(true);
@@ -73,7 +74,6 @@ const PhotoGallery = () => {
       });
 
       const uploadImageURL = await response.json();
-      // console.log(uploadImageURL);
 
       // Pass the image URL and name to fileUploadMongo
       fileUploadMongo(uploadImageURL.url, uploadImageURL.original_filename);
@@ -86,17 +86,19 @@ const PhotoGallery = () => {
 
   // Function to get all photos from MongoDB
   const getAllPhotos = () => {
+    setIsFetching(true); // Start skeleton loading
     try {
       axios.get(baseUrl + "/api/gallery/")
         .then(result => {
-          // console.log(result.data);
           setPhotos(result.data); // Store fetched photos
         })
         .catch(err => {
           toast.error(err.message);
-        });
+        })
+        .finally(() => setIsFetching(false)); // Stop skeleton loading
     } catch (err) {
       toast.error(err.message);
+      setIsFetching(false);
     }
   };
 
@@ -114,51 +116,51 @@ const PhotoGallery = () => {
     <div className='mt-5 md:mx-10'>
       <div>
         <h3 className='text-5xl font-medium py-5'>Photo Gallery</h3>
-        {
-userInfo?.role === "admin" &&
-        <div className='grid grid-cols-5 md:flex' >
-        <input
-          type="file"
-          className='col-span-3'
-          onChange={(e) => setSelectedFile(e.target.files[0])} // Store selected file
-        />
-        <button
-          className=' col-span-2 bg-gray-900 py-1 px-3 text-white rounded-md text-sm'
-          onClick={handleFileUpload} // Upload photo on button click
-        >
-          {
-            loading ? <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "Add Photo"
-          }
-        </button>
-        </div>
-        }
+        {userInfo?.role === "admin" && (
+          <div className='grid grid-cols-5 md:flex'>
+            <input
+              type="file"
+              className='col-span-3'
+              onChange={(e) => setSelectedFile(e.target.files[0])} // Store selected file
+            />
+            <button
+              className='col-span-2 bg-gray-900 py-1 px-3 text-white rounded-md text-sm'
+              onClick={handleFileUpload} // Upload photo on button click
+            >
+              {loading ? <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "Add Photo"}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className='gallery mt-5 grid grid-cols-2 md:grid-cols-7 gap-2'>
-        {/* Display the uploaded photos */}
-        {photos.length > 0 ? (
-          photos.map((photo) => (
-            <div key={photo._id} className="photo-item relative">
-              <img 
-                src={photo.imageUrl.replace('/upload/', '/upload/w_300/')} 
-                alt={photo.imageName} 
-                className='cursor-pointer md:h-32'
-                onClick={() => setSelectedImage(photo.imageUrl)} // Open modal with original image
-              />
-              {
-                userInfo?.role === "admin" &&
-              <button 
-              className='absolute bottom-2 left-2 text-red-700 bg-white text-xl' 
-              onClick={(e) =>deleteImage(photo.imageName)}
-            >
-              <AiFillDelete />
-            </button>
-              }
-            </div>
-          ))
-        ) : (
-          <p>No photos available.</p>
-        )}
+        {/* Display skeletons if photos are loading */}
+        {isFetching
+          ? Array(10).fill(0).map((_, idx) => (
+              <Skeleton key={idx} className="w-40 h-32 rounded-md" />
+            ))
+          : photos.length > 0 ? (
+            photos.map((photo) => (
+              <div key={photo._id} className="photo-item relative">
+                <img
+                  src={photo.imageUrl.replace('/upload/', '/upload/w_300/')}
+                  alt={photo.imageName}
+                  className='cursor-pointer md:h-32'
+                  onClick={() => setSelectedImage(photo.imageUrl)} // Open modal with original image
+                />
+                {userInfo?.role === "admin" && (
+                  <button
+                    className='absolute bottom-2 left-2 text-red-700 bg-white text-xl'
+                    onClick={(e) => deleteImage(photo.imageName)}
+                  >
+                    <AiFillDelete />
+                  </button>
+                )}
+              </div>
+            ))
+          ) : (
+            <p>No photos available.</p>
+          )}
       </div>
 
       {/* Modal for full-screen image */}
@@ -166,8 +168,8 @@ userInfo?.role === "admin" &&
         <div className='fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50'>
           <div className='relative'>
             <img src={selectedImage} alt="Full size" className='max-w-full max-h-screen' />
-            <button 
-              className='absolute top-2 right-2 text-black text-3xl' 
+            <button
+              className='absolute top-2 right-2 text-white text-3xl'
               onClick={closeModal}
             >
               <AiOutlineClose />

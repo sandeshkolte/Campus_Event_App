@@ -61,6 +61,25 @@ const getUsersByName = async (req, res, next) => {
         next(err);
     }
 };
+
+const getUserByBranch = async (req, res, next) => {
+    try {
+        // Find users based on the constructed query
+        const users = await userModel.find({branch:'CSE'}, 'firstname lastname email role image yearOfStudy');
+
+        if (users.length === 0) {
+            return res.status(404).json({ status: "Error", response: "No users found" });
+        }
+
+        return res.status(200).json({
+            status: "success",
+            response: users
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 const getParticipants = async (req, res, next) => {
     try {
         const { search } = req.body;
@@ -421,4 +440,4 @@ const deleteUser = async (req, res) => {
 };
 
 
-module.exports = { getParticipants,getUsersByName, getUserDetails, registerUser, loginUser, googleLogin, updateUserRole, userUpdate, addOrganisedEvent, deleteUser, resendVerificationEmail, addMyEvent }
+module.exports = { getParticipants,getUsersByName, getUserDetails, registerUser, loginUser, googleLogin, updateUserRole, userUpdate, addOrganisedEvent, deleteUser, resendVerificationEmail, addMyEvent,getUserByBranch }

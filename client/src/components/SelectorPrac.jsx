@@ -108,7 +108,7 @@ const SelectorPrac = ({ setValue,selector }) => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Select Coordinators"
-            className="flex h-11 w-[280px] max-w-[330px] rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-11 w-[250px] md:w-[280px] max-w-[330px] rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
             onFocus={() => setMenuOpen(true)}
             onBlur={() => setMenuOpen(false)}
           />

@@ -31,8 +31,6 @@ import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { baseUrl } from "@/common/common"
-import { storage } from "../firebase"
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage"
 import { VscLoading } from "react-icons/vsc"
 import { CalendarIcon, Upload } from "lucide-react"
 import CategorySelector from "./CategorySelector"
@@ -67,26 +65,25 @@ export default function Component() {
   //   setUserLoading(false);
   // }, 300);
 
-  const handleImageUpload = (file, folderName) => {
+  const handleImageUpload = (file, folderName, preset_name) => {
     return new Promise((resolve, reject) => {
       if (!file) reject("No file provided");
-
-      const storageRef = ref(storage, `${folderName}/${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => { },
-        (error) => {
+  
+      const formData = new FormData();
+      formData.append("file", file); // The file to upload
+      formData.append("upload_preset", preset_name); // Your Cloudinary upload preset
+      formData.append("folder", folderName); // Specify the folder path
+      formData.append("cloud_name", "diayircfv"); // Your Cloudinary cloud name
+  
+      axios
+        .post(`https://api.cloudinary.com/v1_1/diayircfv/image/upload`, formData)
+        .then((response) => {
+          resolve(response.data.secure_url); // Resolve with the uploaded image URL
+        })
+        .catch((error) => {
           toast.error("Image upload failed!");
           reject(error);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL);
-          });
-        }
-      );
+        });
     });
   };
 
@@ -171,17 +168,17 @@ export default function Component() {
 
 
     try {
-      const eventFolderName = `events/${new Date().toISOString()}`; // Create a unique folder name for each event
+      
       const file = uploadedFile;
       const qrFile = uploadedQRFile; // Assuming you have set this when handling QR code file input
 
       if (file) {
-        const downloadURL = await handleImageUpload(file, eventFolderName);
+        const downloadURL = await handleImageUpload(file, "event/event_image","event_image");
         data.image = downloadURL; // Store the event image URL
       }
 
       if (qrFile) {
-        const qrDownloadURL = await handleImageUpload(qrFile, eventFolderName); // Upload QR image
+        const qrDownloadURL = await handleImageUpload(qrFile, "event/payment_qr","event_payment_qr"); // Upload QR image
         data.qrImage = qrDownloadURL; // Store the QR code image URL
       }
 
@@ -431,7 +428,7 @@ export default function Component() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col space-y-1.5 w-[280px]">
+            <div className="flex flex-col space-y-1.5 w-[250px]">
               <Label htmlFor="coordinator">Coordinators <span className="text-red-500" >*</span></Label>
               <SelectorPrac selector={"coordinator"} setValue={setValue} />
             </div>

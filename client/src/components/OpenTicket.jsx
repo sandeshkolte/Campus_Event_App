@@ -13,7 +13,7 @@ import { baseUrl } from '@/common/common';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { VscLoading } from 'react-icons/vsc';
-import SelectorPrac from './SelectorPrac';
+import GroupMemberSelector from './GroupMemberSelector';
 
 export default function TicketBooking({ isOpen, onClose,eventDetails }) {
   const currentUser = useSelector((state)=>state.auth?.userInfo) // Replace with actual username from your state or props
@@ -130,7 +130,7 @@ export default function TicketBooking({ isOpen, onClose,eventDetails }) {
       }
     } catch (error) {
       console.log("error: ",error);
-      toast.error(`Error: ${error}`);
+      // toast.error(`Error: ${error}`);
     } finally {
       setisBookingLoading(false);
     }
@@ -163,7 +163,8 @@ export default function TicketBooking({ isOpen, onClose,eventDetails }) {
                </div>
                <div className="flex flex-col space-y-1.5 pt-5">
                <Label htmlFor="member">Members</Label>
-               <SelectorPrac selector={"participants"}  setValue={setValue}  />
+               {/* <SelectorPrac selector={"participants"}  setValue={setValue}  /> */}
+               <GroupMemberSelector selector={"participants"} eventDetails={eventDetails}  setValue={setValue}/>
                {/* <CoordinatorProvider>
                  <CoordinatorSelector selector={"participants"} setValue={setValue} />
                </CoordinatorProvider> */}
@@ -213,8 +214,9 @@ export default function TicketBooking({ isOpen, onClose,eventDetails }) {
                   onClick={(e) =>handleImageUpload(file)}
                   >
                     {
-isLoading ?
-                   <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "Upload"
+                      paymentScreenshot==="" ? isLoading ?  <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "Upload" : "Uploaded"
+// isLoading ?
+//                    <VscLoading className="text-white animate-spin-slow text-2xl text-bold" /> : "Upload"
                     }
                   </Button>
                   }

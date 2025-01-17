@@ -37,6 +37,9 @@ import MECommittee from './components/MechCommittee'
 import ElectricalCommittee from './components/ElecCommittee'
 import InstrumentationCommittee from './components/InstruCommittee'
 import { AnimatePresence } from 'framer-motion'
+import SuperAdminPanel from './pages/SuperAdminPanel'
+import ManageEvents from './components/admin-components/ManageEvents'
+import HomeComponent from './components/admin-components/HomeComponent'
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -125,6 +128,8 @@ const App = () => {
     const fetchData = async () => {
       if (token && userId) {
         await fetchUserDetails()
+        // const knock = new Knock(); 
+        // knock.authenticate(userId, token);
       }
       await fetchAllEvents()
       if (role === "admin") {
@@ -136,9 +141,9 @@ const App = () => {
     fetchData()
   }, [token, userId])
 
-  if (loading) {
-    return <LoadingScreen /> // Show loading screen while data is loading
-  }
+  // if (loading) {
+  //   return <LoadingScreen /> // Show loading screen while data is loading
+  // }
 
 const location = useLocation();
 
@@ -180,10 +185,17 @@ const location = useLocation();
               <Route path='/update/:id' element={<UpdateEvent />} />
               <Route path="/verifytickets" element={<VerifyTickets />} />
               <Route path="/event/:id" element={<TicketStatusChangingPage />} />
+
+
+              <Route path="superadmin" element={<SuperAdminPanel />}>
+                      <Route index element={<HomeComponent />} />
+                      <Route path="organise-events" element={<ManageEvents />} />
+                    </Route>
             </>
           )}
         </Route>
       </Route>
+    <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>
     </div>

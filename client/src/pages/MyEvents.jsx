@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import EventTickets from "@/components/eventTicket";
 import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 
 export default function Component() {
@@ -33,16 +34,12 @@ export default function Component() {
     return null; // Or handle cases where there's no match
   }).filter(event => event !== null); // Remove null entries (if no matches found)
   
-
-
   const [statusFilter, setStatusFilter] = useState("Confirmed"); // Default to "Confirmed"
   const [previousFilter, setPreviousFilter] = useState(statusFilter); // Track the previous filter
   const [slideDirection, setSlideDirection] = useState(""); // Track the direction of the slide
   const [isSliding, setIsSliding] = useState(false); // Track whether sliding is happening
   const [displayedEvents, setDisplayedEvents] = useState(combinedDetails.filter((event) => event.paymentStatus === "Confirmed")); // Displayed events
-
-
- 
+const navigate = useNavigate()
 
   useEffect(() => {
     if (previousFilter !== statusFilter) {
@@ -124,9 +121,37 @@ export default function Component() {
               : "translate-x-0 opacity-100"
           }`}
         >
-          {displayedEvents.map((event) => (
+          {displayedEvents?.length>0 ?  displayedEvents?.map((event) => (
             <EventTickets key={event._id} event={event} />
-          ))}
+          )) : 
+          <>
+           <div className='md-max-h-screen w-full flex justify-center text-center items-center' >
+        <p>
+            <span className='font-medium md:text-7xl text-3xl' >
+
+            Nothing Here!<br />
+            <span className="md:text-4xl text-2xl " >
+            How about participating in an event 
+            </span>
+            <br />
+            </span>
+            <span className='text-gray-900 font-light' >
+             <br />
+             <Button
+            variant="default"
+            className="mt-4 bg-indigo-200 text-gray-700"
+            onClick={() => navigate("/")
+            }
+            >
+            Browse Events
+            </Button>
+            </span>
+             </p>
+        
+    </div>
+          </>
+          
+          }
         </div>
       </div>
     </div>

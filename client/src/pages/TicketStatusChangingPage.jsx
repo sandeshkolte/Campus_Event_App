@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -202,12 +201,6 @@ const ParticipantCard = ({ user, onStatusChange, event }) => {
                     {!isGroupEvent && user?.response.firstname}{" "}
                     {!isGroupEvent && user?.response.lastname}
                   </CardTitle>
-                  {/* <p className="text-sm text-gray-600">
-                  Price:{" "}
-                  <span className="font-medium text-gray-800">
-                    ${ticket.price.toFixed(2)}
-                  </span>
-                </p> */}
                 </CardHeader>
               </div>
 
@@ -438,20 +431,24 @@ export default function TicketStatusChangingPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {participantDetails.map((user) => {
-              const key = isGroupEvent
-                ? `${user.user.response._id}-${user.groupName}`
-                : `${user.response._id}-${user.response.firstname}`;
+            {participantDetails.length > 0 ? (
+              participantDetails.map((user) => {
+                const key = isGroupEvent
+                  ? `${user.user.response._id}-${user.groupName}`
+                  : `${user.response._id}-${user.response.firstname}`;
 
-              return (
-                <ParticipantCard
-                  key={key}
-                  user={user}
-                  onStatusChange={handleStatusChange}
-                  event={event}
-                />
-              );
-            })}
+                return (
+                  <ParticipantCard
+                    key={key}
+                    user={user}
+                    onStatusChange={handleStatusChange}
+                    event={event}
+                  />
+                );
+              })
+            ) : (
+              <div>Nothing Available Here</div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

@@ -26,7 +26,10 @@ const Home = () => {
   return (
     <div className="min-h-screen relative ">
       
-      <section className="bg-gradient-to-tr from-[#dee8fb] via-[#b0c7f4] to-[#bce4ce] " >
+      <section className="bg-white relative md:overflow" >
+      <div className='hidden sm:block absolute -bottom-32 -left-5 h-72 w-72 rounded-full bg-[#b3f5d2b3] blur-2xl animate-shapeChange'></div>
+<div className='hidden sm:block absolute -top-32 -right-5 h-72 w-72 rounded-full bg-[#bbb3f588] blur-2xl animate-shapeChange'></div>
+                      
       <RevealAnimation>
       {/* <div className="absolute -z-50 bottom-10 right-[0%] translate-y-[-50%] translate-x-[-50%]">
         <div className="w-56 h-56 blur-[200px] max-sm:bg-transparent bg-blue-500 rounded-3xl"></div>
@@ -35,7 +38,7 @@ const Home = () => {
         <div className="w-56 h-56 blur-[200px] max-sm:bg-transparent bg-blue-500 rounded-3xl"></div>
       </div> */}
 
-      <div className=" w-full  mb-10 md:mb-52 ">
+      <div className=" w-full mb-10 md:mb-52 ">
         <div className="mt-5 flex justify-center">
           <img
             src="https://th.bing.com/th/id/OIP.U_AL86l48sLEcu0k2UhMzgHaHa?rs=1&pid=ImgDetMain"
@@ -45,7 +48,7 @@ const Home = () => {
             className="h-20 w-20 md:h-32 md:w-32 rounded-full "
           />
         </div>
-        <h1 className="font-light z-50  text-8xl text-center p-5 pt-10">
+        <h1 className="font-semibold z-50 text-7xl md:text-8xl text-center p-5 pt-10">
           GCOEC
           <br />
           Where Campus Life
@@ -98,7 +101,7 @@ const Home = () => {
           </Select>
         </div>
       </div> */}
-      <div className="py-10 h-screen bg-gradient-to-br from-[#fefdcd] via-[#cbf0e9] to-[#a3e6ff]">
+      <div className="py-10 h-screen bg-gray-50">
       <div className="flex justify-center mb-5 md:mb-10 md:mt-20" >
       <div className="bg-zinc-950 w-fit text-gray-300 p-3 rounded-2xl text-center mt-5" >
         <RevealAnimation>
@@ -108,14 +111,13 @@ const Home = () => {
       </div>
       </div>
         <RevealAnimation>
-          <section className="flex justify-center" >
-            <div className=" md:flex md:justify-center md:flex-wrap md:gap-16  md:w-full md:p-10" >
-              <Link to='/cse-committee'>
-            <OrganizingCommitteCard title={'CSE'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
-            <Link to='/entc-committee'> <OrganizingCommitteCard title={'ENTC'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+          <section className="flex justify-center items-center py-10" >
+            <div className=" grid grid-cols-2 gap-10 md:flex md:justify-center md:flex-wrap md:gap-16  md:w-full md:p-10" >
+              <Link to='/cse-committee'> <OrganizingCommitteCard title={'CSE'} image={'https://static.vecteezy.com/system/resources/previews/007/088/830/original/cse-letter-logo-design-on-black-background-cse-creative-initials-letter-logo-concept-cse-letter-design-vector.jpg'} /></Link>
+            <Link to='/entc-committee'> <OrganizingCommitteCard title={'ENTC'} image={'https://www.nicepng.com/png/detail/261-2611775_automotive-electronics-electronics-and-telecommunication-engineering-logo.png'} /></Link>
             <Link to='/instru-committee'>  <OrganizingCommitteCard title={'INSTRU'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
             <Link to='/mech-committee'>  <OrganizingCommitteCard title={'MECH'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
-            <Link to='/civil-committee'>  <OrganizingCommitteCard title={'CIVIL'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/civil-committe'>  <OrganizingCommitteCard title={'CIVIL'} image={'https://tse1.mm.bing.net/th?id=OIP.m6XBhAkjIMlmW5IykwxjqwHaHa&rs=1&pid=ImgDetMain'} /></Link>
             <Link to='/elec-committee'>   <OrganizingCommitteCard title={'ELECT'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
             </div>
           </section>
@@ -150,7 +152,7 @@ const Home = () => {
         </RevealAnimation>
         <div className="flex gap-10 justify-center"></div>
       </div>
-      <section className="bg-gradient-to-br from-sky-200 via-blue-200 to-sky-200 md:flex md:justify-center md:flex-wrap md:gap-16 md:w-full md:p-10" >
+      <section className="bg-white md:flex md:justify-center md:flex-wrap md:gap-16 md:w-full md:p-10" >
       <div className="flex justify-center" >
       <div className="bg-zinc-950 w-fit text-gray-300 p-3 rounded-2xl text-center my-5" >
       <h3 className="font-light text-2xl md:mx-10 ">Upcoming Events</h3>

@@ -253,6 +253,19 @@ const findRelatedEvents = async (req, res) => {
   }
 };
 
+const findEventByBranch = async (req, res) => {
+  try {
+      // Fetch events based on the query
+      const user = await userModel.findOne({branch:"CSE"})
+      const events = await eventModel.find({organisedBy:user._id, isActive: true});
+
+      res.status(200).json({ status: "success", response: events });
+  } catch (err) {
+      res.status(403).json({ status: "Error", response: err.message });
+  }
+};
+
+
 const updateWinners = async (req, res) => {
   try {
     const { eventId } = req.params;
@@ -603,5 +616,6 @@ module.exports = {
     adminAllEvents,
     updateStudentPaymentStatus,
     findRelatedEvents,
-    updateWinners
+    updateWinners,
+    findEventByBranch
 };

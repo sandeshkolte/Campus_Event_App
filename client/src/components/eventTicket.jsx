@@ -99,9 +99,9 @@ Date: ${new Date(qrData.date).toLocaleString()}
 `;
 
   return (
-    <Card className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <Card className="overflow-hidden md:hover:shadow-xl transition-shadow duration-300">
       <div className="flex flex-col sm:flex-row">
-        <div className="w-full sm:w-48 h-48 relative">
+        <div className="w-full sm:w-48 h-48 relative bg-gray-300">
           <img
             src={event.image}
             alt={event.title}
@@ -139,9 +139,10 @@ Date: ${new Date(qrData.date).toLocaleString()}
                 <MapPin className="h-4 w-4 mr-2 text-gray-400" />
                 {event.venue}
               </p>
+              <p></p>
             </div>
             <div>
-              <div className="flex justify-between items-center mb-2">
+              {/* <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium text-gray-600">
                   Tickets Sold
                 </span>
@@ -152,7 +153,7 @@ Date: ${new Date(qrData.date).toLocaleString()}
               <Progress
                 value={(event.ticketsSold / event.totalTickets) * 100}
                 className="h-2 bg-gray-200"
-              />
+              /> */}
             </div>
           </CardContent>
           <CardFooter className="p-0 mt-4">

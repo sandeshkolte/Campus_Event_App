@@ -9,7 +9,8 @@ const {
    updateStudentPaymentStatus,
    adminAllEvents,
    findRelatedEvents,
-   updateWinners} = require('../controller/eventController');
+   updateWinners,
+   findEventByBranch} = require('../controller/eventController');
 const router = express.Router();
 const upload = require('../config/multer-config');
 const { isUserLoggedIn, isAdminLoggedIn } = require('../middlewares/isLoggedIn');
@@ -24,6 +25,7 @@ router.get('/myallevents/:userId', adminAllEvents);
 router.get('/find/title', findEventByTitle);
 router.get('/find/category', findEventByCategory);
 router.get('/related', findRelatedEvents);
+router.get('/branch', findEventByBranch);
 
 // Create, update, and delete events
 router.post('/create',  createEvent);

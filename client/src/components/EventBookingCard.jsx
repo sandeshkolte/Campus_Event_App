@@ -1,11 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Camera, Ticket, X } from "lucide-react"
-import React, { useEffect, useRef, useState } from "react"
+import React, { useRef } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
-import { storage } from "../firebase"
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import axios from "axios"
@@ -30,28 +28,31 @@ export default function EventBookingCard() {
   }
 
 
-  const handleImageUpload = (file) => {
-    return new Promise((resolve, reject) => {
-      if (!file) reject("No file provided")
-
-      const storageRef = ref(storage, `paymentScreenShots/${file.name}`)
-      const uploadTask = uploadBytesResumable(storageRef, file)
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {},
-        (error) => {
-          toast.error("Image upload failed!")
-          reject(error)
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL)
-          })
-        }
-      )
-    })
-  }
+  const handleImageUpload = async (file) => {
+    setLoading(true); // Set loading to true before the upload starts
+    try {
+      if (!file) throw new Error("No file provided");
+  
+      const formData = new FormData();
+      formData.append("file", file); // The file to upload
+      formData.append("upload_preset", "user_payments"); // Your Cloudinary upload preset
+      formData.append("folder", "users/user_uploads/payment_ss"); // Specify the folder path
+  
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/diayircfv/image/upload`,
+        formData
+      );
+  
+      toast.success("Image uploaded successfully!"); // Show success toast
+      return response.data.secure_url; // Return the uploaded image URL
+    } catch (error) {
+      toast.error(`Image upload failed: ${error.message || "Unknown error"}`); // Show error toast
+      throw error; // Rethrow the error to handle it upstream
+    } finally {
+      setLoading(false); // Set loading to false after the upload is complete
+    }
+  };
+  
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]

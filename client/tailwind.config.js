@@ -57,14 +57,19 @@ module.exports = {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+			  shapeChange: {
+				'0%, 100%': { borderRadius: '0%' }, // Square
+				'50%': { borderRadius: '50%' },    // Circle
+			  },
   		},
   		animation: {
   			gradient: 'gradient 6s linear infinite',
   			'spin-slow': 'spin 2s linear infinite',
   			'spin-fast': 'spin 5s linear infinite',
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+			shapeChange: 'shapeChange 3s infinite',
   		}
   	}
   },
