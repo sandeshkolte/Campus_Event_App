@@ -19,11 +19,11 @@ import { ShowWinnersSwitch } from "@/components/utils/ShowWinnerSwitch";
 import CertificateGeneratorDialog from "@/components/CerticateIssuesPage";
 
 export default function EventsOrganized() {
-  const events = useSelector((state) => state.event.myOrganizedEvents);
+  const events = useSelector((state) => state.event?.myOrganizedEvents);
 
   // State for filtering events by "Active" or "Closed"
   const [statusFilter, setStatusFilter] = useState("Active");
-  const filteredEvents = events.filter((event) =>
+  const filteredEvents = events?.filter((event) =>
     statusFilter === "Active" ? event.isActive : !event.isActive
   );
 
@@ -68,7 +68,7 @@ export default function EventsOrganized() {
 
       {/* Filtered events */}
       <div className="space-y-4">
-        {filteredEvents.map((event) => (
+        {filteredEvents?.map((event) => (
           <Card
             key={event._id}
             className="flex flex-col sm:flex-row items-center relative"

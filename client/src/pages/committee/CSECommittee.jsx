@@ -136,7 +136,7 @@ export default function CSECommittee() {
     window.scrollTo(0, 0); // Scroll to the top
   }, []);
   return (
-    <div className="min-h-screen mt-20 bg-white">
+    <div className="min-h-screen mt-20 bg-[#f1f1f1]">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

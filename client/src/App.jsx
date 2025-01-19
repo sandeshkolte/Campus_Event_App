@@ -20,7 +20,7 @@ import BookingPage from './pages/BookingPage'
 import VerifyEmail from './pages/VerifyEmail'
 import PhotoGallery from './pages/PhotoGallery'
 import EventsOrganized from './pages/EventsOrganized'
-import CSECommittee from './pages/CommitteePage'
+import CSECommittee from './pages/committee/CSECommittee'
 import VerifyTickets from './pages/VerifyTickets'
 import TicketStatusChangingPage from './pages/TicketStatusChangingPage'
 import { VscLoading } from 'react-icons/vsc'
@@ -31,11 +31,11 @@ import PageNotFound from './components/utils/PageNotFound'
 import NotificationComponent from './components/utils/NotificationComponent'
 import UpdateEvent from './pages/UpdateEventCard'
 import WinnersPage from './pages/WinnersPage'
-import CivilCommittee from './components/CivilCommittePage'
-import EntcCommittee from './components/EntcCommittee'
-import MECommittee from './components/MechCommittee'
-import ElectricalCommittee from './components/ElecCommittee'
-import InstrumentationCommittee from './components/InstruCommittee'
+import CivilCommittee from './pages/committee/CivilCommittePage'
+import EntcCommittee from './pages/committee/EntcCommittee'
+import MECommittee from './pages/committee/MechCommittee'
+import ElectricalCommittee from './pages/committee/ElecCommittee'
+import InstrumentationCommittee from './pages/committee/InstruCommittee'
 import { AnimatePresence } from 'framer-motion'
 import SuperAdminPanel from './pages/SuperAdminPanel'
 import ManageEvents from './components/admin-components/ManageEvents'
@@ -76,6 +76,19 @@ const App = () => {
       console.error("Invalid token:", error)
     }
   }
+
+
+// const knock = new Knock();
+
+// async function initializeKnock(userId, userToken) {
+//     try {
+//         await knock.authenticate(userId, userToken);
+//         console.log('Knock initialized successfully');
+//     } catch (error) {
+//         console.error('Error initializing Knock:', error);
+//     }
+// }
+  
 
   const fetchUserDetails = async () => {
     try {
@@ -130,6 +143,7 @@ const App = () => {
         await fetchUserDetails()
         // const knock = new Knock(); 
         // knock.authenticate(userId, token);
+        // initializeKnock(userId, token);
       }
       await fetchAllEvents()
       if (role === "admin") {
@@ -185,8 +199,6 @@ const location = useLocation();
               <Route path='/update/:id' element={<UpdateEvent />} />
               <Route path="/verifytickets" element={<VerifyTickets />} />
               <Route path="/event/:id" element={<TicketStatusChangingPage />} />
-
-
               <Route path="superadmin" element={<SuperAdminPanel />}>
                       <Route index element={<HomeComponent />} />
                       <Route path="organise-events" element={<ManageEvents />} />

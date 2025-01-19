@@ -5,6 +5,7 @@ const {registerUser,loginUser, getUserDetails,
     getUsersByName,
     getParticipants,
     getUserByBranch,
+    getAllParticipants,
     // addMyEvent
 } 
     = require('../controller/userController')
@@ -20,6 +21,7 @@ router.get('/getuser/:userid', getUserDetails)
 router.post('/getallusers', getUsersByName)
 router.get('/getuserbybranch', getUserByBranch)
 router.post('/get-participants/:eventId', getParticipants)
+router.get('/get-allparticipants/:eventId', getAllParticipants)
 router.post('/update/:id', userUpdate)
 router.post('/delete', deleteUser)
 router.post("/updateRole", updateUserRole);

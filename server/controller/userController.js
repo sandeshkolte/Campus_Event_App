@@ -3,7 +3,7 @@ const userModel = require('../models/user');
 const eventModel = require('../models/event');
 const { generateToken } = require('../utils/generateToken');
 const crypto = require('crypto');
-const { sendVerificationEmail } = require('../config/email-verification');
+const { sendVerificationEmail, sendWelcomeEmail } = require('../config/email-verification');
 const { Knock }  = require("@knocklabs/node")
 const knock = new Knock(process.env.KNOCK_API_KEY);
 
@@ -117,6 +117,39 @@ const getParticipants = async (req, res, next) => {
     }
 };
 
+const getAllParticipants = async (req, res, next) => {
+    try {
+        const { eventId } = req.params;
+
+        // Find the event by its ID and populate the participants
+        const event = await eventModel.findById(eventId).populate({
+            path: 'participants.userId',
+            select: 'firstname lastname email branch yearOfStudy' // Select only required fields
+        });
+
+        if (!event) {
+            return res.status(404).json({ status: "Error", response: "Event not found" });
+        }
+
+        // Map the participants to include only the necessary details
+        const participants = event.participants.map(participant => ({
+            firstname: participant.userId.firstname,
+            lastname: participant.userId.lastname,
+            email: participant.userId.email,
+            branch: participant.userId.branch,
+            yearOfStudy: participant.userId.yearOfStudy
+        }));
+
+        return res.status(200).json({
+            status: "success",
+            response: participants
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+
 const registerUser = async (req, res, next) => {
     try {
         const {
@@ -193,6 +226,7 @@ const registerUser = async (req, res, next) => {
         // Send verification email
       await  sendVerificationEmail(createdUser, createdUser.verificationToken);
 
+    //   await sendWelcomeEmail(createdUser);
         res.status(200).json({ status: "Success", response: 'User registered. Please verify your email.' });
     } catch (err) {
         console.error(err);
@@ -241,12 +275,14 @@ const loginUser = async (req, res, next) => {
             email: user.email,
         });
 
-        await knock.objects.addSubscriptions("all-event-notification", "alleventnotification1234", {
-            recipients: [user._id.toString()],
-            properties: {
-              // Optionally set other properties on the subscription for each recipient
-            },
-          });
+        // await knock.objects.addSubscriptions("all-event-notification", "alleventnotification1234", {
+        //     recipients: [user._id.toString()],
+        //     properties: {
+        //       // Optionally set other properties on the subscription for each recipient
+        //     },
+        //   });
+
+        await sendWelcomeEmail(user)
 
         return res.status(200).json({
             status: "Success",
@@ -285,62 +321,70 @@ const resendVerificationEmail = async (req, res, next) => {
 const googleLogin = async (req, res, next) => {
     try {
         const { email, firstname, lastname, image } = req.body;
-        // console.log("google server data: ",req.body);
 
         // Find user by email in the database
         const user = await userModel.findOne({ email });
 
         if (user) {
-            // If the user exists, generate a token for login
-            const token = generateToken(user);
-            res.cookie("token", token);
-            const { password, ...userData } = user._doc; // Exclude password when sending user data
-            res.status(200).json({
-                status: "Success",
-                response: { user: userData, token }
-            })
+            // Check if the user already has a password (registered with email/password)
+            if (user.password) {
+                // User exists with email-password registration
+                // Do not overwrite their password
+                const token = generateToken(user);
+                res.cookie("token", token);
+                const { password, ...userData } = user._doc; // Exclude password when sending user data
+                return res.status(200).json({
+                    status: "Success",
+                    response: { user: userData, token },
+                });
+            } else {
+                // User exists but doesn't have a password (Google login user)
+                const token = generateToken(user);
+                res.cookie("token", token);
+                const { password, ...userData } = user._doc; // Exclude password when sending user data
+                return res.status(200).json({
+                    status: "Success",
+                    response: { user: userData, token },
+                });
+            }
         } else {
             // If the user doesn't exist, create a new one
-            const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
-            const hashedPassword = await bcrypt.hash(generatedPassword, 10);
-
-            // Create a new user object
-            const newUser = userModel({
+            const newUser = new userModel({
                 firstname,
                 lastname,
                 email,
-                password: hashedPassword,
+                password: null, // No password for Google login
                 image,
                 branch: '',
                 yearOfStudy: '',
                 interests: [],
-                contact: ''
+                contact: '',
             });
 
             await newUser.save();
 
+            // Identify the user with Knock (optional)
             await knock.users.identify(newUser._id.toString(), {
-                name: firstname + ' ' + lastname,
+                name: `${firstname} ${lastname}`,
                 email,
             });
 
-            await knock.objects.addSubscriptions("all-event-notification", "alleventnotification1234", {
-                recipients: [newUser._id.toString()],
-                properties: {
-                  // Optionally set other properties on the subscription for each recipient
-                },
-              });
+            // Send a welcome email
+            await sendWelcomeEmail(newUser);
 
             const token = generateToken(newUser);
             res.cookie("token", token);
             const { password, ...userData } = newUser._doc; // Exclude password when sending user data
-            res.status(201)
-                .json({ user: userData, token });
+            return res.status(201).json({
+                user: userData,
+                token,
+            });
         }
     } catch (error) {
         next(error); // Pass the error to the error-handling middleware
     }
 };
+
 
 
 const updateUserRole = async (req, res) => {
@@ -440,4 +484,4 @@ const deleteUser = async (req, res) => {
 };
 
 
-module.exports = { getParticipants,getUsersByName, getUserDetails, registerUser, loginUser, googleLogin, updateUserRole, userUpdate, addOrganisedEvent, deleteUser, resendVerificationEmail, addMyEvent,getUserByBranch }
+module.exports = { getAllParticipants,getParticipants,getUsersByName, getUserDetails, registerUser, loginUser, googleLogin, updateUserRole, userUpdate, addOrganisedEvent, deleteUser, resendVerificationEmail, addMyEvent,getUserByBranch }

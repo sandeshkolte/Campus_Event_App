@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,15 +16,38 @@ import {
 } from "@/components/ui/dialog";
 import { Award, PlusCircle, X } from "lucide-react";
 import { Slider } from "@radix-ui/react-slider";
+import axios from "axios";
+import { baseUrl } from "@/common/common";
 
-export default function CertificateGeneratorDialog() {
+export default function CertificateGeneratorDialog({ event }) {
   const [isOpen, setIsOpen] = useState(false);
   const [template, setTemplate] = useState(null);
-  const [participants, setParticipants] = useState([
-    { name: "Sandesh Kolte", email: "sandeshkolte11@gmail.com" },
-    { name: "Ritesh Doijad", email: "riteshdoijad218@gmail.com" },
-    { name: "Bhupendra Chandanmalagar", email: "bhupendra@gmail.com" },
-  ]);
+  // const [participants, setParticipants] = useState([
+  //   { name: "Sandesh Kolte", email: "sandeshkolte11@gmail.com" },
+  //   { name: "Ritesh Doijad", email: "riteshdoijad218@gmail.com" },
+  //   { name: "Bhupendra Chandanmalagar", email: "bhupendra@gmail.com" },
+  // ]);
+
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    const fetchParticipants = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`${baseUrl}/api/user/get-allparticipants/${event._id}`);
+        setData(response.data.response);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchParticipants();
+  }, [event._id]);
+
+  const participants = data;
   const [generatedCertificates, setGeneratedCertificates] = useState([]);
   const [textElements, setTextElements] = useState([
     {
@@ -84,7 +107,10 @@ export default function CertificateGeneratorDialog() {
   };
 
   const generateCertificateNumber = () => {
-    return "CERT-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+    const timestamp = Math.floor(Date.now() / 1000); // Convert to seconds (10-digit timestamp)
+    const randomNumber = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit random number
+    const number = timestamp-randomNumber
+    return `CERT-${number}`;
   };
 
   const addNewField = () => {
@@ -115,21 +141,22 @@ export default function CertificateGeneratorDialog() {
       return `
         <div style="position: relative; width: 800px; height: 600px; background-image: url(${template}); background-size: cover;">
           ${textElements
-            .map(
-              (el) => `
+          .map(
+            (el) => `
             <div style="position: absolute; top: ${el.position.y}%; left: ${el.position.x}%; transform: translate(-50%, -50%); font-size: ${el.size}px; font-weight: bold; text-align: center;">
               ${el.value
-                .replace("{participant.name}", participant.name)
+                .replace("{participant.name}", `${participant.firstname} ${participant.lastname}`)
                 .replace("{certificateNumber}", certificateNumber)}
             </div>
           `
-            )
-            .join("")}
+          )
+          .join("")}
         </div>
       `;
     });
     setGeneratedCertificates(certificates);
   };
+
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -139,7 +166,7 @@ export default function CertificateGeneratorDialog() {
           size="sm"
           className="flex sm:mr-5 border-gray-100 border-2 items-center gap-2"
         >
-            <Award className="h-4 w-4" />
+          <Award className="h-4 w-4" />
           Open Certificate Generator
         </Button>
       </DialogTrigger>
@@ -161,10 +188,10 @@ export default function CertificateGeneratorDialog() {
               {template && (
                 <div
                   ref={templateRef}
-                  className="relative mt-4 border border-gray-300 rounded-md"
+                  className="relative mt-4 border border-gray-300 rounded-md w-full h-full"
                   style={{
-                    width: "100%",
-                    height: "450px",
+                    width: "full",
+                    height: "480px",
                     backgroundImage: `url(${template})`,
                     backgroundSize: "cover",
                   }}
@@ -276,14 +303,34 @@ export default function CertificateGeneratorDialog() {
               <CardTitle>Participants</CardTitle>
             </CardHeader>
             <CardContent>
-              <Textarea
-                value={JSON.stringify(participants, null, 2)}
-                onChange={(e) => setParticipants(JSON.parse(e.target.value))}
-                rows={10}
-                className="resize-none"
-              />
+              <div className="max-h-64 overflow-y-auto">
+                {participants.length > 0 ? (
+                  <ul className="space-y-4">
+                    {participants.map((participant, index) => (
+                      <li key={index} className="flex w-[280px] max-w-[330px] p-3 rounded-md h-11 text-sm bg-gray-100 justify-between">
+                        <div>
+
+                          <p>{participant.firstname} {participant.lastname}</p>
+                          {/* <p>{participant.email}</p> */}
+                        </div>
+                        <div className="text-xs text-white flex gap-2">
+                          <div className="bg-purple-600 p-1 rounded-3xl">
+                            {participant.yearOfStudy ?? "N/A"}
+                          </div>
+                          <div className="bg-indigo-600 p-1 rounded-3xl">
+                            {participant.branch ?? "N/A"}
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500">No participants available.</p>
+                )}
+              </div>
             </CardContent>
           </Card>
+
 
           <Button onClick={generateCertificates} disabled={!template} className="w-full sm:w-auto">
             Generate Certificates
