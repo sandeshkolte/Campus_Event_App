@@ -35,7 +35,7 @@ const sendVerificationEmail = async (user, token) => {
   };
 
   try {
-    await sgMail.send(msg);
+    await transporter.sendMail(msg);
     console.log('Verification email sent');
   } catch (error) {
     console.error('Error sending email:', error.response.body);

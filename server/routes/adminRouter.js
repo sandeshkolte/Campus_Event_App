@@ -1,15 +1,41 @@
-// const express = require('express')
-// const {registerUser,loginUser, getUserDetails, getUserByRole, userUpdate, updateUserRole} = require('../controller/userController')
+const express = require('express');
+const router = express.Router();
+const User = require('../models/user');
 
-// const upload = require('../config/multer-config')
-// const router = express.Router()
 
-// router.post('/register',upload.single("image"),registerUser)
-// router.post('/login', loginUser)
-// router.post('/getuser', getUserDetails)
-// router.get('/userrole', getUserByRole)
-// router.post('/update', userUpdate)
-// router.post("/updateRole", updateUserRole);
-// // router.post("/addOrganisedEvent", updateUserRole);
+router.post('/students', async (req, res) => {
+    try {
+        const { branch, role } = req.body; 
 
-// module.exports = router
+        // Only allow Superadmins to fetch students
+        if (role !== "superadmin") {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        // Fetch students only from the given department
+        const students = await User.find({branch }).select("-password");
+        res.json(students);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching students", error });
+    }
+});
+
+
+router.put('/update-role/:id', async (req, res) => {
+    const { role } = req.body;
+
+    if (!["admin", "user"].includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
+    }
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate(req.params.id, { role }, { new: true });
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(500).json({ message: "Error updating role", error });
+    }
+});
+
+
+
+module.exports = router

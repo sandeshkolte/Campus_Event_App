@@ -38,7 +38,7 @@ import ElectricalCommittee from './pages/committee/ElecCommittee'
 import InstrumentationCommittee from './pages/committee/InstruCommittee'
 import { AnimatePresence } from 'framer-motion'
 import SuperAdminPanel from './pages/SuperAdminPanel'
-import ManageEvents from './components/admin-components/ManageEvents'
+import ManageEvents from './components/admin-components/AdminToggle.jsx'
 import HomeComponent from './components/admin-components/HomeComponent'
 
 // Loading Screen Component

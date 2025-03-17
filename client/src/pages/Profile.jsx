@@ -395,25 +395,25 @@ const toggleSecurityChange=()=>{
                     <SelectContent className="bg-white">
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="1st year"
+                        value="1st"
                       >
                         1st year
                       </SelectItem>
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="2nd year"
+                        value="2nd"
                       >
                         2nd year
                       </SelectItem>
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="3rd year"
+                        value="3rd"
                       >
                         3rd year
                       </SelectItem>
                       <SelectItem
                         className="hover:bg-gray-100 cursor-pointer"
-                        value="4th year"
+                        value="4th"
                       >
                         4th year
                       </SelectItem>

@@ -8,7 +8,7 @@ const { format } =  require('date-fns');
 
 const redis = new Redis({
     host: process.env.REDISHOST,
-    port: 11327,
+    port: 12853,
     password: process.env.REDISPASS,
 });
 
