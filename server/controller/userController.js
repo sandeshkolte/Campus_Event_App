@@ -134,6 +134,7 @@ const getAllParticipants = async (req, res, next) => {
         // Map the participants to include only the necessary details
         const participants = event.participants.map(participant => ({
             firstname: participant.userId.firstname,
+            userId: participant.userId._id,
             lastname: participant.userId.lastname,
             email: participant.userId.email,
             branch: participant.userId.branch,
