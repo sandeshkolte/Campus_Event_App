@@ -46,7 +46,6 @@ export default function AdminToggle() {
       await axios.put(
         `${baseUrl}/api/admin/update-role/${userId}`,
         { role: newRole },
-        { headers: { Authorization: `Bearer ${userInfo.token}` } },
       )
       fetchStudents(userInfo.branch, userInfo.role)
     } catch (error) {

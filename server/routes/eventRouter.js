@@ -10,7 +10,8 @@ const {
    adminAllEvents,
    findRelatedEvents,
    updateWinners,
-   findEventByBranch} = require('../controller/eventController');
+   findEventByBranch,
+   saveCertificateTemplate} = require('../controller/eventController');
 const router = express.Router();
 const upload = require('../config/multer-config');
 const { isUserLoggedIn, isAdminLoggedIn } = require('../middlewares/isLoggedIn');
@@ -29,7 +30,7 @@ router.get('/branch', findEventByBranch);
 
 // Create, update, and delete events
 router.post('/create',  createEvent);
-router.put('/update/:id', updateEvent);
+router.post('/update/:id', updateEvent);
 router.post('/winners/:eventId', updateWinners);
 router.delete('/delete/:id',  deleteEvent);
 
@@ -39,6 +40,9 @@ router.post('/add-participants', addParticipantandEvent);
 router.post('/add-group-participants', addGroupParticipants);
 router.post('/update-group-payment-status', updateGroupPaymentStatus);
 router.post('/update-payment-status', updateStudentPaymentStatus);
+
+// certificate
+router.post('/save-certificate-template', saveCertificateTemplate);
 
 
 module.exports = router;

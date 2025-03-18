@@ -64,8 +64,8 @@ const SuperAdminPanel = () => {
                 <p className='text-sm text-gray-700'>Total Students</p>
                 <h3 className='text-4xl font-semibold pt-2 flex justify-center'>{totalParticipants}</h3>
               </div>
-              <div className='bg-gray-800 rounded-3xl text-white text-center h-12 w-32 my-auto flex align-middle justify-center'>
-                <h3 className='text-sm font-light py-3'>+ Add Task</h3>
+              <div className='bg-pink-700 rounded-3xl text-white text-center h-12 w-32 my-auto flex align-middle justify-center'>
+                <h3 className=' font-light py-3'>{userInfo?.branch}</h3>
               </div>
             </div>
           </section>

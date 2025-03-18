@@ -192,7 +192,7 @@ export default function UpdateEvent() {
       }
 
       console.log(id, data);
-      await axios.put(`${baseUrl}/api/event/update/${id}`, data).then((response) => {
+      await axios.post(`${baseUrl}/api/event/update/${id}`, data).then((response) => {
         console.log("Update response: ", response);
 
         toast.success("Event updated successfully!")

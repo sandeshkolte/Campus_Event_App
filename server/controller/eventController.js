@@ -598,6 +598,41 @@ const adminAllEvents = async (req, res) => {
   }
 };
 
+//  Save or update the certificate template for an event
+
+saveCertificateTemplate = async (req, res) => {
+ try {
+   const { eventId, template, fields } = req.body;
+
+   if (!eventId || !template || !fields) {
+     return res.status(400).json({ message: "Missing required fields." });
+   }
+
+   // Find event by ID
+   const event = await eventModel.findById(eventId);
+   if (!event) {
+     return res.status(404).json({ message: "Event not found." });
+   }
+
+   // Update event with certificate template
+   event.certificateTemplate = {
+     backgroundImage: template.backgroundImage,
+     fields,
+   };
+
+   event.isCertificateEnabled = true;
+
+   await event.save();
+
+   res.status(200).json({
+     message: "Certificate template saved successfully.",
+     certificateTemplate: event.certificateTemplate,
+   });
+ } catch (error) {
+   console.error("Error saving certificate template:", error);
+   res.status(500).json({ message: "Server error."});
+}
+};
 
 
 module.exports = {
@@ -617,5 +652,6 @@ module.exports = {
     updateStudentPaymentStatus,
     findRelatedEvents,
     updateWinners,
-    findEventByBranch
+    findEventByBranch,
+    saveCertificateTemplate
 };

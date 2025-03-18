@@ -53,6 +53,24 @@ const eventSchema = mongoose.Schema({
     isActive: { type: Boolean, default: true },
     winner: { type: mongoose.Schema.Types.ObjectId, ref: 'winner' },
     showWinners: { type: Boolean, default: true },
+    isCertificateEnabled: { type: Boolean, default: false },
+     certificateTemplate: {
+    backgroundImage: { type: String }, // URL or Base64 of the template image
+    fields: [
+      {
+        id: { type: String, required: true }, // Unique identifier for the field
+        label: { type: String, required: true }, // Field label (e.g., "Participant Name")
+        value: { type: String, required: true }, // Placeholder or default value (e.g., "{participant.name}")
+        position: {
+          x: { type: Number, required: true }, // X-coordinate (percentage)
+          y: { type: Number, required: true }, // Y-coordinate (percentage)
+        },
+        size: { type: Number, default: 14 }, // Font size
+        color: { type: String, default: "#000000" }, // Font color
+      },
+    ],
+  },
+    
     slug: { type: String, unique: true }
 }, {
     timestamps: true

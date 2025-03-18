@@ -52,7 +52,7 @@ export default function CertificateTemplateUploader({ event }) {
   }
 
   // Handle template upload
-  const handleTemplateUpload = (e) => {
+  const handleTemplateUpload = async (e) => {
     const file = e.target.files?.[0]
     if (file) {
       if (!file.type.startsWith("image/")) {
@@ -64,11 +64,26 @@ export default function CertificateTemplateUploader({ event }) {
         return
       }
 
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setTemplate(e.target?.result)
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("upload_preset", "event_certificate_template") // Replace with your Cloudinary upload preset
+
+      try {
+        const response = await axios.post("https://api.cloudinary.com/v1_1/diayircfv/image/upload", formData) // Replace with your Cloudinary cloud name
+        const imageUrl = response.data.secure_url
+        setTemplate(imageUrl)
+        toast({
+          title: "Upload successful",
+          description: "Template uploaded successfully",
+        })
+      } catch (error) {
+        console.error("Error uploading to Cloudinary:", error)
+        toast({
+          title: "Upload failed",
+          description: "An error occurred while uploading the template",
+          variant: "destructive",
+        })
       }
-      reader.readAsDataURL(file)
     }
   }
 
@@ -173,13 +188,14 @@ export default function CertificateTemplateUploader({ event }) {
 
     try {
       setIsLoading(true)
-      await axios.post(`${baseUrl}/api/admin/save-certificate-template`, {
+      
+      console.log("Event Certificate data: ",event._id, template, textElements);
+      
+      await axios.post(`${baseUrl}/api/event/save-certificate-template`, {
         eventId: event._id,
         template,
         fields: textElements,
       })
-
-      
 
       toast({
         title: "Success",
