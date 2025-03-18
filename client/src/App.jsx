@@ -40,6 +40,7 @@ import { AnimatePresence } from 'framer-motion'
 import SuperAdminPanel from './pages/SuperAdminPanel'
 import ManageEvents from './components/admin-components/AdminToggle.jsx'
 import HomeComponent from './components/admin-components/HomeComponent'
+import CertificatePage from './pages/CertificatePageUser'
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -178,6 +179,7 @@ const location = useLocation();
         <Route path='/entc-committee' element={<EntcCommittee />} />
         <Route path='/instru-committee' element={<InstrumentationCommittee />} />
         <Route path='/mech-committee' element={<MECommittee />} />
+        
 
         {!isAuthenticated && (
           <>
@@ -190,6 +192,7 @@ const location = useLocation();
           <Route path='/register' element={<Navigate to="/" />} />
           <Route path='/login' element={<Navigate to="/" />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/certificate' element={<CertificatePage/>}/>
           <Route path='/mytickets' element={<MyTickets />} />
           <Route path='/buyticket/:id' element={<BookingPage />} />
           {(role === "admin" || role === "superadmin") && (

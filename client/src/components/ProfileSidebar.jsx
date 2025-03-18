@@ -59,18 +59,18 @@ export default function ProfileSidebar() {
                  </div>
           <NavItem icon={User} path="/profile">User Profile</NavItem>
           {/* <NavItem icon={User} path="/profile">User Profile</NavItem> */}
-          {(userInfo?.role === "admin" || userInfo?.role==="superadmin") && (
+          {(userInfo?.role === "admin" || userInfo?.role==="superadmin") ? (
             <>
           <NavItem icon={PenBox} path="/create">Create Event</NavItem>
           <NavItem icon={CheckSquare} path="/verifytickets">Verify Tickets</NavItem>
           <NavItem icon={StarIcon} path="/organized">Events Organised</NavItem>
           </>
-          ) }
+          ): <NavItem icon={Award} path="/certificate">Certificate</NavItem> }
+          
           <NavItem icon={TbPhoto} path="/gallery">Photo Gallery</NavItem>
           <NavItem icon={Ticket} path="/mytickets">My Tickets</NavItem>
           <NavItem icon={Trophy} path="/winners">Winners</NavItem>
-          {/* <NavItem icon={History} path="/">History</NavItem>
-          <NavItem icon={Award} path="/">Certificate</NavItem> */}
+          {/* <NavItem icon={History} path="/">History</NavItem> */}
           <NavItem icon={Home} path="/" className="lg:hidden">Home</NavItem>
         </div>
       </ScrollArea>
