@@ -11,12 +11,12 @@ const eventSchema = mongoose.Schema({
     price: { 
         type: Number, 
         default: 0, 
-        validate: {
-            validator: function(value) {
-                return !this.isAuditCourse || value === 0;
-            },
-            message: 'Audit courses must have a price of 0.'
-        }
+        // validate: {
+        //     validator: function(value) {
+        //         return !this.isAuditCourse || value === 0;
+        //     },
+        //     message: 'Audit courses must have a price of 0.'
+        // }
     },
     isAuditCourse: { type: Boolean, default: false },
     participants: { 
@@ -54,22 +54,27 @@ const eventSchema = mongoose.Schema({
     winner: { type: mongoose.Schema.Types.ObjectId, ref: 'winner' },
     showWinners: { type: Boolean, default: true },
     isCertificateEnabled: { type: Boolean, default: false },
-     certificateTemplate: {
-    backgroundImage: { type: String }, // URL or Base64 of the template image
-    fields: [
-      {
-        id: { type: String, required: true }, // Unique identifier for the field
-        label: { type: String, required: true }, // Field label (e.g., "Participant Name")
-        value: { type: String, required: true }, // Placeholder or default value (e.g., "{participant.name}")
-        position: {
-          x: { type: Number, required: true }, // X-coordinate (percentage)
-          y: { type: Number, required: true }, // Y-coordinate (percentage)
+     
+    certificateTemplate: { 
+        type: {
+            eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'event',  }, // Ensure correct event reference
+            backgroundImage: { type: String,  }, // Ensure a background image is provided
+            fields: [
+                {
+                    id: { type: String,  }, // Unique identifier for the field
+                    label: { type: String,  }, // Field label
+                    value: { type: String,  }, // Placeholder or actual value
+                    position: {
+                        x: { type: Number,  }, // X-coordinate (percentage)
+                        y: { type: Number,  }, // Y-coordinate (percentage)
+                    },
+                    size: { type: Number, default: 14 }, // Font size
+                    color: { type: String, default: "#000000" }, // Font color
+                },
+            ],
         },
-        size: { type: Number, default: 14 }, // Font size
-        color: { type: String, default: "#000000" }, // Font color
-      },
-    ],
-  },
+        default: {}, // This allows the event to be created without a certificate initially
+    },
     
     slug: { type: String, unique: true }
 }, {

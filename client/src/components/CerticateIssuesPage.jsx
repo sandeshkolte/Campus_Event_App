@@ -193,7 +193,7 @@ export default function CertificateTemplateUploader({ event }) {
       
       await axios.post(`${baseUrl}/api/event/save-certificate-template`, {
         eventId: event._id,
-        template,
+        backgroundImage:template,
         fields: textElements,
       })
 
