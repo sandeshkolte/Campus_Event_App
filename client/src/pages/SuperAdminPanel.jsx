@@ -50,22 +50,22 @@ const SuperAdminPanel = () => {
           <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         </aside>
         <div className='w-full'>
-          <section className='heading flex justify-between py-10 px-5 w-full'>
+          <section className='heading flex justify-between lg:py-10  px-5 w-full'>
             <div className='w-[50%]'>
-              <h3 className='text-3xl font-semibold'>Good Morning, {userInfo?.firstname}!</h3>
+              <h3 className='lg:text-3xl text-xl font-semibold'>Good Morning, {userInfo?.firstname}!</h3>
               <p className='text-sm text-gray-700 pt-3'>Let's handle the events productively.</p>
             </div>
             <div className='flex w-[50%] justify-between'>
               <div>
                 <p className='text-sm text-gray-700'>Total Revenue</p>
-                <h3 className='text-4xl font-semibold pt-2 flex justify-center'>₹{totalRevenue}</h3>
+                <h3 className='lg:text-4xl text-xl font-semibold pt-2 flex justify-center'>₹{totalRevenue}</h3>
               </div>
               <div>
                 <p className='text-sm text-gray-700'>Total Students</p>
-                <h3 className='text-4xl font-semibold pt-2 flex justify-center'>{totalParticipants}</h3>
+                <h3 className='lg:text-4xl text-xl font-semibold pt-2 flex justify-center'>{totalParticipants}</h3>
               </div>
-              <div className='bg-gray-800 rounded-3xl text-white text-center h-12 w-32 my-auto flex align-middle justify-center'>
-                <h3 className='text-sm font-light py-3'>+ Add Task</h3>
+              <div className='hidden  bg-pink-700 rounded-3xl text-white text-center h-12 w-32 my-auto lg:flex align-middle justify-center'>
+                <h3 className=' font-light py-3'>{userInfo?.branch}</h3>
               </div>
             </div>
           </section>

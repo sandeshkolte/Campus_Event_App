@@ -100,7 +100,7 @@ export default function Profile() {
         // profileImage: user.image || "default-image-url",
         interests: user.interests || [],
         email: user.email || "",
-        contact: user.contact || "90759******",
+        contact: user.contact || "",
       });
       setSelectedFilters(user.interests || []);
      setProfileImage(user.image)

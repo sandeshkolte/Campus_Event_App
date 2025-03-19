@@ -178,9 +178,12 @@ export default function EventDetails() {
   const handleBookNow = () => {
     if (!user) {
       // If user is not logged in, redirect to the login page
-      toast.error("You Need To Login First")
+      toast.error("You Need To Login First");
+    } else if (!user.branch || !user.yearOfStudy) {
+      // If user fields like branch or yearOfStudy are empty
+      toast.error("Please complete your profile information before booking");
     } else {
-      // If user is logged in, open the ticket booking dialog
+      // If user is logged in and profile is complete, open the ticket booking dialog
       openDialog();
     }
   };

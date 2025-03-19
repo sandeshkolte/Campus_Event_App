@@ -28,9 +28,13 @@ export default function VerifyTickets() {
 
   const confirmStatusChange = async () => {
     try {
+      
       const result = await axios.post(`${baseUrl}/api/event/update/${selectedEventId}`,{
         isActive: false
       })
+
+      console.log(result);
+      
       toast.success("Event closed successfully")
       setIsDialogOpen(false);
       window.location.reload();

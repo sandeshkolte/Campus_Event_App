@@ -13,7 +13,7 @@ router.post('/students', async (req, res) => {
         }
 
         // Fetch students only from the given department
-        const students = await User.find({branch }).select("-password");
+        const students = await User.find({ }).select("-password");
         res.json(students);
     } catch (error) {
         res.status(500).json({ message: "Error fetching students", error });
