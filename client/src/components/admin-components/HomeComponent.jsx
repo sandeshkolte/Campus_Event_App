@@ -52,14 +52,14 @@ const HomeComponent = () => {
                 const earnings = event.price * event.participants.length;
                 return (
                   <li key={event._id} className="py-2 list-none">
-                    <div className="flex justify-around">
-                      <img src={event?.image} alt="event" className="h-20 rounded-sm w-32" />
+                    <div className=" flex justify-around">
+                      <img src={event?.image} alt="event" className="hidden lg:block h-20 rounded-sm w-32" />
                       <div className="w-80">
-                        <div className='flex justify-between' >
+                        <div className='flex lg:justify-between justify-evenly' >
                         <h3 className="flex text-sm text-gray-900 font-medium overflow-ellipsis overflow-hidden whitespace-nowrap">
                           {event.title}
                         </h3>
-                        <p className='text-green-600 font-medium rounded-md bg-gray-100 border-2 backdrop-blur-md p-1 ' >
+                        <p className='text-green-600 text-sm lg:text-base font-medium rounded-md bg-gray-100 border-2 backdrop-blur-md p-1 ' >
                           ₹{earnings}
                           </p>
                         </div>

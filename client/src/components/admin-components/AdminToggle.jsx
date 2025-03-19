@@ -32,7 +32,7 @@ export default function AdminToggle() {
         fullname: `${user.firstname} ${user.lastname}`,
       }))
       setUsers(usersWithFullname)
-      console.log(users)
+      console.log(response.data)
     } catch (error) {
       console.error("Error fetching students:", error)
     } finally {
@@ -75,7 +75,7 @@ export default function AdminToggle() {
   )
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4  h-[calc(100vh-200px)]">
       <div className="flex items-center justify-between">
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -102,7 +102,7 @@ export default function AdminToggle() {
             <TableSkeleton />
           </div>
         ) : (
-          <div className="max-h-[400px] overflow-y-auto">
+          <div className=" lg:max-h-[400px] overflow-y-auto">
             <Table className="min-w-full">
               <TableHeader className="sticky top-0 shadow-md">
                 <TableRow>
@@ -144,7 +144,7 @@ export default function AdminToggle() {
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
+                                <MoreHorizontal className="h-4 w-4 mr-5 lg:mr-0" />
                                 <span className="sr-only">Open menu</span>
                               </Button>
                             </DropdownMenuTrigger>
