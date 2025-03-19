@@ -1,85 +1,74 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Search } from "lucide-react"
-
-
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import EventCard from "@/components/EventCard"
-import CertificateCard from "@/components/CertificateCard"
-import { useSelector } from "react-redux"
-
-// Sample event data
-const events = [
-  {
-    id: 1,
-    title: "Tech Expo 2024",
-    time: "Fri 12:00 PM",
-    location: "Main Auditorium",
-    status: "Active",
-    pendingRequests: 2,
-    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=200&h=120",
-    ticketsSold: true,
-    date: new Date("2024-03-15"),
-  },
-  {
-    id: 2,
-    title: "Cultural Fest 2024",
-    time: "Mon 7:30 PM",
-    location: "Auditorium GCOEC",
-    status: "Active",
-    pendingRequests: 2,
-    image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=200&h=120",
-    ticketsSold: true,
-    date: new Date("2024-03-18"),
-  },
-  {
-    id: 3,
-    title: "Sports Meet 2024",
-    time: "Mon 1:30 PM",
-    location: "Sports Ground",
-    status: "Active",
-    pendingRequests: 0,
-    image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&q=80&w=200&h=120",
-    ticketsSold: true,
-    date: new Date("2024-03-18"),
-  },
-  {
-    id: 4,
-    title: "Robo Sumo",
-    time: "Wed 10:00 AM",
-    location: "GCOEC Main Ground",
-    status: "Active",
-    pendingRequests: 0,
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=200&h=120",
-    ticketsSold: false,
-    date: new Date("2024-03-20"),
-  },
-]
+import { useEffect, useState, useMemo } from "react";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import CertificateCard from "@/components/CertificateCard";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function CertificatePage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [sortBy, setSortBy] = useState("date")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("date");
 
+  const user = useSelector((state) => state.auth?.userInfo?.myevents);
+  const myActiveTickets = useSelector((state) => state.event?.events);
+
+  // Memoize combined details to avoid unnecessary re-renders
+  const combinedDetails = useMemo(() => {
+    return user
+      ?.map((paymentEvent) => {
+        const matchedEvent = myActiveTickets?.find(
+          (activeEvent) => activeEvent._id === paymentEvent.eventId
+        );
+
+        if (matchedEvent) {
+          return {
+            ...matchedEvent,
+            paymentStatus: paymentEvent.paymentStatus,
+            paymentScreenshot: paymentEvent.paymentScreenshot,
+          };
+        }
+        return null;
+      })
+      .filter((event) => event !== null);
+  }, [user, myActiveTickets]);
+
+  // State for displayed events
+  const [displayedEvents, setDisplayedEvents] = useState([]);
+
+  useEffect(() => {
+    setDisplayedEvents(
+      combinedDetails?.filter(
+        (event) => event.paymentStatus === "Confirmed" && event.isCertificateEnabled
+      ) || []
+    );
+  }, [combinedDetails]);
+  
   // Filter events based on search term
-  const filteredEvents = events.filter((event) => event.title.toLowerCase().includes(searchTerm.toLowerCase()))
-
-  const events1 = useSelector((state) => state.event.events);
-
-  console.log(events1)
+  const filteredEvents = useMemo(() => {
+    return displayedEvents.filter((event) =>
+      event.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [displayedEvents, searchTerm]);
 
   // Sort events based on selected criteria
-  const sortedEvents = [...filteredEvents].sort((a, b) => {
-    if (sortBy === "date") {
-      return a.date.getTime() - b.date.getTime()
-    } else if (sortBy === "title") {
-      return a.title.localeCompare(b.title)
-    } else if (sortBy === "location") {
-      return a.location.localeCompare(b.location)
-    }
-    return 0
-  })
+  const sortedEvents = useMemo(() => {
+    return [...filteredEvents].sort((a, b) => {
+      if (sortBy === "title") {
+        return a.title.localeCompare(b.title);
+      }
+      if (sortBy === "venue") {
+        return a.venue.localeCompare(b.venue);
+      }
+      const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
+      const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
+      return dateA - dateB;
+    });
+  }, [filteredEvents, sortBy]);
+
+  console.log(sortedEvents);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -111,7 +100,7 @@ export default function CertificatePage() {
         {sortedEvents.length > 0 ? (
           <div className="space-y-4">
             {sortedEvents.map((event) => (
-              <CertificateCard key={event.id} event={event} />
+              <CertificateCard key={event._id} event={event} />
             ))}
           </div>
         ) : (
@@ -121,5 +110,5 @@ export default function CertificatePage() {
         )}
       </div>
     </div>
-  )
+  );
 }
