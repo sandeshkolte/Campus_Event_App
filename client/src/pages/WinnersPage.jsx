@@ -14,7 +14,7 @@ const WinnerItem = ({ winner, position }) => {
       <div>
         <p className="font-semibold">{`${winner.user.firstname} ${winner.user.lastname}`}</p>
         <p className="text-sm text-gray-600">
-          {winner.user.branch || "NA"}, {winner.user.yearOfStudy || "NA"}
+          {winner.user.branch || "NA"}, {winner.user.yearOfStudy || "NA"} year
         </p>
       </div>
     </div>

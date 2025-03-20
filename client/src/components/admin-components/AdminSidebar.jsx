@@ -25,8 +25,15 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
       <div>
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger>
-              <NavItem icon={Menu} onClick={() => setActiveTab("menu")} isActive={activeTab === "menu"} />
+            <TooltipTrigger asChild>
+              <span>
+              <NavItem icon={Menu} 
+              onClick={() => {}
+                //  setActiveTab("menu")
+                
+              }
+               isActive={activeTab === "menu"} />
+              </span>
             </TooltipTrigger>
             <TooltipContent className="bg-gray-800 text-white">
               <p>Menu</p>
@@ -39,8 +46,11 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
         <li>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
+                <span>
+
                 <NavItem icon={Home} onClick={() => setActiveTab("home")} isActive={activeTab === "home"} />
+                </span>
               </TooltipTrigger>
               <TooltipContent className="bg-gray-800 text-white">
                 <p>Home</p>
@@ -51,8 +61,11 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
         <li>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
+                <span>
+
                 <NavItem icon={LayoutGrid} onClick={() => setActiveTab("organise")} isActive={activeTab === "organise"} />
+                </span>
               </TooltipTrigger>
               <TooltipContent className="bg-gray-800 text-white">
                 <p>Organise Events</p>
@@ -63,8 +76,16 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
         <li>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
-                <NavItem icon={Zap} onClick={() => setActiveTab("analytics")} isActive={activeTab === "analytics"} />
+              <TooltipTrigger asChild>
+                <span>
+
+                <NavItem icon={Zap} 
+                onClick={() => {}
+                  // setActiveTab("analytics")
+
+                }
+                 isActive={activeTab === "analytics"} />
+                </span>
               </TooltipTrigger>
               <TooltipContent className="bg-gray-800 text-white">
                 <p>Analytics</p>
@@ -77,8 +98,15 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
       <div>
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger>
-              <NavItem icon={LogOut} onClick={() => setActiveTab("logout")} isActive={activeTab === "logout"} />
+            <TooltipTrigger asChild>
+              <span>
+
+              <NavItem icon={LogOut} 
+              onClick={() => {}
+                // setActiveTab("logout")
+              }
+               isActive={activeTab === "logout"} />
+              </span>
             </TooltipTrigger>
             <TooltipContent className="bg-gray-800 text-white">
               <p>Logout</p>

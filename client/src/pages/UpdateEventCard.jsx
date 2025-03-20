@@ -367,18 +367,30 @@ export default function UpdateEvent() {
                     <SelectValue placeholder="Select Committe" />
                   </SelectTrigger>
                   <SelectContent className="bg-white font-semibold">
-                    <SelectItem value={"Abhirang"}>Abhirang</SelectItem>
-                    <SelectItem value={"Technotsav"}>Technotsav</SelectItem>
-                    <SelectItem value={"ACSES"}>ACSES</SelectItem>
-                    <SelectItem value={"EESA"}>EESA</SelectItem>
-                    <SelectItem value={"MESA"}>MESA</SelectItem>
-                    <SelectItem value={"CESA"}>CESA</SelectItem>
-                    <SelectItem value={"ETESA"}>
-                      ETESA
-                    </SelectItem>
-                    <SelectItem value={"INSA"}>
-                      INSA
-                    </SelectItem>
+                   <SelectItem value={"Abhirang"}>
+                                      Abhirang
+                                    </SelectItem>
+                                    <SelectItem value={"Technotsav"}>
+                                      Technotsav
+                                    </SelectItem>
+                                    <SelectItem value={"CSE"}>
+                                      ACSES
+                                    </SelectItem>
+                                    <SelectItem value={"EE"}>
+                                      EESA
+                                    </SelectItem>
+                                    <SelectItem value={"ME"}>
+                                      MESA
+                                    </SelectItem>
+                                    <SelectItem value={"CE"}>
+                                      CESA
+                                    </SelectItem>
+                                    <SelectItem value={"ENTC"}>
+                                      ETESA
+                                    </SelectItem>
+                                    <SelectItem value={"IE"}>
+                                      INSA
+                                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <div className="p-8 flex flex-col gap-5">

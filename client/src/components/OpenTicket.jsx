@@ -167,7 +167,7 @@ export default function TicketBooking({ isOpen, onClose, eventDetails }) {
                       <GraduationCap className="w-6 h-6 text-purple-600" />
                       <span>
                         Year of Study:{" "}
-                        <span className="font-semibold">{currentUser?.yearOfStudy || "NA"}</span>
+                        <span className="font-semibold">{currentUser?.yearOfStudy || "NA"} year</span>
                       </span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm md:text-xl font-medium text-gray-700">

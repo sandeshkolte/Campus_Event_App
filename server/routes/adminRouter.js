@@ -6,14 +6,15 @@ const User = require('../models/user');
 router.post('/students', async (req, res) => {
     try {
         const { branch, role } = req.body; 
+// console.log(req.body);
 
         // Only allow Superadmins to fetch students
         if (role !== "superadmin") {
             return res.status(403).json({ message: "Access denied" });
         }
 
-        // Fetch students only from the given department
-        const students = await User.find({ }).select("-password");
+        // Fetch students only from the given branch
+        const students = await User.find({ branch }).select("-password");
         res.json(students);
     } catch (error) {
         res.status(500).json({ message: "Error fetching students", error });

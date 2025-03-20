@@ -11,7 +11,7 @@ const OrganizerCard = ({organizer}) => {
         <hr className='py-1' />
         <div className='flex justify-around gap-10 text-sm font-light' >
             <p>{organizer?.branch || "NA"}</p>
-            <p>{organizer?.yearOfStudy || "NA"}</p>
+            <p>{organizer?.yearOfStudy || "NA"} year</p>
             <p>{organizer?.contact || "NA"}</p>
         </div>        
         </div>

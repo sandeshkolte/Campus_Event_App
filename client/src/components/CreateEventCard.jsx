@@ -386,22 +386,22 @@ export default function Component() {
                   <SelectItem value={"Technotsav"}>
                     Technotsav
                   </SelectItem>
-                  <SelectItem value={"ACSES"}>
+                  <SelectItem value={"CSE"}>
                     ACSES
                   </SelectItem>
-                  <SelectItem value={"EESA"}>
+                  <SelectItem value={"EE"}>
                     EESA
                   </SelectItem>
-                  <SelectItem value={"MESA"}>
+                  <SelectItem value={"ME"}>
                     MESA
                   </SelectItem>
-                  <SelectItem value={"CESA"}>
+                  <SelectItem value={"CE"}>
                     CESA
                   </SelectItem>
-                  <SelectItem value={"ETESA"}>
+                  <SelectItem value={"ENTC"}>
                     ETESA
                   </SelectItem>
-                  <SelectItem value={"INSA"}>
+                  <SelectItem value={"IE"}>
                     INSA
                   </SelectItem>
                 </SelectContent>

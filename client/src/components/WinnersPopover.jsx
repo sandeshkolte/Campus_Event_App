@@ -16,7 +16,7 @@ console.log("winner:", winner);
       <div>
         <p className="font-semibold">{`${winner.user.firstname} ${winner.user.lastname}`}</p>
         <p className="text-sm text-gray-600">
-          {winner.user.branch}, {winner.user.yearOfStudy}
+          {winner.user.branch}, {winner.user.yearOfStudy} year
         </p>
       </div>
     </div>

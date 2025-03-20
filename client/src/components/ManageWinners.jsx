@@ -11,7 +11,7 @@ const ManageWinners = ({ eventId, participants }) => {
 
   const handleSubmit = async () => {
     try {
-      await axios.put(`/api/events/winners/${eventId}`, { winners, showWinners });
+      await axios.put(`/api/event/winners/${eventId}`, { winners, showWinners });
       alert("Winners updated successfully!");
     } catch (error) {
       console.error("Error updating winners:", error);

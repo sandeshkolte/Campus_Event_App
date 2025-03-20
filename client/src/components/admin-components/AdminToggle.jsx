@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import axios from "axios"
 import { useSelector } from "react-redux"
@@ -7,19 +9,21 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Search } from "lucide-react"
+import { MoreHorizontal, Search, Filter } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function AdminToggle() {
   const [users, setUsers] = useState([])
   const [searchQuery, setSearchQuery] = useState("")
+  const [yearFilter, setYearFilter] = useState("all")
   const [loading, setLoading] = useState(true)
   const userInfo = useSelector((state) => state.auth?.userInfo)
 
   useEffect(() => {
     if (userInfo?.role === "superadmin") {
-      fetchStudents(userInfo.department, userInfo.role)
+      fetchStudents(userInfo?.branch, userInfo?.role)
     }
   }, [userInfo])
 
@@ -32,7 +36,7 @@ export default function AdminToggle() {
         fullname: `${user.firstname} ${user.lastname}`,
       }))
       setUsers(usersWithFullname)
-      console.log(response.data)
+      // console.log(response.data)
     } catch (error) {
       console.error("Error fetching students:", error)
     } finally {
@@ -43,21 +47,25 @@ export default function AdminToggle() {
   const toggleUserRole = async (userId, currentRole) => {
     try {
       const newRole = currentRole === "user" ? "admin" : "user"
-      await axios.put(
-        `${baseUrl}/api/admin/update-role/${userId}`,
-        { role: newRole },
-      )
+      await axios.put(`${baseUrl}/api/admin/update-role/${userId}`, { role: newRole })
       fetchStudents(userInfo.branch, userInfo.role)
     } catch (error) {
       console.error("Error updating role:", error)
     }
   }
 
-  const filteredUsers = users?.filter(
-    (user) =>
+  const filteredUsers = users?.filter((user) => {
+    // Filter by search query (name or email)
+    const matchesSearch =
       (user.fullname && user.fullname.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase())),
-  )
+      (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase()))
+
+    // Filter by year of study
+    const matchesYear = yearFilter === "all" || (user?.yearOfStudy && user.yearOfStudy.toString() === yearFilter)
+
+    // Return users that match both filters
+    return matchesSearch && matchesYear
+  })
 
   // Skeleton loader component
   const TableSkeleton = () => (
@@ -75,8 +83,8 @@ export default function AdminToggle() {
   )
 
   return (
-    <div className="space-y-4  h-[calc(100vh-200px)]">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 h-[calc(100vh-200px)]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-3 mt-5 lg:mt-0">
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -87,6 +95,24 @@ export default function AdminToggle() {
             onChange={(e) => setSearchQuery(e.target.value)}
             disabled={loading}
           />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Select value={yearFilter} onValueChange={setYearFilter} disabled={loading}>
+            <SelectTrigger className="w-[180px]">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                <SelectValue placeholder="Filter by year" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Years</SelectItem>
+              <SelectItem value="1st">1st Year</SelectItem>
+              <SelectItem value="2nd">2nd Year</SelectItem>
+              <SelectItem value="3rd">3rd Year</SelectItem>
+              <SelectItem value="4th">4th Year</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -102,7 +128,7 @@ export default function AdminToggle() {
             <TableSkeleton />
           </div>
         ) : (
-          <div className=" lg:max-h-[400px] overflow-y-auto">
+          <div className="lg:max-h-[400px] overflow-y-auto">
             <Table className="min-w-full">
               <TableHeader className="sticky top-0 shadow-md">
                 <TableRow>
@@ -138,7 +164,7 @@ export default function AdminToggle() {
                           {user.role}
                         </Badge>
                       </TableCell>
-                      <TableCell>{user?.yearOfStudy ? user?.yearOfStudy : "N/A"}</TableCell>
+                      <TableCell>{user?.yearOfStudy ? user?.yearOfStudy : "N/A"} year</TableCell>
                       <TableCell className="text-right">
                         {userInfo?.role === "superadmin" && (
                           <DropdownMenu>
@@ -161,7 +187,7 @@ export default function AdminToggle() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={4} className="text-center py-6">
-                      No users found. Try a different search.
+                      No users found. Try a different search or filter.
                     </TableCell>
                   </TableRow>
                 )}

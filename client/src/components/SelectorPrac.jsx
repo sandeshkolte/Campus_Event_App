@@ -138,7 +138,7 @@ const SelectorPrac = ({ setValue,selector }) => {
                     {tag.firstname} {tag.lastname}
                         </p>
                         <h3 className="text-xs text-white flex gap-2" >
-                            <div className="bg-purple-600 p-1 rounded-3xl" >{tag.yearOfStudy??"N/A"}</div>
+                            <div className="bg-purple-600 p-1 rounded-3xl" >{tag.yearOfStudy??"N/A"} year</div>
                             <div className="bg-indigo-600 p-1 rounded-3xl"  >{tag.branch??"N/A"}</div>
                              
                              </h3>

@@ -17,9 +17,13 @@ const SuperAdminPanel = () => {
   const [activeTab, setActiveTab] = useState("home");
 
   useEffect(() => {
-    dispatch(fetchUsers());
-    dispatch(fetchEvents());
-  }, [dispatch]);
+    if (userInfo?.role === 'superadmin') {
+      // Dispatch actions to fetch users and events
+      dispatch(fetchUsers({ branch: userInfo?.branch, role: userInfo?.role }));
+
+      dispatch(fetchEvents(userInfo?.branch));
+    }
+  }, [dispatch, userInfo]);
 
   return (
     <div className='max-h-screen overflow-hidden w-full relative backdrop-blur-md bg-gradient-to-tr from-[#d7d8e0] via-[#d7d8e0] to-[#e8e8e8]'>

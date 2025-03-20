@@ -159,7 +159,7 @@ const GroupMemberSelector = ({ setValue, selector, eventDetails }) => {
                             className={`p-1 rounded-3xl ${tag.isDisabled ? "bg-gray-300" : "bg-purple-600 text-white"
                               }`}
                           >
-                            {tag.yearOfStudy ?? "N/A"}
+                            {tag.yearOfStudy ?? "N/A"} year
                           </div>
                           <div
                             className={`p-1 rounded-3xl ${tag.isDisabled ? "bg-gray-300" : "bg-indigo-600 text-white"
