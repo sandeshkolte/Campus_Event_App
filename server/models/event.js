@@ -19,13 +19,13 @@ const eventSchema = mongoose.Schema({
         // }
     },
     isAuditCourse: { type: Boolean, default: false },
-    participants: { 
-        type: [{
-            userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
-            groupName: { type: String }
-        }], 
-        default: [] 
-    },
+    participants: [
+        {
+          userId: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+          groupName: String,
+          paymentStatus: { type: String, enum: ["Pending", "Confirmed", "Rejected"], default: "Pending" }, // ✅ New Field
+        },
+      ],
     isGroupEvent: { type: Boolean, default: false },
     participantSize: {
         type: Number,

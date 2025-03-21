@@ -382,40 +382,48 @@ const deleteEvent = async (req, res) => {
 // };
 
 const addParticipantandEvent = async (req, res) => {
+  const { userId, eventId, paymentImage } = req.body;
 
-    // User added as event participant and event added to user event
-
-    const {userId, eventId, paymentImage } = req.body;
-    // console.log(req.body);
-    try {
-      const userUpdate = await userModel.findByIdAndUpdate(userId, {
-        $push: { myevents: { eventId, paymentScreenshot: paymentImage } },
-      }, { new: true }); // `new: true` returns the updated document
-  
-      if (!userUpdate) {
-        return res.status(404).json({ message: "User not found" });
+  try {
+      // Check if the user is already a participant in the event
+      const user = await userModel.findById(userId);
+      if (!user) {
+          return res.status(404).json({ message: "User not found" });
       }
-  
-      const eventUpdate = await eventModel.findByIdAndUpdate(eventId, {
-        $push: { participants: {userId} },
-      }, { new: true });
-  
+
+      const alreadyRegistered = user.myevents.some(event => event.eventId.toString() === eventId);
+      if (alreadyRegistered) {
+          return res.status(400).json({ message: "User is already registered for this event" });
+      }
+
+      // Add the user to the event
+      const userUpdate = await userModel.findByIdAndUpdate(
+          userId,
+          { $push: { myevents: { eventId, paymentScreenshot: paymentImage } } },
+          { new: true }
+      );
+
+      const eventUpdate = await eventModel.findByIdAndUpdate(
+          eventId,
+          { $push: { participants: { userId } } },
+          { new: true }
+      );
+
       if (!eventUpdate) {
-        return res.status(404).json({ message: "Event not found" });
+          return res.status(404).json({ message: "Event not found" });
       }
-  
+
       res.status(200).json({ message: "User added as event participant and event added to user event" });
   } catch (err) {
       console.error("Error during user/event update:", err.message);
       res.status(500).json({ status: "Error", response: err.message });
   }
-  
 };
 
 const addGroupParticipants = async (req, res) => {
   try {
       const { eventId, groupName, participants, paymentImage } = req.body;
-      
+
       const event = await eventModel.findById(eventId);
       if (!event) return res.status(404).json({ message: "Event not found" });
 
@@ -423,25 +431,37 @@ const addGroupParticipants = async (req, res) => {
           return res.status(400).json({ message: "This event is not marked as a group event" });
       }
 
-      // Adding participants to the event with the same groupName
-      participants.forEach(async (participantId) => {
-          event.participants.push({ userId: participantId, groupName });
-          
-          // Optionally update each user's myevents to reflect the group registration
-          await userModel.findByIdAndUpdate(participantId, {
-              $push: {
-                  myevents: {
-                      eventId: eventId,
-                      paymentScreenshot: paymentImage
-                  }
+      // Fetch all participants from the database
+      const users = await userModel.find({ _id: { $in: participants } });
+
+      // Filter out already registered participants
+      const newParticipants = users.filter(user => 
+          !user.myevents.some(event => event.eventId.toString() === eventId)
+      );
+
+      if (newParticipants.length === 0) {
+          return res.status(400).json({ message: "All users in the group are already registered" });
+      }
+
+      // Update only new participants
+      const participantUpdates = newParticipants.map(user => ({
+          updateOne: {
+              filter: { _id: user._id },
+              update: {
+                  $push: { myevents: { eventId, paymentScreenshot: paymentImage } }
               }
-          });
-      });
+          }
+      }));
 
+      await userModel.bulkWrite(participantUpdates);
+
+      // Add new participants to the event
+      event.participants.push(...newParticipants.map(user => ({ userId: user._id, groupName })));
       await event.save();
-      res.status(200).json({ message: "Group participants added successfully", event });
 
+      res.status(200).json({ message: "New group participants added successfully", event });
   } catch (error) {
+      console.error("Error adding group participants:", error);
       res.status(500).json({ message: "Error adding group participants", error });
   }
 };
@@ -450,13 +470,11 @@ const updateGroupPaymentStatus = async (req, res) => {
   try {
     const { eventId, groupName, userId, newStatus } = req.body;
 
-    // console.log(req.body);
-
     // Find the event by ID
     const event = await eventModel.findById(eventId);
     if (!event) return res.status(404).json({ message: "Event not found" });
 
-    // Check authorization (either organiser or coordinator)
+    // Check authorization
     const isAuthorized = event.organisedBy.equals(userId) || event.coordinator.some(coordinatorId => coordinatorId.equals(userId));
     if (!isAuthorized) {
       return res.status(403).json({ message: 'You are not authorized to update payment status for this event.' });
@@ -468,22 +486,24 @@ const updateGroupPaymentStatus = async (req, res) => {
       return res.status(404).json({ message: 'No participants found for this Group Name.' });
     }
 
-
-    // Update payment status for each participant in the group
-     groupParticipants.forEach( async (participant) => {
-      // console.log("Paritcipants id:", participant.userId);
-      
+    // Update payment status in both User and Event models
+    const updatePromises = groupParticipants.map(async (participant) => {
+      // Update User model
       await userModel.findOneAndUpdate(
         { _id: participant.userId, "myevents.eventId": eventId },
-        { $set: { "myevents.$.paymentStatus": newStatus } } // Use the $ positional operator to update the correct entry in the array
+        { $set: { "myevents.$.paymentStatus": newStatus } }
+      );
+
+      // Update Event model
+      await eventModel.updateOne(
+        { _id: eventId, "participants.userId": participant.userId },
+        { $set: { "participants.$.paymentStatus": newStatus } }
       );
     });
 
-    // Wait for all updates to complete
-    // await Promise.all(updatePromises);
+    await Promise.all(updatePromises);
 
     res.status(200).json({ message: "Payment status updated for all group members", group: groupParticipants });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error updating payment status", error });
@@ -491,55 +511,48 @@ const updateGroupPaymentStatus = async (req, res) => {
 };
 
 
+
 const updateStudentPaymentStatus = async (req, res) => {
   try {
     const { eventId, participantId, newStatus, userId } = req.body;
-    
-    // console.log(req.body);
+
     // Find the event by ID
     const event = await eventModel.findById(eventId);
-    
-    if (!event) {
-        return res.status(404).json({ message: 'Event not found' });
-    }
+    if (!event) return res.status(404).json({ message: 'Event not found' });
 
-    // Check if the user making the request is the event organizer or one of the coordinators
+    // Check authorization
     const isAuthorized = event.organisedBy.equals(userId) || event.coordinator.some(coordinatorId => coordinatorId.equals(userId));
-    
     if (!isAuthorized) {
-        return res.status(403).json({ message: 'You are not authorized to update payment status for this event.' });
+      return res.status(403).json({ message: 'You are not authorized to update payment status for this event.' });
     }
 
-    // Find the participant in the event by participantId
+    // Find the participant in the event
     const participant = event.participants.find(p => p.userId.equals(participantId));
-    
-    if (!participant) {
-        return res.status(404).json({ message: 'Participant not found in this event.' });
-    }
+    if (!participant) return res.status(404).json({ message: 'Participant not found in this event.' });
 
-    // Assuming myevents is a field in the User model that stores the events the participant is involved in.
-    // Find the specific event in the participant's myevents
+    // Update User model
     const user = await userModel.findById(participantId);
+    if (!user) return res.status(404).json({ message: 'User not found.' });
 
     const participantEvent = user.myevents.find(e => e.eventId.equals(eventId));
-    
-    if (!participantEvent) {
-        return res.status(404).json({ message: 'Event not found in participant\'s myevents.' });
-    }
+    if (!participantEvent) return res.status(404).json({ message: 'Event not found in participant\'s myevents.' });
 
-    // Update the payment status for this specific event
     participantEvent.paymentStatus = newStatus;
-
-    // Save the user's updated myevents
     await user.save();
+
+    // Update Event model
+    await eventModel.updateOne(
+      { _id: eventId, "participants.userId": participantId },
+      { $set: { "participants.$.paymentStatus": newStatus } }
+    );
 
     res.status(200).json({ message: 'Payment status updated successfully' });
   } catch (error) {
     console.log(error);
-    
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
 
 const activeEvents = async (req, res) => {
   try {

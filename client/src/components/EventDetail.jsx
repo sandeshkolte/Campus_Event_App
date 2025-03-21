@@ -8,8 +8,6 @@ import {
 import { MapPin, Calendar, Clock, Plus, ArrowLeft, IndianRupee } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import Organizer from "./Organizer";
-import Marquee from "react-fast-marquee";
 import { useCallback, useEffect, useState } from "react";
 import TicketBooking from "./OpenTicket";
 import { toast } from "react-toastify";
@@ -62,18 +60,29 @@ export default function EventDetails() {
       <div className="p-6 space-y-4">
         <EventDateTime />
         <Button
-          onClick={handleBookNow}
-          className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors"
-        >
-          Book Now ({String(eventDetails?.price) === '0' || eventDetails?.price === '' ? (
-                <span className="">FREE</span>
-              ) : (
-                <span className="flex items-center">
-                  <IndianRupee className="w-3 h-3" strokeWidth={3} />
-                  {eventDetails?.price}
-                </span>
-              )})
-        </Button>
+  onClick={handleBookNow}
+  disabled={user?.myevents?.some(event => event.eventId === eventDetails?._id)}
+  className={`w-full text-white transition-colors ${
+    user?.myevents?.some(event => event.eventId === eventDetails?._id)
+      ? 'bg-gray-500 cursor-not-allowed' // Disabled styling
+      : 'bg-gray-900 hover:bg-gray-700' // Normal styling
+  }`}
+>
+  {user?.myevents?.some(event => event.eventId === eventDetails?._id) ? (
+    "Already Participated"
+  ) : (
+    <>
+      Book Now ({String(eventDetails?.price) === '0' || eventDetails?.price === '' ? (
+        <span className="">FREE</span>
+      ) : (
+        <span className="flex items-center">
+          <IndianRupee className="w-3 h-3" strokeWidth={3} />
+          {eventDetails?.price}
+        </span>
+      )})
+    </>
+  )}
+</Button>
 
         <p className="text-sm text-gray-500 text-center">No Refunds</p>
       </div>
@@ -259,19 +268,30 @@ export default function EventDetails() {
               <Plus className="mr-2 h-4 w-4" /> Add to Calendar
             </Button>
             <div className="flex">
-              <Button
-                onClick={handleBookNow}
-                className="w-full bg-gray-900 hover:bg-gray-700 text-white transition-colors"
-              >
-                Book Now ({String(eventDetails?.price) === '0' || eventDetails?.price === '' ? (
-                <span className="">FREE</span>
-              ) : (
-                <span className="flex items-center">
-                  <IndianRupee className="w-3 h-3" strokeWidth={3} />
-                  {eventDetails?.price}
-                </span>
-              )})
-              </Button>
+            <Button
+  onClick={handleBookNow}
+  disabled={user?.myevents?.some(event => event.eventId === eventDetails?._id)}
+  className={`w-full text-white transition-colors ${
+    user?.myevents?.some(event => event.eventId === eventDetails?._id)
+      ? 'bg-gray-500 cursor-not-allowed' // Disabled styling
+      : 'bg-gray-900 hover:bg-gray-700' // Normal styling
+  }`}
+>
+  {user?.myevents?.some(event => event.eventId === eventDetails?._id) ? (
+    "Already Participated"
+  ) : (
+    <>
+      Book Now ({String(eventDetails?.price) === '0' || eventDetails?.price === '' ? (
+        <span className="">FREE</span>
+      ) : (
+        <span className="flex items-center">
+          <IndianRupee className="w-3 h-3" strokeWidth={3} />
+          {eventDetails?.price}
+        </span>
+      )})
+    </>
+  )}
+</Button>
               <CoordinatorProvider>
               <TicketBooking isOpen={isDialogOpen} onClose={closeDialog} eventDetails={eventDetails} />
               </CoordinatorProvider>
