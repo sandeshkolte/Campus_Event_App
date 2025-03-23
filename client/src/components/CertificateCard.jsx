@@ -13,7 +13,7 @@ export default function CertificateCard({ event }) {
   const certificateRef = useRef(null)
   const [scaleFactor, setScaleFactor] = useState(1)
 
-  console.log(user)
+  // console.log(user)
 
   useEffect(() => {
     const updateScaleFactor = () => {

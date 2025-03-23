@@ -126,7 +126,7 @@ export default function UpdateEvent() {
   const addtoOrganisedEvent = async (userId, id) => {
     try {
       await axios.put(`${baseUrl}/api/user/addOrganisedEvent`, { userId, id });
-      console.log(`Event added to organised event`);
+      // console.log(`Event added to organised event`);
     } catch (error) {
       console.error("Failed to add event to user:", error);
       toast.error("Failed to add event to user.");
@@ -191,9 +191,9 @@ export default function UpdateEvent() {
         data.organisedBy = `${userId}`
       }
 
-      console.log(id, data);
+      // console.log(id, data);
       await axios.post(`${baseUrl}/api/event/update/${id}`, data).then((response) => {
-        console.log("Update response: ", response);
+        // console.log("Update response: ", response);
 
         toast.success("Event updated successfully!")
       }

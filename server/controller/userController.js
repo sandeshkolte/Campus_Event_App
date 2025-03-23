@@ -400,11 +400,9 @@ const updateUserRole = async (req, res) => {
         return res.status(403).json({ message: "Error updating user role", error: err.message });
     }
 };
-
 const userUpdate = async (req, res, next) => {
     try {
         let {
-
             firstname,
             lastname,
             email,
@@ -414,34 +412,50 @@ const userUpdate = async (req, res, next) => {
             interests,
             role,
             myevents,
+            image,
             contact
         } = req.body;
 
+        // Find the existing user
+        let existingUser = await userModel.findById(req.params.id);
+        if (!existingUser) {
+            return res.status(404).json({ status: "Error", response: "User not found" });
+        }
+
+        // Prevent superadmin from updating branch
+        if (existingUser.role === "superadmin" && branch) {
+            return res.status(403).json({ status: "Error", response: "Superadmin cannot update branch" });
+        }
+
+        // Prepare updated data
         let updatedData = {
-            firstname,
-            lastname,
-            email,
-            branch,
-            yearOfStudy,
-            interests,
-            role,
-            myevents,
-            contact
+            firstname: firstname || existingUser.firstname,
+            lastname: lastname || existingUser.lastname,
+            email: email || existingUser.email,
+            yearOfStudy: yearOfStudy || existingUser.yearOfStudy,
+            interests: interests || existingUser.interests,
+            role: role || existingUser.role,
+            image: image || existingUser.image,  // Ensure image is updated
+            myevents: myevents || existingUser.myevents,
+            contact: contact || existingUser.contact
         };
 
+        // Hash password only if it's provided
         if (password) {
             updatedData.password = await bcrypt.hash(password, 10);
         }
 
-        let updatedUser = await userModel.findByIdAndUpdate(req.params.id, updatedData, { new: true });
-
-        if (!updatedUser) {
-            return res.status(403).json({ status: "Error", response: "User not found" });
+        // Only update branch if the user is not a superadmin
+        if (existingUser.role !== "superadmin") {
+            updatedData.branch = branch || existingUser.branch;
         }
+
+        // Update user in the database
+        let updatedUser = await userModel.findByIdAndUpdate(req.params.id, updatedData, { new: true });
 
         return res.status(200).json({
             status: "success",
-            response: "User Details Updated"
+            response: updatedUser  // Send updated user back to frontend
         });
     } catch (err) {
         next(err);

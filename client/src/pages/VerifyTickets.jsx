@@ -31,7 +31,7 @@ export default function VerifyTickets() {
         isActive: false,
       });
 
-      console.log(result);
+      // console.log(result);
       toast.success("Event closed successfully");
       setIsDialogOpen(false);
       window.location.reload();
