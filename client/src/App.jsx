@@ -109,6 +109,8 @@ const App = () => {
     try {
       const result = await axios.get(`${baseUrl}/api/event/`)
       const events = result.data.response
+      console.log("Evnets:",events);
+      
       dispatch(allEvents(events))
     } catch (err) {
       toast.error(err.message || "Error fetching events")
@@ -120,6 +122,7 @@ const App = () => {
     try {
       const result = await axios.get(`${baseUrl}/api/event/active-events/${userID}`)
       const events = result.data.adminEvents
+      console.log("Active Events:",events);
       dispatch(activeEvents(events))
     } catch (err) {
       toast.error(err.message || "Error fetching active events")
@@ -147,7 +150,7 @@ const App = () => {
         // initializeKnock(userId, token);
       }
       await fetchAllEvents()
-      if (role === "admin") {
+      if (role === "admin" || role === "superadmin") {
         await fetchActiveEvents(userId)
         await fetchMyOrganizedEvents(userId)
       }

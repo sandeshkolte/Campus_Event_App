@@ -20,12 +20,15 @@ import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 
 export default function VerifyTickets() {
-  const events = useSelector((state) => state.event.activeEvents);
+  const events = useSelector((state) => state.event?.activeEvents);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+console.log("hello:",events);
+
 
   const confirmStatusChange = async () => {
     setLoading(true);

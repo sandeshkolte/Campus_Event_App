@@ -20,7 +20,7 @@ role:{
 },
 image:{
     type:String,
-    default:"default_profile.webp"
+    default:"default_profile.jpg"
 },
 myevents: [{
     eventId: {
