@@ -35,9 +35,7 @@ const SignInWithGoogle = () => {
         image: photoURL,
       });
 
-      // console.log("Reponse: ",response.data);
-      const { token, user } = response.data;
-      
+      const { token, user } = response.data.response;
       localStorage.setItem('userToken', token);
       dispatch(login(user));
 
