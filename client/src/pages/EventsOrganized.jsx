@@ -92,10 +92,16 @@ export default function EventsOrganized() {
             <CardHeader className="flex-1">
               <CardTitle className="text-xl font-semibold">{event.title}</CardTitle>
               <p className="text-sm text-gray-500">
-                {event.date} · {event.location}
+              {new Date(event.startDate).toLocaleString("en-US", {
+                  weekday: "short",
+                  hour: "numeric",
+                  minute: "numeric",
+                })}{" "}
+                · {event.venue}
               </p>
               <p className="text-sm text-gray-500">
-                {event.ticketsSold}/{event.totalTickets} tickets sold
+                {`${event.participants?.filter((p) => p.paymentStatus === "Confirmed").length || 0} / 
+                ${event.participants?.length || 0} tickets sold`}
               </p>
             </CardHeader>
             <CardContent className="flex flex-wrap items-center gap-4">
