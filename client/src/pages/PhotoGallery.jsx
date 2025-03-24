@@ -116,7 +116,7 @@ const PhotoGallery = () => {
     <div className='mt-5 md:mx-10'>
       <div>
         <h3 className='text-5xl font-medium py-5'>Photo Gallery</h3>
-        {userInfo?.role === "admin" && (
+        {(userInfo?.role === "admin" || userInfo?.role === "superadmin")&& (
           <div className='grid grid-cols-5 md:flex'>
             <input
               type="file"
@@ -148,7 +148,7 @@ const PhotoGallery = () => {
                   className='cursor-pointer md:h-32'
                   onClick={() => setSelectedImage(photo.imageUrl)} // Open modal with original image
                 />
-                {userInfo?.role === "admin" && (
+                {(userInfo?.role === "admin" || userInfo?.role === "superadmin") && (
                   <button
                     className='absolute bottom-2 left-2 text-red-700 bg-white text-xl'
                     onClick={(e) => deleteImage(photo.imageName)}
