@@ -236,7 +236,6 @@ const registerUser = async (req, res, next) => {
 };
 
 
-
 const loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -327,29 +326,21 @@ const googleLogin = async (req, res, next) => {
         const user = await userModel.findOne({ email });
 
         if (user) {
-            // Check if the user already has a password (registered with email/password)
-            if (user.password) {
-                // User exists with email-password registration
-                // Do not overwrite their password
-                const token = generateToken(user);
-                res.cookie("token", token);
-                const { password, ...userData } = user._doc; // Exclude password when sending user data
-                return res.status(200).json({
-                    status: "Success",
-                    response: { user: userData, token },
-                });
-            } else {
-                // User exists but doesn't have a password (Google login user)
-                const token = generateToken(user);
-                res.cookie("token", token);
-                const { password, ...userData } = user._doc; // Exclude password when sending user data
-                return res.status(200).json({
-                    status: "Success",
-                    response: { user: userData, token },
-                });
+            // Ensure user is marked as verified if logging in with Google
+            if (!user.isVerified) {
+                user.isVerified = true;
+                await user.save();
             }
+
+            const token = generateToken(user);
+            res.cookie("token", token);
+            const { password, ...userData } = user._doc; // Exclude password when sending user data
+            return res.status(200).json({
+                status: "Success",
+                response: { user: userData, token },
+            });
         } else {
-            // If the user doesn't exist, create a new one
+            // If the user doesn't exist, create a new one with isVerified: true
             const newUser = new userModel({
                 firstname,
                 lastname,
@@ -360,6 +351,7 @@ const googleLogin = async (req, res, next) => {
                 yearOfStudy: '',
                 interests: [],
                 contact: '',
+                isVerified: true, // Google users are automatically verified
             });
 
             await newUser.save();

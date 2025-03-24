@@ -27,10 +27,15 @@ const Header = () => {
   // useFetchUserDetails(userId);
 
   return (
-    <header className="fixed top-0 left-0 z-50 w-full h-15 backdrop-blur-lg bg-white bg-opacity-30 pr-5 py-2">
+    <header
+      className="fixed top-0 left-0 z-50 w-full h-15 backdrop-blur-lg bg-white bg-opacity-30 pr-5 py-2"
+    >
       <div className="flex justify-between items-center">
         <h1 className="flex items-center bg-gradient-to-r ml-3 md:ml-6 from-purple-400 to-indigo-600 font-bold text-xl text-transparent bg-clip-text">
-       <span> <img src="/college-logo.jpeg" alt="logo" className="h-8 w-8" /> </span>   Eventify
+          <span>
+            <img src="/college-logo.jpeg" alt="logo" className="h-8 w-8" />
+          </span>{" "}
+          <NavLink to="/">Eventify</NavLink>
         </h1>
 
         <ul className="lg:flex justify-center items-center flex-row gap-5 font-semibold hidden">
@@ -41,7 +46,11 @@ const Header = () => {
                 <NavLink
                   to="/"
                   className={({ isActive }) =>
-                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
+                    ` text-black md:hover:text-black font-medium ${
+                      isActive
+                        ? "text-black font-medium "
+                        : "md:text-gray-600"
+                    } text-sm`
                   }
                 >
                   Home
@@ -52,7 +61,11 @@ const Header = () => {
                 <NavLink
                   to="/gallery"
                   className={({ isActive }) =>
-                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
+                    ` text-black md:hover:text-black font-medium ${
+                      isActive
+                        ? "text-black font-medium "
+                        : "md:text-gray-600"
+                    } text-sm`
                   }
                 >
                   Photo Gallery
@@ -63,43 +76,63 @@ const Header = () => {
                 <NavLink
                   to="/winners"
                   className={({ isActive }) =>
-                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
+                    ` text-black md:hover:text-black font-medium ${
+                      isActive
+                        ? "text-black font-medium "
+                        : "md:text-gray-600"
+                    } text-sm`
                   }
                 >
                   Winners
                 </NavLink>
               </li>
 
-              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
+              {(userInfo?.role === "superadmin" ||
+                userInfo?.role === "admin") && (
                 <li>
                   <NavLink
                     to="/verifytickets"
                     className={({ isActive }) =>
-                      ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
+                      ` text-black md:hover:text-black font-medium ${
+                        isActive
+                          ? "text-black font-medium "
+                          : "md:text-gray-600"
+                      } text-sm`
                     }
                   >
                     Verify Tickets
                   </NavLink>
                 </li>
-              ) || ( <li>
-                <NavLink
-                  to="/mytickets"
-                  className={({ isActive }) =>
-                    ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
-                  }
-                >
-                  My Tickets
-                </NavLink>
-              </li>) }
+              ) || (
+                <li>
+                  <NavLink
+                    to="/mytickets"
+                    className={({ isActive }) =>
+                      ` text-black md:hover:text-black font-medium ${
+                        isActive
+                          ? "text-black font-medium "
+                          : "md:text-gray-600"
+                      } text-sm`
+                    }
+                  >
+                    My Tickets
+                  </NavLink>
+                </li>
+              )}
 
               {/* userInfo?.role-based links */}
-              {(userInfo?.role === "superadmin" || userInfo?.role === "admin") && (
+              {(userInfo?.role === "superadmin" ||
+                userInfo?.role === "admin") && (
                 <li>
                   <NavLink
                     to="/create"
                     className={({ isActive }) =>
                       `bg-gray-50 backdrop-blur-md bg-opacity-40 py-1 px-2 text-sm font-medium border border-gray-400 rounded-md 
-                       ${isActive ? "text-black" : "md:text-gray-600 md:hover:text-black"}`
+                       ${
+                         isActive
+                           ? "text-black"
+                           : "md:text-gray-600 md:hover:text-black"
+                       }`
                     }
                   >
                     Create Event
@@ -107,9 +140,9 @@ const Header = () => {
                 </li>
               )}
 
-<li>
-  <NotificationComponent/>
-</li>
+              <li>
+                <NotificationComponent />
+              </li>
 
               <li>
                 <NavLink
@@ -145,17 +178,28 @@ const Header = () => {
             <NavLink
               to="/"
               className={({ isActive }) =>
-                ` text-black md:hover:text-black font-medium ${isActive ? "text-black font-medium " : "md:text-gray-600"} text-sm`
+                ` text-black md:hover:text-black font-medium ${
+                  isActive
+                    ? "text-black font-medium "
+                    : "md:text-gray-600"
+                } text-sm`
               }
             >
               Home
             </NavLink>
             {/* {location.pathname !== "/login" && ( */}
-              <NavLink to="/login"
-               className={({ isActive }) =>` ${isActive ? "hidden" : "bg-gray-950 py-1 px-2 text-white md:hover:text-white rounded-md text-sm"} `}
-              >
-                Log In
-              </NavLink>
+            <NavLink
+              to="/login"
+              className={({ isActive }) =>
+                ` ${
+                  isActive
+                    ? "hidden"
+                    : "bg-gray-950 py-1 px-2 text-white md:hover:text-white rounded-md text-sm"
+                } `
+              }
+            >
+              Log In
+            </NavLink>
             {/* )} */}
           </div>
         )}
