@@ -19,15 +19,15 @@ export default function Component() {
   
   const myActiveTickets=useSelector((state)=>state.event?.events)
    // Combine event details with payment status
-   const combinedDetails = user.map(paymentEvent => {
+   const combinedDetails = user?.map(paymentEvent => {
     // Find the matching active event using the eventId
-    const matchedEvent = myActiveTickets.find(activeEvent => activeEvent._id === paymentEvent.eventId);
+    const matchedEvent = myActiveTickets?.find(activeEvent => activeEvent._id === paymentEvent.eventId);
   
     // If a match is found, combine the details
     if (matchedEvent) {
       return {
         ...matchedEvent,
-        paymentStatus: paymentEvent.paymentStatus,
+        paymentStatus: paymentEvent?.paymentStatus,
         paymentScreenshot: paymentEvent.paymentScreenshot
       };
     }
@@ -38,7 +38,7 @@ export default function Component() {
   const [previousFilter, setPreviousFilter] = useState(statusFilter); // Track the previous filter
   const [slideDirection, setSlideDirection] = useState(""); // Track the direction of the slide
   const [isSliding, setIsSliding] = useState(false); // Track whether sliding is happening
-  const [displayedEvents, setDisplayedEvents] = useState(combinedDetails.filter((event) => event.paymentStatus === "Confirmed")); // Displayed events
+  const [displayedEvents, setDisplayedEvents] = useState(combinedDetails?.filter((event) => event.paymentStatus === "Confirmed")); // Displayed events
 const navigate = useNavigate()
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const navigate = useNavigate()
       setIsSliding(true);
   
       setTimeout(() => {
-        setDisplayedEvents(combinedDetails.filter((event) => event.paymentStatus === statusFilter));
+        setDisplayedEvents(combinedDetails?.filter((event) => event.paymentStatus === statusFilter));
         setIsSliding(false); 
         setPreviousFilter(statusFilter); 
       }, 100); 

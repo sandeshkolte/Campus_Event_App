@@ -12,7 +12,7 @@ const OrganizingCommitteCard = ({ title, image }) => {
         </h1>
       </div>
       <div className='group-hover:hidden transition-all duration-300 absolute right-4 top-4 flex justify-center items-center'>
-        <img className='h-16 w-16 object-cover transition-all duration-300 overflow-hidden rounded-xl' src={image} alt="image" />
+        <img className='h-16 w-16 object-cover transition-all duration-300 overflow-hidden rounded-xl' src={image} alt={title} />
       </div>
     </div>
   );

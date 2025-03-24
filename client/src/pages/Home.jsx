@@ -113,12 +113,12 @@ const Home = () => {
         <RevealAnimation>
           <section className="flex justify-center items-center py-10" >
             <div className=" grid grid-cols-2 gap-10 md:flex md:justify-center md:flex-wrap md:gap-16  md:w-full md:p-10" >
-              <Link to='/cse-committee'> <OrganizingCommitteCard title={'CSE'} image={'https://static.vecteezy.com/system/resources/previews/007/088/830/original/cse-letter-logo-design-on-black-background-cse-creative-initials-letter-logo-concept-cse-letter-design-vector.jpg'} /></Link>
-            <Link to='/entc-committee'> <OrganizingCommitteCard title={'ENTC'} image={'https://www.nicepng.com/png/detail/261-2611775_automotive-electronics-electronics-and-telecommunication-engineering-logo.png'} /></Link>
-            <Link to='/instru-committee'>  <OrganizingCommitteCard title={'INSTRU'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
-            <Link to='/mech-committee'>  <OrganizingCommitteCard title={'MECH'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+              <Link to='/cse-committee'> <OrganizingCommitteCard title={'CSE'} image={'asces_logo.jpg'} /></Link>
+            <Link to='/entc-committee'> <OrganizingCommitteCard title={'ENTC'} image={'etesa_logo.png'} /></Link>
+            <Link to='/instru-committee'>  <OrganizingCommitteCard title={'INSTRU'} image={'iesa_logo.jpg'} /></Link>
+            <Link to='/mech-committee'>  <OrganizingCommitteCard title={'MECH'} image={'mesa_logo.png'} /></Link>
             <Link to='/civil-committe'>  <OrganizingCommitteCard title={'CIVIL'} image={'https://tse1.mm.bing.net/th?id=OIP.m6XBhAkjIMlmW5IykwxjqwHaHa&rs=1&pid=ImgDetMain'} /></Link>
-            <Link to='/elec-committee'>   <OrganizingCommitteCard title={'ELECT'} image={'https://th.bing.com/th/id/OIP.pk_awZvzX_-rks1Vfgjo4wHaE7?w=2576&h=1717&rs=1&pid=ImgDetMain'} /></Link>
+            <Link to='/elec-committee'>   <OrganizingCommitteCard title={'ELECT'} image={'eesa_logo.jpg'} /></Link>
             </div>
           </section>
           {/* <OrganizersComponent/> */}

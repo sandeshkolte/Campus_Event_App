@@ -44,7 +44,22 @@ export default function EventDetails() {
       <h1 className="text-5xl font-bold text-white leading-tight">
         {eventDetails?.title}
       </h1>
-      <p className="text-xl text-white/90">Organized By {eventDetails?.organizingBranch}</p>
+      <p className="text-xl text-white/90">
+      Organized By{" "}
+            {eventDetails?.organizingBranch === "CSE"
+              ? "Department of Computer Science and Engineering"
+              : eventDetails?.organizingBranch === "ENTC"
+              ? "Department of Electronics and Telecommunication Engineering"
+              : eventDetails?.organizingBranch === "CE"
+              ? "Department of Civil Engineering"
+              : eventDetails?.organizingBranch === "ME"
+              ? "Department of Mechanical Engineering"
+              : eventDetails?.organizingBranch === "IE"
+              ? "Department of Instrumentation Engineering"
+              : eventDetails?.organizingBranch === "EE"
+              ? "Department of Electrical Engineering"
+              : eventDetails?.organizingBranch}
+      </p>
       <p className="text-base text-white/80">{eventDetails?.venue}</p>
       <Button
         variant="outline"
@@ -237,43 +252,56 @@ export default function EventDetails() {
           </div>
         </div>
 
-        {/* small screen layout */}
-        <div className="md:hidden">
-          <div className="relative h-64 md:h-80">
-            <div
-              style={{ backgroundImage: `url(${imageUrl})` }}
-              className="absolute inset-0 bg-cover bg-center"
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-blue-900/60 to-transparent" />
-            </div>
+        {/* small screen layout  */}
+          <div className="md:hidden">
+            <div className="relative h-64 md:h-80">
+              <div
+                style={{ backgroundImage: `url(${imageUrl})` }}
+                className="absolute inset-0 bg-cover bg-center"
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-blue-900/60 to-transparent" />
+              </div>
 
-            <div className="absolute inset-0 p-4 flex flex-col justify-end">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
-                {eventDetails?.title}
-              </h2>
-              <p className="text-sm sm:text-base text-white/80">
-              Organized By {eventDetails?.organizingBranch}
-              </p>
+              <div className="absolute inset-0 p-4 flex flex-col justify-end">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
+            {eventDetails?.title}
+                </h2>
+                <p className="text-sm sm:text-base text-white/80">
+            Organized By{" "}
+            {eventDetails?.organizingBranch === "CSE"
+              ? "Department of Computer Science and Engineering"
+              : eventDetails?.organizingBranch === "ENTC"
+              ? "Department of Electronics and Telecommunication Engineering"
+              : eventDetails?.organizingBranch === "CE"
+              ? "Department of Civil Engineering"
+              : eventDetails?.organizingBranch === "ME"
+              ? "Department of Mechanical Engineering"
+              : eventDetails?.organizingBranch === "IE"
+              ? "Department of Instrumentation Engineering"
+              : eventDetails?.organizingBranch === "EE"
+              ? "Department of Electrical Engineering"
+              : eventDetails?.organizingBranch}
+                </p>
+              </div>
             </div>
-          </div>
-          <CardHeader>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <MapPin className="mr-2 h-4 w-4" />
-              <p>{eventDetails?.venue}</p>
-            </div>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <EventDateTime />
-            <Button variant="outline" className="w-full justify-start">
-              <Plus className="mr-2 h-4 w-4" /> Add to Calendar
-            </Button>
-            <div className="flex">
-            <Button
-  onClick={handleBookNow}
-  disabled={user?.myevents?.some(event => event.eventId === eventDetails?._id)}
-  className={`w-full text-white transition-colors ${
-    user?.myevents?.some(event => event.eventId === eventDetails?._id)
-      ? 'bg-gray-500 cursor-not-allowed' // Disabled styling
+            <CardHeader>
+              <div className="flex items-center text-sm text-muted-foreground">
+                <MapPin className="mr-2 h-4 w-4" />
+                <p>{eventDetails?.venue}</p>
+              </div>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <EventDateTime />
+              <Button variant="outline" className="w-full justify-start">
+                <Plus className="mr-2 h-4 w-4" /> Add to Calendar
+              </Button>
+              <div className="flex">
+              <Button
+          onClick={handleBookNow}
+          disabled={user?.myevents?.some(event => event.eventId === eventDetails?._id)}
+          className={`w-full text-white transition-colors ${
+            user?.myevents?.some(event => event.eventId === eventDetails?._id)
+              ? 'bg-gray-500 cursor-not-allowed' // Disabled styling
       : 'bg-gray-900 hover:bg-gray-700' // Normal styling
   }`}
 >
