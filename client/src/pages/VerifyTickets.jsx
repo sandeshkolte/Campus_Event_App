@@ -17,28 +17,29 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { baseUrl } from "@/common/common";
 import { toast } from "react-toastify";
+import { Loader2 } from "lucide-react";
 
 export default function VerifyTickets() {
   const events = useSelector((state) => state.event.activeEvents);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const confirmStatusChange = async () => {
+    setLoading(true);
     try {
-      const result = await axios.post(`${baseUrl}/api/event/update/${selectedEventId}`, {
+      await axios.post(`${baseUrl}/api/event/update/${selectedEventId}`, {
         isActive: false,
       });
-
-      // console.log(result);
       toast.success("Event closed successfully");
       setIsDialogOpen(false);
       window.location.reload();
     } catch (err) {
       toast.error(err.message || "Error updating event status");
-      setIsDialogOpen(false);
     }
+    setLoading(false);
   };
 
   const handleSelectChange = (value, eventId) => {
@@ -48,13 +49,18 @@ export default function VerifyTickets() {
     }
   };
 
-  // Filter events based on search input
   const filteredEvents = events.filter((event) =>
     event.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="container max-w-6xl mx-auto p-4 bg-white text-gray-900 cursor-pointer">
+    <div className="relative container max-w-6xl mx-auto p-4 bg-white text-gray-900 cursor-pointer">
+      {loading && (
+        <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+          <Loader2 className="animate-spin h-12 w-12 text-white" />
+        </div>
+      )}
+
       <div className="flex justify-center mb-10">
         <div className="bg-zinc-950 w-fit text-gray-300 p-3 rounded-2xl text-center mt-5">
           <h3 className="font-light text-2xl md:mx-10">Verify Payment</h3>
@@ -74,7 +80,7 @@ export default function VerifyTickets() {
       </div>
 
       <div className="space-y-2">
-        {filteredEvents.map((event) => (
+        {filteredEvents?.map((event) => (
           <Card
             key={event._id}
             className="flex flex-col sm:flex-row items-center"
@@ -84,44 +90,21 @@ export default function VerifyTickets() {
               <img
                 src={event.image}
                 alt={event.title}
-                className="w-full h-full object-fit"
-                width={80}
-                height={80}
+                className="w-full h-full object-cover"
               />
-              <Badge
-                className={`absolute top-1 right-1 ${
-                  event.isActive ? "bg-green-500" : "bg-red-500"
-                } text-white`}
-              >
+              <Badge className={`absolute top-1 right-1 ${event.isActive ? "bg-green-500" : "bg-red-500"} text-white`}>
                 {event.isActive ? "Active" : "Closed"}
               </Badge>
             </div>
 
             <CardHeader className="flex-1">
               <CardTitle className="text-xl font-semibold">{event.title}</CardTitle>
-              <p className="text-sm text-gray-500">
-                {new Date(event.startDate).toLocaleString("en-US", {
-                  weekday: "short",
-                  hour: "numeric",
-                  minute: "numeric",
-                })}{" "}
-                · {event.venue}
-              </p>
-              <p className="text-sm text-gray-500">
-                {`${event.participants?.filter((p) => p.paymentStatus === "Confirmed").length || 0} / 
-                ${event.participants?.length || 0} tickets sold`}
-              </p>
+              <p className="text-sm text-gray-500">{new Date(event.startDate).toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "numeric" })} · {event.venue}</p>
+              <p className="text-sm text-gray-500">{`${event.participants?.filter((p) => p.paymentStatus === "Confirmed").length || 0} / ${event.participants?.length || 0} tickets sold`}</p>
             </CardHeader>
 
             <CardContent className="flex flex-col items-center gap-2">
-              <Badge
-                variant="secondary"
-                className={`mb-1 ${
-                  event.participants?.some((p) => p.paymentStatus === "Pending")
-                    ? "bg-red-100 text-red-800 border-red-200"
-                    : "bg-green-100 text-green-800 border-green-200"
-                }`}
-              >
+              <Badge variant="secondary" className={`mb-1 ${event.participants?.some((p) => p.paymentStatus === "Pending") ? "bg-red-100 text-red-800 border-red-200" : "bg-green-100 text-green-800 border-green-200"}`}>
                 {event.participants?.some((p) => p.paymentStatus === "Pending")
                   ? `${event.participants.filter((p) => p.paymentStatus === "Pending").length} pending`
                   : "No Pending Requests"}
@@ -150,11 +133,11 @@ export default function VerifyTickets() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={loading}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={confirmStatusChange}>
-              Close Event
+            <Button variant="destructive" onClick={confirmStatusChange} disabled={loading}>
+              {loading ? "Closing..." : "Close Event"}
             </Button>
           </DialogFooter>
         </DialogContent>
