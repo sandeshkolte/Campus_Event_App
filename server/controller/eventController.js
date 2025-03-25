@@ -206,7 +206,7 @@ const getEvent = async (req, res, next) => {
         // console.log("From MONGO");
 
         // the populate used here makes the id as na object os that i get all info just from the id
-        events = await eventModel.find({isActive:true}).populate('organisedBy coordinator participants winner.user');
+        events = await eventModel.find().populate('organisedBy coordinator participants winner.user');
         await redis.setex("events", 60, JSON.stringify(events));
 
         res.status(200).json({ status: "success", response: events });
