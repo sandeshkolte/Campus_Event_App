@@ -206,7 +206,7 @@ const ParticipantCard = ({ user, onStatusChange, event }) => {
 
               {/* Right Section */}
               <CardContent className="p-0 flex items-center gap-5">
-                <Dialog>
+              {event.price!=0 &&  <Dialog>
                   <DialogTrigger asChild>
                     <Button className="bg-gray-800 text-white hover:bg-gray-700 mb-2">
                       Show Screenshot
@@ -228,7 +228,7 @@ const ParticipantCard = ({ user, onStatusChange, event }) => {
                       />
                     </div>
                   </DialogContent>
-                </Dialog>
+                </Dialog>}
 
                 <Select onValueChange={handleStatusChange}>
                   <SelectTrigger className="w-[180px] text-sm">

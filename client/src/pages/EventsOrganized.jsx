@@ -17,6 +17,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ShowWinnersSwitch } from "@/components/utils/ShowWinnerSwitch";
 import CertificateGeneratorDialog from "@/components/CerticateIssuesPage";
+import { ParticipantsListPopup } from "@/components/ParticipantsListPopup";
 
 export default function EventsOrganized() {
   const events = useSelector((state) => state.event?.myOrganizedEvents);
@@ -116,14 +117,7 @@ export default function EventsOrganized() {
                 </Link>
               ) : (
                 <>
-                  {/* <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex border-gray-100 border-2 items-center gap-2"
-                  >
-                    <Users className="h-4 w-4" />
-                    <span>Participant List</span>
-                  </Button> */}
+                  <ParticipantsListPopup event={event} />
                   <WinnerDeclarationPopup event={event} />
                   <CertificateGeneratorDialog event={event}/>
                 </>
