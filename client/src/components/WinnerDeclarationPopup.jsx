@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -6,49 +6,50 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Trophy } from 'lucide-react';
-import SelectorPrac from './SelectorPrac';
-import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import { DialogDescription } from '@radix-ui/react-dialog';
-import { baseUrl } from '@/common/common';
-import ParticipantsSelector from './ParticipantsSelector';
+import { Trophy } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { baseUrl } from "@/common/common";
+import ParticipantsSelector from "./ParticipantsSelector";
 
 export function WinnerDeclarationPopup({ event }) {
   const { handleSubmit, watch, setValue, reset } = useForm();
   const [loading, setLoading] = useState(false);
 
-  // Watch the selected winners
+  // Watch selected winners
   const winner1 = watch("winner1");
   const winner2 = watch("winner2");
-  const winner3 = watch("winner3");
 
   const formSubmit = async () => {
+
+console.log("winner1:",winner1._id);
+console.log("winner2:",winner2._id);
+
+
     setLoading(true);
 
     // Prepare the winners array for the backend
     const winners = [
-      { user: winner1?.[0]?._id, position: "1" },
-      { user: winner2?.[0]?._id, position: "2" },
-      { user: winner3?.[0]?._id, position: "3" },
-    ].filter(winner => winner.user); // Filter out any undefined or empty selections
+      { user: winner1._id, position: "1" },
+      { user: winner2._id, position: "2" },
+    ].filter((winner) => winner.user); // Filter out empty selections
 
+
+    
     try {
-      const response = await axios.post(
-        `${baseUrl}/api/winners/add/${event._id}`, // Adjusted to match backend route
-        {
-          winners,
-          showWinners: true, // Optional: Include if visibility is being toggled
-        }
-      );
+      await axios.post(`${baseUrl}/api/winners/add/${event._id}`, {
+        winners,
+        showWinners: true, // Visibility flag
+      });
 
       toast.success("Winners updated successfully!");
       reset();
     } catch (err) {
-      toast.error("Failed to update winners: " + err.response?.data?.message || err.message);
+      toast.error("Failed to update winners: " + (err.response?.data?.message || err.message));
     } finally {
       setLoading(false);
     }
@@ -57,11 +58,7 @@ export function WinnerDeclarationPopup({ event }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex sm:mr-5 border-gray-100 border-2 items-center gap-2"
-        >
+        <Button variant="outline" size="sm" className="flex sm:mr-5 border-gray-100 border-2 items-center gap-2">
           <Trophy className="h-4 w-4" />
           {event.winners?.length > 0 ? "Update Winners" : "Declare Winners"}
         </Button>
@@ -77,15 +74,11 @@ export function WinnerDeclarationPopup({ event }) {
           <div className="grid gap-4 py-4">
             <div>
               <Label>First</Label>
-              <ParticipantsSelector selector={"winner1"} setValue={setValue} eventId={event._id} />
+              <ParticipantsSelector selector="winner1" setValue={setValue} eventId={event._id} />
             </div>
             <div>
               <Label>Second</Label>
-              <ParticipantsSelector selector={"winner2"} setValue={setValue} eventId={event._id}  />
-            </div>
-            <div>
-              <Label>Third</Label>
-              <ParticipantsSelector selector={"winner3"} setValue={setValue} eventId={event._id}  />
+              <ParticipantsSelector selector="winner2" setValue={setValue} eventId={event._id} />
             </div>
           </div>
           <div className="flex justify-end">

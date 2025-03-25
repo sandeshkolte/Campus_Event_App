@@ -116,14 +116,14 @@ export default function EventsOrganized() {
                 </Link>
               ) : (
                 <>
-                  <Button
+                  {/* <Button
                     variant="outline"
                     size="sm"
                     className="flex border-gray-100 border-2 items-center gap-2"
                   >
                     <Users className="h-4 w-4" />
                     <span>Participant List</span>
-                  </Button>
+                  </Button> */}
                   <WinnerDeclarationPopup event={event} />
                   <CertificateGeneratorDialog event={event}/>
                 </>

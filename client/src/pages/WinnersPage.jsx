@@ -118,7 +118,7 @@ const WinnersPage = () => {
     const fetchWinners = async () => {
       try {
         setLoading(true)
-        const response = await axios.get(`${baseUrl}/api/winners`)
+        const response = await axios.get(`${baseUrl}/api/winners/`)
 
         if (response.status !== 200) {
           throw new Error("Failed to fetch winners")
