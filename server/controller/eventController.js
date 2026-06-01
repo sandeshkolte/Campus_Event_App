@@ -1,16 +1,10 @@
 const eventModel = require('../models/event');
 const userModel = require('../models/user');
-const Redis = require('ioredis');
+const redisClient = require('../config/redis-config');
 require('dotenv').config();
 const { Knock }  = require("@knocklabs/node")
 const knock = new Knock(process.env.KNOCK_API_KEY);
 const { format } =  require('date-fns');
-
-const redis = new Redis({
-    host: process.env.REDISHOST,
-    port: 13606,
-    password: process.env.REDISPASS,
-});
 
 //create event working fine on postman
 const createEvent = async (req, res) => {
@@ -198,16 +192,16 @@ const createEvent = async (req, res) => {
 
 const getEvent = async (req, res, next) => {
     try {
-        let events = await redis.get("events");
+        let events = await redisClient.get("events");
         if (events) {
-            // console.log("Get from cache");
+            console.log("Get from Redis cache");
             return res.json({ response: JSON.parse(events) });
         }
-        // console.log("From MONGO");
+        console.log("Get from MongoDB");
 
-        // the populate used here makes the id as na object os that i get all info just from the id
+        // the populate used here makes the id as an object so that i get all info just from the id
         events = await eventModel.find().populate('organisedBy coordinator participants winner.user');
-        await redis.setex("events", 60, JSON.stringify(events));
+        await redisClient.setEx("events", 60, JSON.stringify(events));
 
         res.status(200).json({ status: "success", response: events });
     } catch (err) {
