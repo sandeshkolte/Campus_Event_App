@@ -13,8 +13,8 @@ const errorMidddleware = require('./middlewares/errorMiddleware');
 const app = express();
 const session = require('express-session');
 
-// const { RedisStore } = require("connect-redis");
-// const redis = require('redis');
+const { RedisStore } = require("connect-redis");
+const redis = require('redis');
 
 const PORT = process.env.PORT || 9000;
 
@@ -29,15 +29,15 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// const redisClient = redis.createClient({
-//   url: process.env.REDIS_URL,
-// });
+const redisClient = redis.createClient({
+  url: process.env.REDIS_URL,
+});
 
-// redisClient.connect().catch(console.error);
+redisClient.connect().catch(console.error);
 
 app.use(
   session({
-      // store: new RedisStore({ client: redisClient }),
+      store: new RedisStore({ client: redisClient }),
       secret: process.env.EXPRESS_SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
