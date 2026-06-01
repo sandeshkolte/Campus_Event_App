@@ -9,12 +9,12 @@ const appLogger = require('./middlewares/appLogger');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const db = require('./config/mongoose-config');
+const redisClient = require('./config/redis-config');
 const errorMidddleware = require('./middlewares/errorMiddleware');
 const app = express();
 const session = require('express-session');
 
 const { RedisStore } = require("connect-redis");
-const redis = require('redis');
 
 const PORT = process.env.PORT || 9000;
 
@@ -28,12 +28,6 @@ app.use(appLogger);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-const redisClient = redis.createClient({
-  url: process.env.REDIS_URL,
-});
-
-redisClient.connect().catch(console.error);
 
 app.use(
   session({
