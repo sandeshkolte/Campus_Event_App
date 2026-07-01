@@ -17,7 +17,8 @@ const SignInWithGoogle = () => {
   const { reset } = useForm();
 
   const googleLogin = async (e) => {
-    e.stopPropagation();
+      e.preventDefault();
+  e.stopPropagation();
     const provider = new GoogleAuthProvider();
 
     try {
