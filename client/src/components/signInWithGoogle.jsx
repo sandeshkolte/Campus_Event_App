@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithRedirect } from 'firebase/auth';
 import React from 'react';
 import { toast } from 'react-toastify';
 import { Button } from './ui/button';
@@ -21,7 +21,7 @@ const SignInWithGoogle = () => {
     const provider = new GoogleAuthProvider();
 
     try {
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithRedirect(auth, provider);
       if (!result.user) return;
 
       const { email, displayName, photoURL } = result.user;
