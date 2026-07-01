@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FaGoogle } from "react-icons/fa";
+import { auth } from "@/firebase";
+import { getRedirectResult } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import axios from "axios";
@@ -30,6 +31,49 @@ export default function LoginForm() {
 
   const [loading, setLoading] = React.useState(false);
 
+  React.useEffect(() => {
+  const handleGoogleRedirect = async () => {
+    try {
+      const result = await getRedirectResult(auth);
+
+      if (!result?.user) return;
+
+      const { email, displayName, photoURL } = result.user;
+
+      const firstname = displayName?.split(" ")[0] || "";
+      const lastname = displayName?.split(" ").slice(1).join(" ") || "";
+
+      const response = await axios.post(`${baseUrl}/api/user/google`, {
+        email,
+        firstname,
+        lastname,
+        image: photoURL,
+      });
+
+      const { token, user } = response.data.response;
+
+      localStorage.setItem("userToken", token);
+      dispatch(login(user));
+
+      toast.success("User Login Successfully!");
+
+      navigate("/");
+    } catch (err) {
+      if (!err) return;
+
+      console.error("Google Redirect Login:", err);
+
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        toast.error("User Already Exists!");
+      } else {
+        toast.error("Google Login Failed.");
+      }
+    }
+  };
+
+  handleGoogleRedirect();
+}, [dispatch, navigate]);
+
   const formSubmit = async (data) => {
     if (data.email !== "" && data.password !== "") {
       setLoading(true);
@@ -39,11 +83,10 @@ export default function LoginForm() {
         if (response.status === 200) {
           toast.success("User Login Successfully!");
           const { token, user } = response.data.response;
-          localStorage.setItem('userToken', token);
-          dispatch(login(user));
-          reset();
-          navigate('/');
-          window.location.reload();
+         localStorage.setItem("userToken", token);
+dispatch(login(user));
+reset();
+navigate("/");
         } else if (response.status === 400) {
           toast.error("Email not verified.");
         }
@@ -122,7 +165,7 @@ export default function LoginForm() {
           </div>
         </CardContent>
         <CardFooter className="grid">
-          <Button className="w-full bg-gray-900 text-white">
+          <Button type="submit" className="w-full bg-gray-900 text-white">
             {loading ? <VscLoading className="text-white animate-spin-slow text-2xl" /> : "SIGN IN"}
           </Button>
           <hr className="mt-3 border-gray-300 rounded-md border-[1.5px]" />
